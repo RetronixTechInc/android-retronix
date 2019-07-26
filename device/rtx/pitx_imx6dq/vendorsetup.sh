@@ -1,0 +1,2 @@
+add_lunch_combo pitx_imx6dq-eng
+add_lunch_combo pitx_imx6dq-user

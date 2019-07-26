@@ -1,0 +1,3 @@
+
+add_lunch_combo a6plus_imx6dq-eng
+add_lunch_combo a6plus_imx6dq-user
