@@ -1,0 +1,16 @@
+ifeq ($(PREBUILT_FSL_WFDSINK),true)
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+
+LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := fsl.imx:fsl.imx.jar
+include $(BUILD_MULTI_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libfsl_wfd.so
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_PATH := $(TARGET_OUT)/lib
+LOCAL_SRC_FILES := ${LOCAL_MODULE}
+include $(BUILD_PREBUILT)
+endif

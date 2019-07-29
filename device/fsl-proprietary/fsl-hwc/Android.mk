@@ -1,0 +1,12 @@
+ifeq ($(TARGET_HAVE_IMX_HWCOMPOSER),true)
+ifeq ($(PREBUILT_FSL_HWCOMPOSER),true)
+LOCAL_PATH := $(my-dir)
+include $(CLEAR_VARS)
+LOCAL_MODULE := hwcomposer_fsl.imx6.so
+LOCAL_SRC_FILES := ${LOCAL_MODULE}
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_PATH := $(TARGET_OUT)/lib/hw/
+include $(BUILD_PREBUILT)
+endif
+endif

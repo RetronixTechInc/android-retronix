@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">仙人掌播放器</string>
+    <string name="waiting">等待</string>
+    <string name="Error">错误</string>
+    <string name="item">条目</string>
+    <string name="Scan">搜索</string>
+    <string name="SelectAudio">选择音频</string>
+    <string name="SelectSubtitle">选择字幕</string>
+    <string name="CloseSubtitle">关闭字幕</string>
+    <string name="LoopFile">循环</string>
+    <string name="CastScreen">远程播放</string>
+    <string name="OK">"确定"</string>
+    <string name="Cancel">"取消"</string>
+    <string name="ClipsNotFound">"没有找到可播放文件，请稍后再试"</string>
+    <string name="Continue">"继续？"</string>
+    <string name="SubtitleOff">"Subtitle OFF"</string>
+    <string name="noname">"没有文件名"</string>
+    <string name="Remote_control">"远程播放控制"</string>
+    <string name="noRemote_control">"没有远程播放"</string>
+    <string name="quit">"完全退出"</string>
+    <string name="Warning">警告</string>
+    <string name="PermissionNotGrant">权限未设置，请在设置里授予Storage权限，否则继续运行可能导致程序崩溃，是否继续运行?</string>
+    <array name="str_body">
+        <item>播放</item>
+        <item>远程播放</item>
+
+    </array>
+</resources>

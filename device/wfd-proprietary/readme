@@ -1,0 +1,13 @@
+=========================================
+How to do wifi display unit test using Ethernet?
+
+*Take two board. Plug in Ethernet tables into the same network.
+
+*Run netcfg command in console respectively to get two ip address. E.g. 10.192.241.13 & 10.192.241.15
+
+*Start wfd server and client to run the test.
+
+ For example:
+
+        #wfd -l 10.192.241.13:1234-------This is server listening on 10.192.241.13 port number 1234
+        #wfd -c 10.192.241.13:1234-------This is client which will connect to server above.

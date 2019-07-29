@@ -1,0 +1,23 @@
+LOCAL_PATH := $(call my-dir)
+
+ifeq ($(BOARD_HAS_SENSOR), true)
+include $(CLEAR_VARS)
+LOCAL_MODULE := magd
+LOCAL_MODULE_TAGS := eng
+LOCAL_MODULE_PATH := $(TARGET_OUT)/bin
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_SRC_FILES := magd
+LOCAL_MODULE_TAGS := eng
+include $(BUILD_PREBUILT)
+
+endif
+
+ifeq ($(BOARD_USE_SENSOR_FUSION), true)
+include $(CLEAR_VARS)
+LOCAL_MODULE := fsl_sensor_fusion
+LOCAL_MODULE_PATH := $(TARGET_OUT)/bin
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_SRC_FILES := fsl_sensor_fusion
+include $(BUILD_PREBUILT)
+
+endif

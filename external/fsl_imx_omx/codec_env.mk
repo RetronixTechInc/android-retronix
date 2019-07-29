@@ -1,0 +1,1 @@
+HAVE_FSL_IMX_CODEC := true

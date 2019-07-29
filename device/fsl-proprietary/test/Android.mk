@@ -1,0 +1,30 @@
+
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := mxc_ipudev_test
+LOCAL_MODULE_TAGS := eng
+LOCAL_MODULE_PATH := $(TARGET_OUT)/bin
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_SRC_FILES :=  bin/mxc_ipudev_test
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := mxc_vpu_test
+LOCAL_MODULE_TAGS := eng
+LOCAL_MODULE_PATH := $(TARGET_OUT)/bin
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_SRC_FILES :=  bin/mxc_vpu_test
+include $(BUILD_PREBUILT)
+
+ifeq ($(PREBUILT_FSL_IMX_GPU),true)
+ifeq ($(TARGET_BOARD_PLATFORM),imx6)
+include $(CLEAR_VARS)
+LOCAL_MODULE :=gmem_info
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_PATH := $(TARGET_OUT)/bin
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_SRC_FILES :=  bin/gmem_info
+include $(BUILD_PREBUILT)
+endif
+endif
