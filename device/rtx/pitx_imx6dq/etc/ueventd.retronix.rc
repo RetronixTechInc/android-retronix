@@ -1,8 +1,10 @@
+/dev/ttyUSB*              0777   radio      radio
+/dev/ttymxc*              0777   root       root
+/dev/i2c-*                0777   root       root
+/dev/block/mmcblk0        0777   root       root
+
 /dev/pmem_gpu             0660   system     graphics
-/dev/ttymxc2              0660   bluetooth  net_bt_stack
-/dev/ttymxc4              0660   bluetooth  net_bt_stack
 /dev/snd/*                0660   system     audio
-/dev/ttyUSB*              0640   radio      radio
 /dev/ttyACM*              0640   radio      radio
 /dev/video*               0660   system     camera
 /dev/video0               0660   system     camera

@@ -295,9 +295,7 @@ if [ ! -f ${retronix_fold_repo} ] ; then
     sudo chmod a+x ./repo
     ./repo init -u ssh://git@github.com/RetronixTechInc/android-manifests.git -b ${BRAN} -m ${MANIFEST}
     ./repo sync
-    cp build/core/root.mk Makefile
-    rm -rf .git
-    
+    cp build/core/root.mk Makefile   
 fi
 
 #######################################

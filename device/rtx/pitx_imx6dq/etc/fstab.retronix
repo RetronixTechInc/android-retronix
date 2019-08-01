@@ -3,8 +3,14 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
-#/devices/soc0/soc/2100000.aips-bus/2194000.usdhc/mmc_host* auto auto defaults voldmanaged=sdcard:auto,encryptable=userdata
+# USB Port
+/devices/soc0/soc/2100000.aips-bus/2184200.usb/ci_hdrc.1* auto auto defaults voldmanaged=usb:auto,encryptable=userdata
+
+# OTG Port
 /devices/soc0/soc/2100000.aips-bus/2184000.usb/ci_hdrc.0*  auto auto defaults voldmanaged=usb:auto
+
+# SD Card slot
+/devices/soc0/soc/2100000.aips-bus/2198000.usdhc/mmc_host* auto auto defaults voldmanaged=sdcard:auto,encryptable=userdata
 
 #/dev/block/mmcblk0p1    /boot        ext4    ro,nosuid,nodev                                                                  wait
 #/dev/block/mmcblk0p5    /system      ext4    ro,barrier=1                                                                     wait,verify
