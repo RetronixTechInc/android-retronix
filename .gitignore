@@ -15,11 +15,6 @@ device/htc/
 device/huawei/
 device/lge/
 device/moto/
-device/rtx/pitx_imx6dq/overlay/frameworks/base/core/res/res/drawable-sw720dp-nodpi/
-device/rtx/tools/pitx-android601/flash/android-R0101.00-fs.tar
-device/rtx/tools/pitx-android601/flash/rtx-imx6q-pitx-b21-android.dtb
-device/rtx/tools/pitx-android601/flash/u-boot.imx
-device/rtx/tools/pitx-android601/flash/uImage
 device/sample/
 docs/
 external/aac/
