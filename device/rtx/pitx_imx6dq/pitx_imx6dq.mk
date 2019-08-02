@@ -387,6 +387,10 @@ PRODUCT_COPY_FILES += \
 	device/rtx/pitx_imx6dq/etc/init.usb.rc:root/init.retronix.usb.rc \
 	device/rtx/pitx_imx6dq/etc/ueventd.retronix.rc:root/ueventd.retronix.rc \
 	device/rtx/pitx_imx6dq/etc/ppp/init.gprs-pppd:system/etc/ppp/init.gprs-pppd \
+	device/rtx/pitx_imx6dq/etc/ppp/3gdata_call.conf:system/etc/ppp/3gdata_call.conf \
+	device/rtx/pitx_imx6dq/etc/ppp/libreference-ril.so:system/lib/libreference-ril.so \
+	device/rtx/pitx_imx6dq/etc/ppp/libril.so:system/lib/libril.so \
+	device/rtx/pitx_imx6dq/etc/ppp/rild:system/bin/rild \
 	device/rtx/pitx_imx6dq/etc/ota.conf:system/etc/ota.conf \
     device/rtx/pitx_imx6dq/etc/init.recovery.retronix.rc:root/init.recovery.retronix.rc \
 	device/rtx/pitx_imx6dq/display/display_mode_fb0.conf:system/etc/display_mode_fb0.conf \

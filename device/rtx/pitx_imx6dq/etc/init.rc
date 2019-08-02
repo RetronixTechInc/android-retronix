@@ -102,7 +102,9 @@ on boot
     # Prepare for RIL
     setprop gsm.ril.delay 15
     setprop ro.ril.wake_lock_timeout 300
-
+    setprop ro.telephony.default_network 9
+    chmod 0777 /etc/ppp/init.gprs-pppd
+    chmod 0777 /etc/ppp/3gdata_call.conf
 
 	#  Enable adb security for JB4.2.2
     setprop ro.adb.secure 1
@@ -137,10 +139,6 @@ on boot
 
 	# chmod for /mnt/media_rw
 	chmod 755 /mnt/media_rw
-	
-    # prepare for ril
-    setprop gsm.ril.delay 15
-    setprop ro.ril.wake_lock_timeout 300
 
     # Default backlight device
     setprop hw.backlight.dev "pwm-backlight"
@@ -338,20 +336,24 @@ service rtl_hostapd /system/bin/hostapd /data/misc/wifi/hostapd.conf
     oneshot
     disabled
 
-service ril-daemon /system/bin/rild
+#modified by simcom
+#----------------------------------------------------------------------------------------
+service ril-daemon /system/bin/rild -l /system/lib/libreference-ril.so
     class main
-    socket rild stream 660 root radio
+    socket rild stream 660 root radio system
     socket rild-debug stream 660 radio system
     socket rild-ppp stream 660 radio system
+#----    gps supported ??? --------------------  
+#   socket rild-gps stream 660 radio system
     user root
-    group radio cache inet misc audio sdcard_rw log
+    group radio cache inet misc audio sdcard_rw 
 
 service pppd_gprs /etc/ppp/init.gprs-pppd
-    class main
     user root
     group radio cache inet misc
     disabled
     oneshot
+#----------------------------------------------------------------------------
     
 on fs
 	# mount ext4 partitions
