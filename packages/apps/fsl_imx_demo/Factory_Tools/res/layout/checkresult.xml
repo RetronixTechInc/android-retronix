@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+    android:background="@drawable/layoutback"
+    android:layout_width="fill_parent"  
+    android:layout_height="fill_parent" >  
+
+    <TableRow
+        android:layout_marginLeft="80dip" 
+        android:layout_marginTop="180dip">  
+        <TextView  
+            android:width="200dp"
+            android:text="@string/test_clock"
+			android:textStyle="bold"
+			android:textSize="24dip"
+			android:textColor="#000000" />  
+        <TextView
+        	android:id="@+id/Systemclock1"
+        	android:layout_width="300dp"    
+			android:textSize="24dip"
+			android:textColor="#000000"
+			android:background="#cccccc" />  
+        <TextView
+        	android:layout_width="300dp" />  
+        <TextView
+        	android:id="@+id/clockcheck1"
+        	android:layout_width="300dp"    
+			android:layout_marginLeft="30dip" 
+            android:text="@string/ng_msg"  
+			android:textSize="24dip"
+			android:textColor="#880000"
+			android:background="#88cccc" />  
+        </TableRow>  
+  
+    <TableRow
+        android:layout_marginLeft="80dip" 
+        android:layout_marginTop="30dip">  
+        <TextView  
+            android:width="200dp"
+            android:text="@string/test_id"  
+			android:textStyle="bold"
+			android:textSize="24dip"
+			android:textColor="#000000" />  
+        <TextView  
+        	android:id="@+id/idcheck1"
+            android:width="200dp"
+            android:text="@string/null_msg"  
+			android:textStyle="bold"
+			android:textSize="24dip"
+			android:textColor="#000000" />  
+        <EditText
+        	android:id="@+id/Productid1"
+        	android:layout_width="300dp"
+			android:layout_marginLeft="30dip" 
+        	android:layout_height="wrap_content"
+			android:textSize="24dip"
+			android:textColor="#000000" 
+			android:background="#88cccc"
+			android:textCursorDrawable="@null"
+			android:singleLine="true" >
+        	</EditText>    
+        <TextView
+        	android:id="@+id/idresult1"
+        	android:layout_width="300dp"    
+			android:layout_marginLeft="30dip" 
+            android:text="@string/ng_msg"  
+			android:textSize="24dip"
+			android:textColor="#880000"
+			android:background="#88cccc" />
+    </TableRow>  
+  
+    <TableRow
+        android:layout_marginLeft="80dip"  
+        android:layout_marginTop="30dip">  
+        <TextView  
+            android:width="200dp"
+            android:text="@string/test_mac"  
+			android:textStyle="bold"
+			android:textSize="24dip"
+			android:textColor="#000000" />  
+        <TextView  
+        	android:id="@+id/maccheck1"
+            android:width="200dp"
+            android:text="@string/null_msg"  
+			android:textStyle="bold"
+			android:textSize="24dip"
+			android:textColor="#000000" />  
+        <EditText
+        	android:id="@+id/Ethmac1"
+        	android:layout_width="300dp"
+			android:layout_marginLeft="30dip" 
+        	android:layout_height="wrap_content"
+			android:textSize="24dip"
+			android:textColor="#000000" 
+			android:background="#88cccc"
+			android:layout_gravity="center_vertical"
+			android:textCursorDrawable="@null"
+			android:singleLine="true" >
+        	</EditText>    
+        <TextView
+        	android:id="@+id/macresult1"
+        	android:layout_width="300dp"    
+			android:layout_marginLeft="30dip" 
+            android:text="@string/ng_msg"  
+			android:textSize="24dip"
+			android:textColor="#880000"
+			android:background="#88cccc" />
+    </TableRow>  
+
+    <TableRow 
+        android:layout_marginLeft="80dip"  
+        android:layout_marginTop="30dip">  
+        <Button  
+            android:id="@+id/Resulttest1"  
+			android:text="@string/test_result"
+            android:width="200dip"
+            android:textStyle="bold"
+            android:textSize="24dip"
+            android:textColor="#000000"
+			android:background="@drawable/mainbtnback2"
+             />
+        </TableRow>  
+        
+       <ImageView
+		android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/resultimageview"
+	    android:layout_gravity="center"
+	    android:layout_marginTop="100dip" 
+	/>
+    
+</TableLayout>  
+

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.aai.tools"
+      android:versionCode="1"
+      android:versionName="1.0"
+      android:sharedUserId="android.uid.system">
+
+    <uses-sdk android:minSdkVersion="10" />
+    
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".AAI_Tools"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Activity Update System -->
+        <activity android:name=".UpdatesystemActivity"
+                  android:label="@string/Systemupdate">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.SAMPLE_CODE" />
+            </intent-filter>
+        </activity>
+
+        <!-- Activity Install APK -->
+        <activity android:name=".InstallApkActivity"
+                  android:label="@string/Installapk">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.SAMPLE_CODE" />
+            </intent-filter>
+        </activity>
+
+        <!-- Activity ScreenOutput APK -->
+        <activity
+            android:name=".ScreenOutputActivity"
+            android:label="@string/ScreenOutput" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.SAMPLE_CODE" />
+            </intent-filter>
+        </activity>
+                
+        <!-- Activity Information APK -->
+        <activity
+            android:name=".InformationActivity"
+            android:label="@string/Information" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.SAMPLE_CODE" />
+            </intent-filter>
+        </activity>
+                
+        <!-- Activity Reboot APK -->
+        <activity
+            android:name=".RebootActivity"
+            android:label="@string/reboot_title" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.SAMPLE_CODE" />
+            </intent-filter>
+        </activity>
+                
+        <!-- Activity Shutdown APK -->
+        <activity
+            android:name=".ShutdownActivity"
+            android:label="@string/shutdown_title" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.SAMPLE_CODE" />
+            </intent-filter>
+        </activity>
+                
+        <!-- Activity McuwakeupActivity APK 
+        <activity
+            android:name=".McuwakeupActivity"
+            android:label="@string/mcuwakeup_title" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.SAMPLE_CODE" />
+            </intent-filter>
+        </activity>-->
+                
+        </application>
+</manifest>

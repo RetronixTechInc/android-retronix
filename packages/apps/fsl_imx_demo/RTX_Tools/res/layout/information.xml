@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="@string/Information">
+
+	<!--ethernet MAC addr-->
+	<Preference android:key="eth_mac" 
+                android:title="@string/eth_mac"
+                android:summary="@string/mac_unknown"/>
+
+    <!--ethernet IP-->
+	<Preference android:key="eth_ip" 
+                android:title="@string/eth_ip"
+                android:summary="@string/ip_unknown"/>
+	
+	<!--wifi MAC addr-->
+	<Preference android:key="wifi_mac" 
+                style="?android:preferenceInformationStyle"
+                android:title="@string/wifi_mac"
+                android:summary="@string/mac_unknown"/>
+
+	<!--wifi IP-->
+	<Preference android:key="wifi_ip" 
+                style="?android:preferenceInformationStyle"
+                android:title="@string/wifi_ip"
+                android:summary="@string/ip_unknown"/>
+
+	<!--gina MCU version-->
+	<Preference android:key="mcu_version" 
+                style="?android:preferenceInformationStyle"
+                android:title="@string/mcu_ver"
+                android:summary="@string/mcu_unknown"/>
+
+</PreferenceScreen>

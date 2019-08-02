@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="@string/ScreenOutput">
+    
+    <ListPreference
+        android:key="orientation"
+        android:title="@string/ScreenRotate"
+		android:summary="@string/ScreenRotate_summary"
+        android:entries="@array/orientation_entries"
+        android:entryValues="@array/orientation_value"/>
+    
+    <ListPreference
+        android:key="screenport"
+        android:title="@string/ScreenOutputPort"
+		android:summary="@string/ScreenOutputPort_summary"
+        android:entries="@array/screenport_entries"
+        android:entryValues="@array/screenport_value"/>
+    
+    <ListPreference
+        android:key="resolution"
+        android:title="@string/ScreenResolution"
+		android:summary="@string/ScreenResolution_summary"
+        android:entries="@array/resolution_entries"
+        android:entryValues="@array/resolution_value"/>
+    
+    <CheckBoxPreference
+        android:key="audio_analog"
+        android:title="@string/audio_ouput"
+        android:persistent="false"
+        android:disableDependentsState="true" />
+	    
+    <CheckBoxPreference
+        android:key="hide_navigationbar"
+        android:title="@string/navigation_bar"
+        android:persistent="false"
+        android:disableDependentsState="true" />
+	    
+</PreferenceScreen >

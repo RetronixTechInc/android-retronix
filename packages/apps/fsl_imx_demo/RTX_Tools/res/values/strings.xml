@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Setting Tools</string>
+    <string name="devdefault">1738-modes</string>
+    
+    <!-- General string -->
+    <string name="start_button">START </string>
+    <string name="save_button">SAVE </string>
+    <string name="getalarm_button">GetWake </string>
+    <string name="cancel_button">Cancel </string>
+    <string name="disable_button">Disable </string>
+    <string name="back_button">BACK</string>    
+    <string name="dialog_update">Update</string>
+    <string name="dialog_cancel">cancel</string>
+    <string name="dialog_sure">sure</string>
+    <string name="on_button">on</string>
+    <string name="off_button">off</string>
+    
+    <!-- Activity Update System -->
+    <string name="Systemupdate">Update system from storage</string>
+    <string name="system_update">Update system from storage</string>
+    <string name="check_update">Press Update button to start updating system.</string>
+    <string name="no_file">No update file</string>
+    <string name="system_update_msg">Please put update file in external card</string>
+   
+    <!-- Activity Install APK -->
+    <string name="Installapk">Install APK from storage</string>
+    <string name="text_title">Find Apk file:</string>
+    
+    <!-- Activity ScreenOutput APK -->
+    <string name="ScreenOutput">Screen Output setting</string>
+    <string name="ScreenRotate">Screen Rotate setting</string>
+    <string name="ScreenRotate_summary">Only support main screen</string>
+    <string name="ScreenOutputPort">Screen Output Port settings</string>
+    <string name="ScreenOutputPort_summary">Only support single display</string>
+    <string name="ScreenResolution">Screen Resolution settings</string>
+    <string name="ScreenResolution_summary">Only support VGA or HDMI</string>
+
+    <string name="set_resolution_msg">Please reboot device to complete this setting.</string>
+    <string name="set_screenout_msg">Please reboot device to complete this setting.</string>
+    <string name="audio_ouput">Fixed Audio output port at Analog.</string>
+    <string name="navigation_bar">Hide navigationbar.</string>
+    
+    <!-- Activity Information APK -->
+    <string name="Information">Device Information</string>
+    <string name="eth_mac">Ethernet MAC address</string>
+    <string name="eth_ip">Ethernet IP</string>
+    <string name="wifi_mac">WiFi MAC address</string>
+    <string name="wifi_ip">WiFi IP</string>
+    <string name="mac_unknown">Unknown</string>
+    <string name="ip_unknown">0.0.0.0</string>
+    <string name="mcu_ver">MCU version</string>
+    <string name="mcu_unknown">Unknown</string>
+    <string name="mcu_bus">MCU BUS(Decimal) : </string>    
+    <string name="mcu_addr">MCU Address(Decimal) : </string>    
+    
+    <!-- Activity Reboot APK -->
+    <string name="reboot_title">Reboot System</string>
+    <string name="reboot_msg">Are you sure Reboot system?</string>
+
+    <!-- Activity Shutdown APK -->
+    <string name="shutdown_title">Shutdown System</string>
+    <string name="shutdown_msg">Are you sure Shutdown system?</string>
+
+    <!-- Activity Mcuwakeup APK -->
+    <string name="mcuwakeup_title">Power Function</string>
+    <string name="mcuwakeup_set">Please set wake-up time(format HHMMSS)\n
+        or Set Second after Current time(if length is not six)</string>
+    <string name="mcuwakeup_msg">System wake up at : </string>
+    <string name="power_status">Keep last power status:</string>
+    <string name="power_status_on">Keep last power status on</string>
+    <string name="power_status_off">Keep last power status off</string>
+    
+</resources>

@@ -28,6 +28,7 @@ import android.util.Slog;
 import android.media.AudioManager;
 import android.util.Log;
 import android.view.InputDevice;
+import android.os.SystemProperties;
 
 import com.android.internal.R;
 import com.android.server.input.InputManagerService;
@@ -69,6 +70,7 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
     private static final String NAME_USB_AUDIO = "usb_audio";
     private static final String NAME_HDMI_AUDIO = "hdmi_audio";
     private static final String NAME_HDMI = "hdmi";
+    private static final String FIXED_AUDIO_PROP_NAME = "persist.sys.fixed.audio";
 
     private static final int MSG_NEW_DEVICE_STATE = 1;
     private static final int MSG_SYSTEM_READY = 2;
@@ -291,8 +293,17 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
             }
 
             if (outDevice != 0) {
-              mAudioManager.setWiredDeviceConnectionState(outDevice, state, "", headsetName);
-            }
+                String audio_type = SystemProperties.get(FIXED_AUDIO_PROP_NAME, "1");
+                if(audio_type.compareTo("1") == 0 && headset == BIT_HDMI_AUDIO)
+                {
+                    mAudioManager.setWiredDeviceConnectionState(outDevice, 0, "", headsetName);
+                }
+                else
+                {
+                    mAudioManager.setWiredDeviceConnectionState(outDevice, state, "", headsetName);
+                }  
+            } 
+            
             if (inDevice != 0) {
               mAudioManager.setWiredDeviceConnectionState(inDevice, state, "", headsetName);
             }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- General Define -->
+    <string name="app_name">Receive_Tools</string>
+    <string name="action_settings">Setting</string>
+    
+	<!-- Radio Define -->
+    <string name="None">None </string>
+    <string name="SoftReset">Software Reboot </string>
+    <string name="McuWake">MCU Wake Up Reboot </string>
+    <string name="McuWakeOff">MCU Wake Up and Power-off </string>
+    <string name="McuWakeReset">MCU Reboot </string>
+    <string name="AcFixOn">AC On/OFF fix time </string>
+    <string name="AcRandomOn">AC On/OFF Random time </string>
+    <string name="AcPlugTest">AC Plug On/Off Test </string>
+    
+	<!-- Button Define -->
+    <string name="about_button">ABOUT...</string>
+    <string name="back_button">BACK</string>    
+    <string name="cancel_button">Cancel </string>
+    <string name="clean_button">Clean </string>
+    <string name="disable_button">Disable </string>
+    <string name="enable_button">Enable </string>
+    <string name="no_button">No.</string>
+    <string name="quit_button">Quit</string>
+    <string name="start_button">START </string>
+    <string name="save_button">SAVE </string>
+    <string name="yes_button">Yes.</string>
+    <string name="running_button">Running</string>
+    <string name="homepage_button">Home</string>
+    <string name="pass_button">PASS</string>
+    
+	<!-- Main Activiry Define -->
+    <string name="Power_count">Power On counter : </string>
+    <string name="Reboot_times">Software Reboot Test times : </string>
+    <string name="Mcu_wakeup_times">MCU Reboot Test times : </string>
+    <string name="Ac_wakeup_times">AC Reboot Test times : </string>
+    <string name="Mcu_wakeup_sec">MCU Wake up delay time.</string>
+    <string name="Ac_input_pin">Device On detect pin : </string>
+    <string name="Mcu_wakeup_sec1">AC Power Control pin : </string>
+    <string name="Preset_boot">Run ReBoot_Tools delay time(Sec) : </string>
+    <string name="Ac_on_delay_fix">AC ON Fix delay time(Sec) : </string>
+    <string name="Ac_on_delay_min">AC ON Min delay time(Sec) : </string>
+    <string name="Preset_boot1">AC ON Max delay time(Sec) : </string>
+    <string name="Preset_run">Reboot start delay time(Sec) : </string>    
+    <string name="Ac_off_run">Power off delay time(Sec) : </string>    
+    <string name="mcu_bus">MCU BUS(Decimal) : </string>    
+    <string name="mcu_addr">MCU Address(Decimal) : </string>    
+    
+	<!-- Test Area -->
+    <string name="alarmAlert_title">About alarmAlert_title.</string>
+    <string name="reportActivity_title">About reportActivity_title.</string>
+    <string name="activityLifeLog_title">About activityLifeLog_title.</string>
+    <string name="timeActivity_title">About timeActivity_title.</string>
+    <string name="playActivity_title">playActivity_title.</string>
+    <string name="about_title">About ReBoot_Tools APK.</string>
+    <string name="about_msg">ReBoot_Tools\n
+               Author : TomWang\n
+               E-mail : tomwang@aai.com.tw</string>
+    <string name="homepage_uri">http://www.google.com.tw/</string>
+        
+</resources>

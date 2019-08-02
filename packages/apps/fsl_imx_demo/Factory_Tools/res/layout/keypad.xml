@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="5dip"
+    android:paddingTop="5dip"
+    android:layout_margin="0dip"
+    >
+<Button
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:id="@+id/keypadfinish"
+	android:text="@string/finish"
+	android:textStyle="bold"
+	android:textSize="18dip"
+	android:textColor="#000000"
+	android:background="@drawable/menuback"
+	/>
+</LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="pop_bootpm_anim_style">
+        <item name="android:windowEnterAnimation">@anim/pop_menu_ani_bottom</item>
+        <item name="android:windowExitAnimation">@anim/pop_menu_ani_bottom_exit</item>
+    </style>
+</resources>
