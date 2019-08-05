@@ -35,7 +35,7 @@ public class InstallApkActivity extends ListActivity {
 	
 	private List<String> items=null;
 	private List<String> paths=null;
-	private String rootPath="/storage";
+	private String rootPath="/mnt";
 	private TextView mPath;
 
     @Override

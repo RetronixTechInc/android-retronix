@@ -66,7 +66,7 @@ public class InformationActivity extends PreferenceActivity {
         findPreference("eth_ip").setSummary(getEthIP());
         findPreference("wifi_mac").setSummary(!TextUtils.isEmpty(wifiMAC) ? wifiMAC  : "Unknown");
         findPreference("wifi_ip").setSummary(getWifiIP());
-        findPreference("mcu_version").setSummary(getDevinfo("cat /sys/devices/platform/mcu_efm.0/mcu_version"));
+        findPreference("mcu_version").setSummary(getDevinfo("cat /sys/devices/soc0/soc/2100000.aips-bus/21a8000.i2c/i2c-2/2-000c/mcu_version"));
 
         //getPreferenceScreen().removePreference(findPreference("device_name"));
     }

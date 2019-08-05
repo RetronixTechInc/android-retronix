@@ -42,7 +42,7 @@ public class McuwakeupActivity extends Activity {
     private static String pref_mcu_bus ;
     private static String pref_mcu_addr ;
 
-    private String[] args = { "efm32fn", "1", "12", "-v", "30"};
+    private String[] args = { "efm32fn", "2", "12", "-v", "30"};
 
 	private String wakeup_time ;
     private long mSeconds;

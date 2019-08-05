@@ -12,13 +12,13 @@ include $(BUILD_PREBUILT)
 
 ########################################################################
 # efm32cmd
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES := bin/efm32cmd 
-LOCAL_MODULE := efm32cmd
-LOCAL_MODULE_PATH := $(TARGET_OUT)/xbin
-LOCAL_MODULE_CLASS := EXECUTABLES
-LOCAL_MODULE_TAGS := optional
-include $(BUILD_PREBUILT)
+#include $(CLEAR_VARS)
+#LOCAL_SRC_FILES := bin/efm32cmd 
+#LOCAL_MODULE := efm32cmd
+#LOCAL_MODULE_PATH := $(TARGET_OUT)/xbin
+#LOCAL_MODULE_CLASS := EXECUTABLES
+#LOCAL_MODULE_TAGS := optional
+#include $(BUILD_PREBUILT)
 
 ########################################################################
 # rtx.init
