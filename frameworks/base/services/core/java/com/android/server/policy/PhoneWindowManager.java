@@ -1653,7 +1653,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // Allow the navigation bar to move on non-square small devices (phones).
         mNavigationBarCanMove = width != height && shortSizeDp < 600;
 
-        if(SystemProperties.getInt("persist.sys.hide.navigationbar", 1) == 1 )
+        if(SystemProperties.getInt("persist.sys.hide.navigationbar", 0) == 1 )
         {
             mHasNavigationBar = false ;
         }

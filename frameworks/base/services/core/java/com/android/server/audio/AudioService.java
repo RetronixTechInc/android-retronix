@@ -599,7 +599,7 @@ public class AudioService extends IAudioService.Stub {
             AudioSystem.DEFAULT_STREAM_VOLUME[AudioSystem.STREAM_MUSIC] = (maxVolume * 3) / 4;
         }
 
-        if (SystemProperties.get("ro.product.device").contains("hdmidongle"))
+        //if (SystemProperties.get("ro.product.device").contains("hdmidongle"))
                mFixedVolumeDevices &= ~AudioSystem.DEVICE_OUT_AUX_DIGITAL;
 
         sSoundEffectVolumeDb = context.getResources().getInteger(

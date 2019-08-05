@@ -57,3 +57,50 @@ fi
 echo "ro.build.characteristics=$TARGET_AAPT_CHARACTERISTICS"
 
 echo "# end build properties"
+
+
+echo "# begin build RTX properties"
+if [ -n "$PROJECT_ADB_PORT" ] ; then
+  echo "service.adb.tcp.port=$PROJECT_ADB_PORT"
+fi
+
+if [ -n "$PROJECT_LANGUAGE" ] ; then
+  echo "persist.sys.language=$PROJECT_LANGUAGE"
+fi
+if [ -n "$PROJECT_COUNTRY" ] ; then
+  echo "persist.sys.country=$PROJECT_COUNTRY"
+fi
+if [ -n "$PROJECT_LOCALEVAR" ] ; then
+  echo "persist.sys.localevar=$PROJECT_LOCALEVAR"
+fi
+
+if [ -n "$PROJECT_TIMEZONE" ] ; then
+  echo "persist.sys.timezone=$PROJECT_TIMEZONE"
+fi
+if [ -n "$PROJECT_NTP_SERVER" ] ; then
+  echo "persist.sys.ntpServer=$PROJECT_NTP_SERVER"
+fi
+
+if [ -n "$PROJECT_SUROOT_MODE" ] ; then
+  echo "persist.sys.root_access=$PROJECT_SUROOT_MODE"
+fi
+
+if [ -n "$PROJECT_FIXED_AUDIO" ] ; then
+  echo "persist.sys.fixed.audio=$PROJECT_FIXED_AUDIO"
+fi
+
+if [ -n "$PROJECT_HIDE_NAVIGATIONBAR" ] ; then
+  echo "persist.sys.hide.navigationbar=$PROJECT_HIDE_NAVIGATIONBAR"
+fi
+
+if [ -n "$PROJECT_DISABLE_REDBOX" ] ; then
+  echo "persist.sys.strictmode.visual=0"
+  echo "persist.sys.strictmode.disable=1"
+fi
+
+if [ -n "$PROJECT_BT_DEFAULT_NAME" ] ; then
+  echo "ro.product.ble.name=$PROJECT_BT_DEFAULT_NAME"
+fi
+
+echo "# end build RTX properties"
+

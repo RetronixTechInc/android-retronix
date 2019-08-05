@@ -129,6 +129,14 @@ static const struct fs_path_config android_files[] = {
     { 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/procmem" },
     { 04770, AID_ROOT,      AID_RADIO,     0, "system/bin/pppd-ril" },
 
+    /* the following files are INTENTIONALLY set-uid for RTX-Tools APK. */
+    { 04755, AID_ROOT,      AID_SHELL,     0, "system/bin/rtx_setting" },
+    { 04755, AID_ROOT,      AID_SYSTEM,    0, "system/bin/rtx_setenv" },
+    { 04755, AID_ROOT,      AID_SYSTEM,    0, "system/bin/rtx_uboot" },
+    { 04755, AID_ROOT,      AID_SHELL,     0, "system/bin/efm32fn" },
+    { 04755, AID_ROOT,      AID_SHELL,     0, "system/bin/pidof" },
+    { 04755, AID_ROOT,      AID_SHELL,     0, "system/bin/pidalive" },
+
     /* the following files have enhanced capabilities and ARE included in user builds. */
     { 00750, AID_ROOT,      AID_SHELL,     (1ULL << CAP_SETUID) | (1ULL << CAP_SETGID), "system/bin/run-as" },
     { 00700, AID_SYSTEM,    AID_SHELL,     (1ULL << CAP_BLOCK_SUSPEND), "system/bin/inputflinger" },

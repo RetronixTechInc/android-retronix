@@ -293,7 +293,7 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
             }
 
             if (outDevice != 0) {
-                String audio_type = SystemProperties.get(FIXED_AUDIO_PROP_NAME, "1");
+                String audio_type = SystemProperties.get(FIXED_AUDIO_PROP_NAME, "0");
                 if(audio_type.compareTo("1") == 0 && headset == BIT_HDMI_AUDIO)
                 {
                     mAudioManager.setWiredDeviceConnectionState(outDevice, 0, "", headsetName);
