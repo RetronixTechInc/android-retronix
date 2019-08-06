@@ -416,7 +416,7 @@ cd ${ANDROID_SRC_ROOT}	|| exit 1
 	export PROJECT_SUROOT_MODE="1"
 	
 	# fixed audio output port at analog 1:enable 0:disable => ready
-	export PROJECT_FIXED_AUDIO="1"
+	export PROJECT_FIXED_AUDIO="0"
 
     # navigationbar 1:enable 0:disable => ready
     export PROJECT_HIDE_NAVIGATIONBAR="0"
