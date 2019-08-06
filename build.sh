@@ -407,7 +407,7 @@ cd ${ANDROID_SRC_ROOT}	|| exit 1
 	export PROJECT_LOCALEVAR=""
 	
 	# timezone => ready
-	export PROJECT_TIMEZONE="Europe/London"
+	export PROJECT_TIMEZONE="Asia/Taipei"
 	# time sync service web => ready
 	export PROJECT_NTP_SERVER="time.stdtime.gov.tw"
 	#export PROJECT_NTP_SERVER="clock.stdtime.gov.tw"
