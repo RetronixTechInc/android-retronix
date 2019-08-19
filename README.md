@@ -10,7 +10,7 @@ It will be download repo, init, sync and build uboot,kernel,android BSP.
 The BSP images at out/device fold if success. 
 
 <h2>Create SD to write device from build image</h2>  
-Prepare micro SD card the volue greater than 4GB.  
+Prepare micro SD card the value greater than 4GB.  
 
 Copy ***.tar, uImage, ***.dtb, ***.imx from out//device fold to device/rtx/tools/pitx-android601/flash/ fold. 
 
@@ -34,7 +34,7 @@ You can see android UI when it start up finished.
 
 
 <h2>Create SD to write device from Retronix pre-build image</h2>  
-Prepare micro SD card the volue greater than 4GB.  
+Prepare micro SD card the value greater than 4GB.  
 
 Insert micro SD card and check node.  
 
