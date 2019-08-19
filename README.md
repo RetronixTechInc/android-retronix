@@ -40,13 +40,13 @@ Insert micro SD card and check node.
 
 $ls /dev/sd* //assume is /dev/sdc  
 
-Download mksd https://drive.google.com/open?id=1D3M5P9JKwUFZLCeEPRbDYV2SRwAnaoat zip file.
+Download <a href="https://drive.google.com/file/d/1D3M5P9JKwUFZLCeEPRbDYV2SRwAnaoat/view?usp=sharing" style="text-decoration:none;color:red;">mksd</a> zip file.
 
 Extract it and write bindata.bin file to sd card:  
 $ sudo dd if=bindata.bin of=/dev/sdc bs=1M
 
-Download pre-build image and extract it to micro sd card.  
-https://drive.google.com/open?id=1jO5p996mNoH78IojQBlLqwD_bsnvWar_
+Download <a href="https://drive.google.com/file/d/1jO5p996mNoH78IojQBlLqwD_bsnvWar_/view?usp=sharing" style="text-decoration:none;color:red;">pre-build image</a> and extract it to micro sd card.  
+
 
 Switch device switch bootup from external sd card.
 
