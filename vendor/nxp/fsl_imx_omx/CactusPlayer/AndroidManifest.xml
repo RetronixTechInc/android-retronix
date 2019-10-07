@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.freescale.cactusplayer"
+    android:versionCode="1"
+    android:versionName="1.0"
+    coreApp="true"
+    >
+
+    <uses-sdk android:minSdkVersion="11" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name="com.freescale.cactusplayer.HdmiApplication"
+        android:icon="@drawable/icn_media_play_pressed_holo_dark"
+        android:label="@string/app_name" >
+        
+		<activity
+            android:name=".VideoMenu"
+            android:configChanges="orientation|mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|screenSize"
+            android:theme="@android:style/Theme.Holo"
+            android:label="@string/app_name" >
+			
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".VideoPlayer"
+            android:configChanges="orientation|mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|screenSize"
+            android:theme="@android:style/Theme.Holo"
+            android:label="@string/app_name" >
+
+             <intent-filter>
+			    <action android:name="android.intent.action.VIEW" />
+			    <category android:name="android.intent.category.DEFAULT" /> 
+			    <data android:mimeType="video/*" />
+            </intent-filter>
+       </activity>
+     </application>
+
+</manifest>

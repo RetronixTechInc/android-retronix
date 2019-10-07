@@ -1,0 +1,8 @@
+{
+    "partitions": [
+        {
+            "label": "userdata",
+            "ignore": true
+        }
+    ]
+}

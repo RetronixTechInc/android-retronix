@@ -1,0 +1,51 @@
+CC = $(CROSS_COMPILE)gcc --sysroot=$(SDKTARGETSYSROOT)
+AR = $(CROSS_COMPILE)ar
+CFLAGS ?= -O2
+
+SOURCE_ROOT = h1_encoder/software
+OMX_SRC_ROOT = openmax_il/source
+
+INCLUDE_HEADERS = -I$(OMX_SRC_ROOT) -I$(OMX_SRC_ROOT)/../headers/ -I$(OMX_SRC_ROOT)/encoder -I$(SOURCE_ROOT)/inc/
+
+LIBS = -L./ -lhantro_h1 -lpthread
+
+CFLAGS += -DSET_OUTPUT_CROP_RECT -DUSE_EXTERNAL_BUFFER -DUSE_OUTPUT_RELEASE -DGET_FREE_BUFFER_NON_BLOCK -DDOWN_SCALER -DENCH1 -DOMX_ENCODER_VIDEO_DOMAIN -DH1V6
+
+CFLAGS += $(INCLUDE_HEADERS)
+
+OBJ = $(OMX_SRC_ROOT)/encoder/encoder_h264.o \
+       $(OMX_SRC_ROOT)/encoder/encoder_vp8.o \
+       $(OMX_SRC_ROOT)/OSAL.o
+
+LIBNAME = libcodec_enc
+SONAMEVERSION = 1
+
+VERSION = imx8mm
+
+all: $(LIBNAME).so $(LIBNAME).a
+
+install: install_headers
+	@mkdir -p $(DEST_DIR)/usr/lib
+	cp -P $(LIBNAME).* $(DEST_DIR)/usr/lib
+
+install_headers:
+	@mkdir -p $(DEST_DIR)/usr/include/hantro_enc
+	cp $(OMX_SRC_ROOT)/*.h $(DEST_DIR)/usr/include/hantro_enc
+
+
+%.o: %.c
+	$(CC) -Wall -fPIC $(CFLAGS) -c $^ -o $@
+
+$(LIBNAME).so.$(SONAMEVERSION): $(OBJ)
+	$(CC) -shared -nostartfiles -Wl,-soname,$@ $^ -o $@ $(LDFLAGS) $(LIBS)
+
+$(LIBNAME).so: $(LIBNAME).so.$(SONAMEVERSION)
+	ln -s $< $@
+
+$(LIBNAME).a: $(OBJ)
+	$(AR) -rc $@  $^
+
+.PHONY: clean
+clean:
+	rm -f $(LIBNAME).* $(OBJ)
+

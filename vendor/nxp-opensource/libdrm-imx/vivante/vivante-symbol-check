@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# The following symbols (past the first nine) are taken from vivante_bo.h.
+
+FUNCS=$(nm -D --format=bsd --defined-only ${1-.libs/libdrm_vivante.so} | awk '{print $3}'| while read func; do
+( grep -q "^$func$" || echo $func )  <<EOF
+__bss_end__
+__bss_start__
+__bss_start
+__end__
+_bss_end__
+_edata
+_end
+_fini
+_init
+drm_vivante_bo_create
+drm_vivante_bo_create_with_ts
+drm_vivante_bo_export_to_fd
+drm_vivante_bo_import_from_fd
+drm_vivante_bo_destroy
+drm_vivante_bo_get_handle
+drm_vivante_bo_mmap
+drm_vivante_bo_munmap
+drm_vivante_bo_query
+drm_vivante_bo_set_tiling
+drm_vivante_bo_get_tiling
+drm_vivante_bo_inc_timestamp
+drm_vivante_bo_get_timestamp
+drm_vivante_bo_ref_node
+EOF
+done)

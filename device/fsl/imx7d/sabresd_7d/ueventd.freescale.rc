@@ -1,0 +1,50 @@
+/dev/block/platform/soc0/soc/30800000\.aips-bus/30b40000\.usdhc/by-name/presistdata 0600   system     system
+/dev/ttymxc5              0660   bluetooth  bluetooth
+/dev/snd/*                0660   system     audio
+/dev/video*               0660   system     camera
+/dev/pxp_device           0666   media      drmrpc
+/dev/uinput               0660   system     bluetooth
+/dev/ion                  0666   media      drmrpc
+/dev/galcore              0666   system     graphics
+/dev/graphics/fb0         0660   system     graphics
+/dev/watchdog             0660   system     root
+/dev/mma8x5x              0640   compass     system
+/dev/input/event*         0660   system     system
+
+# Sensors sysfs for 7d platform.
+/sys/devices/virtual/misc/Freescale* name       0660 system system
+/sys/devices/virtual/misc/Freescale* max        0660 system system
+/sys/devices/virtual/misc/Freescale* min        0660 system system
+/sys/devices/virtual/misc/Freescale* poll       0660 system system
+/sys/devices/virtual/misc/Freescale* enable     0660 system system
+/sys/devices/virtual/misc/Freescale* position   0660 system system
+/sys/devices/virtual/misc/Freescale* poll_delay 0660 system system
+/sys/devices/virtual/misc/Freescale* fifo       0660 system system
+
+#sensors sysfs
+/dev/FreescaleAccelerometer                     0660  system system
+/dev/FreescaleMagnetometer                      0660  system system
+/dev/FreescaleGyroscope                         0660  system system
+
+/sys/class/input/input*   name        0660  system system
+/sys/class/input/input*   max         0660  system system
+/sys/class/input/input*   min         0660  system system
+/sys/class/input/input*   min         0660  system system
+/sys/class/input/input*   poll        0660  system system
+/sys/class/input/input*   enable      0660  system system
+/sys/class/input/input*   position    0660  system system
+/sys/class/input/input*   poll_delay  0660  system system
+/sys/class/input/input*   fifo        0660  system system
+
+# sysfs properties
+/sys/devices/virtual/input/input*   name        0660  system   system
+/sys/devices/virtual/input/input*   max         0660  system   system
+/sys/devices/virtual/input/input*   min         0660  system   system
+/sys/devices/virtual/input/input*   poll        0660  system   system
+/sys/devices/virtual/input/input*   enable      0660  system   system
+/sys/devices/virtual/input/input*   position    0660  system   system
+/sys/devices/virtual/input/input*   poll_delay  0660  system   system
+/sys/devices/virtual/input/input*   fifo        0660  system   system
+/sys/devices/virtual/thermal/thermal_zone* trip_point_0_temp 0660 system system
+/sys/devices/virtual/thermal/thermal_zone* trip_point_1_temp 0660 system system
+/sys/devices/virtual/thermal/thermal_zone* trip_point_2_temp 0660 system system

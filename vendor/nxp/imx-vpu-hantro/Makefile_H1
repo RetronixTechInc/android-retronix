@@ -1,0 +1,84 @@
+CC = $(CROSS_COMPILE)gcc --sysroot=$(SDKTARGETSYSROOT)
+AR = $(CROSS_COMPILE)ar
+CFLAGS ?= -O2
+
+
+SOURCE_ROOT = ./h1_encoder/software
+OMX_ROOT = ./openmax_il/source
+LIBH1NAME = libhantro_h1
+SONAMEVERSION = 1
+LIBH1_LIBS = $(SOURCE_ROOT)/linux_reference/libh1enc.a
+RELEASE_DIR = bin
+
+#CFLAGS += -DENC_MODULE_PATH=\"/dev/mxc_hantro_h1\"
+
+ENV = -DENC_MODULE_PATH=\\\"/dev/mxc_hantro_h1\\\"
+ENV += -DMEMALLOC_MODULE_PATH=\\\"/dev/ion\\\"
+#ENV += -DSDRAM_LM_BASE=0x00000000
+ENV += -DEWL_NO_HW_TIMEOUT
+ENV += -DUSE_ION
+ENV += -I$(LINUX_KERNEL_ROOT)/include/uapi -I$(LINUX_KERNEL_ROOT)/include
+ENV += -I$(SDKTARGETSYSROOT)/usr/imx/include
+
+LIBENCNAME = libcodec_enc
+LIBSENC = -L./ -lhantro_h1 -lpthread
+
+all: $(LIBH1NAME).so $(LIBH1NAME).a $(LIBENCNAME) test
+
+install: install_headers
+	@mkdir -p $(DEST_DIR)$(libdir)
+	@mkdir -p $(DEST_DIR)/unit_tests/VPU/hantro
+	cp -P $(LIBH1NAME).so* $(DEST_DIR)$(libdir)
+	cp -P $(LIBENCNAME).so* $(DEST_DIR)$(libdir)
+	cp $(SOURCE_ROOT)/linux_reference/test/h264/h264_testenc $(DEST_DIR)/unit_tests/VPU/hantro
+	cp $(SOURCE_ROOT)/linux_reference/test/vp8/vp8_testenc $(DEST_DIR)/unit_tests/VPU/hantro
+#	cp $(SOURCE_ROOT)/linux_reference/test/jpeg/jpeg_testenc $(DEST_DIR)/unit_tests/VPU/hantro
+
+install_headers:
+	#@mkdir -p $(DEST_DIR)/usr/include
+	@mkdir -p $(DEST_DIR)/usr/include/hantro_enc/encoder
+	@mkdir -p $(DEST_DIR)/usr/include/hantro_enc/headers
+	cp $(OMX_ROOT)/encoder/*.h $(DEST_DIR)/usr/include/hantro_enc/encoder
+	cp $(OMX_ROOT)/*.h $(DEST_DIR)/usr/include/hantro_enc
+	cp $(OMX_ROOT)/../headers/*.h $(DEST_DIR)/usr/include/hantro_enc/headers
+	cp $(SOURCE_ROOT)/inc/*.h $(DEST_DIR)/usr/include/hantro_enc
+	cp $(SOURCE_ROOT)/linux_reference/ewl/*.h $(DEST_DIR)/usr/include/hantro_enc
+
+
+$(LIBH1NAME).a:
+	make -C $(SOURCE_ROOT)/linux_reference/ nxp_m845s INCLUDE_TESTING=n DEBUG=n USE_64BIT_ENV=y ENVSET="$(ENV)" CC="$(CC)" AR="$(AR) -rc"
+	$(AR) -rc $@ $(LIBH1_LIBS) 
+
+$(LIBH1NAME).so.$(SONAMEVERSION): $(LIBH1NAME).a
+	$(CC) -o $@ $(LDFLAGS) -shared -nostartfiles -Wl,-soname,$@ -Wl,--whole-archive $(LIBH1_LIBS) -Wl,--no-whole-archive
+
+$(LIBH1NAME).so: $(LIBH1NAME).so.$(SONAMEVERSION)
+	ln -fs $< $@
+
+$(LIBENCNAME):
+	make -f Makefile_codec_enc CC="$(CC)" AR="$(AR)" LIBNAME="$(LIBENCNAME)"
+
+test:
+	make -C $(SOURCE_ROOT)/linux_reference/test/h264 INCLUDE_TESTING=n DEBUG=n USE_64BIT_ENV=y ENVSET="$(ENV)" nxp_m845s CC="$(CC) $(LDFLAGS)" AR="$(AR) -rc"
+#	make -C $(SOURCE_ROOT)/linux_reference/test/jpeg DEBUG=n USE_64BIT_ENV=y ENVSET="$(ENV)" nxp_m845s CC="$(CC) $(LDFLAGS)" AR="$(AR) -rc"
+	make -C $(SOURCE_ROOT)/linux_reference/test/vp8 INCLUDE_TESTING=n DEBUG=n USE_64BIT_ENV=y ENVSET="$(ENV)" nxp_m845s CC="$(CC) $(LDFLAGS)" AR="$(AR) -rc"
+	cp $(SOURCE_ROOT)/linux_reference/test/h264/h264_testenc $(RELEASE_DIR)/
+	cp $(SOURCE_ROOT)/linux_reference/test/vp8/vp8_testenc $(RELEASE_DIR)/
+#	cp $(SOURCE_ROOT)/linux_reference/test/jpeg/jpeg_testenc $(RELEASE_DIR)/
+
+#%.o: %.c
+#	$(CC) -Wall -fPIC $(CFLAGS) -c $^ -o $@
+
+
+.PHONY: clean
+clean:
+	rm -f $(LIBH1NAME).*
+	rm -f $(LIBENCNAME).*
+	rm -f $(RELEASE_DIR)/h264_testenc
+	rm -f $(RELEASE_DIR)/vp8_testenc
+#	rm -f $(RELEASE_DIR)/jpeg_testenc
+	make -C $(SOURCE_ROOT)/linux_reference/ clean
+	make -C $(SOURCE_ROOT)/linux_reference/test/h264 clean
+#	make -C $(SOURCE_ROOT)/linux_reference/test/jpeg clean
+	make -C $(SOURCE_ROOT)/linux_reference/test/vp8 clean
+

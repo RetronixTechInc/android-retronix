@@ -1,0 +1,4 @@
+Package								License
+----------							----------
+$(FSL_CODEC_PATH)/fsl-codec						Freescale EULA
+$(FSL_IMX_OMX_PATH)/fsl_imx_omx						Freescale EULA

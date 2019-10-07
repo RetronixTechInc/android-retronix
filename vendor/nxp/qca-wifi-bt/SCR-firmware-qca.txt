@@ -1,0 +1,15 @@
+NXP Software Content Register
+
+--------------------------------------------
+
+Package:                   firmware-qca.bin
+Outgoing License:          LA_OPT_NXP_Software_License - Production Use, Section 2.3 applies
+                              and Qualcomm Atheros License
+License File:              COPYING and QUALCOMM_ATHEROS_LICENSE_AGREEMENT.pdf
+Package Category:          BSP
+Type of content:           Binaries
+Description and comments:  QCA9377, QCA6174A WLAN & BT firmware and releated tools
+Release Location:          NXP.com
+Origin:                    Qualcomm (proprietary)
+
+--------------------------------------------

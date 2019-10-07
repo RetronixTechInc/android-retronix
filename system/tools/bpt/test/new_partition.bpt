@@ -1,0 +1,11 @@
+{
+    "partitions": [
+        {
+            "label": "my_data_partition",
+            "size": "1.5 GB",
+            "guid": "auto",
+            "type_guid": "ebd0a0a2-b9e5-4433-87c0-68b6b72699c7",
+            "flags": "0x8000000000000000"
+        }
+    ]
+}

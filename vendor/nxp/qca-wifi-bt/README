@@ -1,0 +1,25 @@
+Qualcomm Wireless/Bluetooth Firmware, Android HAL libs and FCC tools
+==========================================================================
+1. firmware:
+1CQ_QCA6174A_LEA_2.0: firmware for BlueZ and Qualcomm CLD LEA2.0 wifi driver.
+1PJ_QCA9377-3_LEA_2.0: firmware for BlueZ and Qualcomm CLD LEA2.0 wifi driver.
+
+Currently, NXP i.MX platforms support Murata 1PJ module with QCA9377-3 chip inside,
+and Murata 1CQ module with QCA6174A chip inside.
+
+The support platforms list:
+- i.MX7ULP EVK: Murata 1PJ (qca9377-3), SDIO interface for WIFI and UART for Bluetooth.
+- i.MX8QM/QXP MEK: Murata 1CQ (qca6174A), PCIe interface for WIFI and UART for Bluetooth.
+- i.MX8MQ EVK: Murata 1CQ (qca6174A), PCIe interface for WIFI and UART for Bluetooth.
+- i.MX845S EVK: Murata 1PJ (qca9377-3), SDIO interface for WIFI and UART for Bluetooth.
+
+2. qca-properity:
+There are binaries for Android HAL libs and FCC tools:
+Android HAL:
+- wcnss_filter_7ulp: binary for i.MX7ULP EVK Android Fluoride HAL Lib.
+- wcnss_filter_8mq: binary for i.MX8MQ EVK Android Fluoride HAL Lib.
+- wcnss_filter_mek_8q: binary for i.MX8QM/i.MX8QXP MEK Android Fluoride HAL Lib.
+FCC tools:
+- qca9377_qca6174_arm32: for ARM32 like i.MX7ULP platform
+- qca9377_qca6174_arm64: for ARM64 like i.MX8MQ/i.MX8QM/i.MX8QXP/i.MX8MM platforms.
+

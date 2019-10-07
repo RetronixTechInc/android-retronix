@@ -1,0 +1,244 @@
+This directory contains a tool for partitioning disk images for Brillo
+and Android.
+
+-- FILES AND DIRECTORIES
+
+ Android.mk
+
+   Build instructions.
+
+ bpttool
+
+   A tool written in Python for partioning disk images.
+
+ bpttool_test
+
+   Unit tests for bpttool.
+
+ test/
+
+   Contains test data used in unit tests.
+
+-- PARTITION DEFINITION FILES
+
+Partitioning directives are expressed in JSON and the file extension
+".bpt" is typically used. A typical .bpt-file looks like this
+
+  {
+      "settings": {
+          "disk_size": "4 GiB"
+      },
+      "partitions": [
+          {
+              "ab": true,
+              "label": "boot",
+              "size": "32 MiB",
+              "guid": "auto",
+              "type_guid": "brillo_boot"
+          },
+          {
+              "ab": true,
+              "label": "system",
+              "size": "512 MiB",
+              "guid": "auto",
+              "type_guid": "brillo_system"
+          },
+          [...]
+          {
+              "label": "userdata",
+              "grow": true,
+              "guid": "auto",
+              "type_guid": "brillo_userdata"
+          }
+      ]
+  }
+
+The two root objects are "settings" and "partitions". Well-known
+key/value-pairs for "settings" are
+
+ ab_suffixes:    List of suffixes to use for A/B partitions, for example
+                 ["-A", "-B"] or ["0", "1", "2"]. Default is ["_a",
+                 "_b"].
+
+ disk_size:      The size of the target disk to use, in bytes. This has
+                 no default value.
+
+ disk_alignment: The alignment, in bytes, to use when laying out
+                 partitions. Default is 4096.
+
+ disk_guid:      The GUID to use for the disk or 'auto' to make bpttool
+                 generate it. The default is 'auto'.
+
+Each of these settings can be overriden or set using command-line
+options in bpttool.
+
+The "partitions" object is an array of objects with the following
+well-known key/value pairs:
+
+ label:       The label of the partition. This must be able to fit in 36
+              UTF-16 code-points.
+
+ offset:      Offset of the partition, in bytes. This will always be
+              re-calculated when using bpttool.
+
+ size:        Size of the partition, in bytes.
+
+ grow:        If 'true', the partition will be grown to use available free
+              space. Default value is 'false'.
+
+ guid:        The GPT instance GUID. Default value is 'auto'.
+
+ type_guid:   The GPT type GUID. A RFC-4122 style GUID is accepted as
+              are the following special values:
+
+                brillo_boot
+                brillo_system
+                brillo_odm
+                brillo_oem
+                brillo_userdata
+                brillo_misc
+                brillo_vbmeta
+                brillo_vendor_specific
+                linux_fs
+                ms_basic_data
+
+              for well-known GPT partition GUIDs. If unset, the value
+              'brillo_vendor_specific' is used.
+
+ flags:       A 64-bit integer (decimal or hexadecimal representations are
+              accepted) for GPT flags. Default value is 0.
+
+ ignore:      If 'true', the partition will not be included in the final
+              output.
+
+ ab:          Set to 'true' if the partition should be expanded for A/B.
+              Default value is 'false'.
+
+ ab_expanded: Set to 'true' only if this partition has already been
+              expanded for A/B. Default value is 'false'.
+
+ position:    The position for the partition, used to determine the sequence
+              of partitions (and, indirectly, partition numbers) or 0 if
+              position doesn't matter. Partitions with low 'position'
+              numbers will be laid out before partitions with high
+              'position' numbers. Default value is 0.
+
+For key/value-pairs involving sizes, either integers can be used, e.g.
+
+ "size": 1048576
+
+means 1 mebibyte. Strings with base-10 units (kB, MB, GB, TB, PB) and
+base-2 units (KiB, MiB, GiB, TiB, PiB) are also supported. For
+example:
+
+ "size": "1 MiB"
+
+means 1,048,576 bytes and
+
+ "size": "1 MB"
+
+means 1,000,000 bytes.
+
+If a partition size is not a multiple of the disk sector size, it will
+be rounded up and if a disk size is not a multiple, it will be rounded
+down.
+
+The bpttool program reads one or more of .bpt-files and the order
+matters. Partitions are identified by label and if a partition has
+already been mentioned in a previous file, directives in the latter
+file will override the existing entry. This allows for setups where
+e.g. a file with the following content
+
+  {
+      "partitions": [
+          {
+              "label": "system",
+              "size": "128 MiB"
+          }
+      ]
+  }
+
+can be used on top to specify that system partitions should be 128 MiB
+instead of 512 MiB. Similarly, a file with the content
+
+  {
+      "partitions": [
+          {
+              "label": "my_app_data",
+              "size": "512 MiB",
+              "type_guid": "linux_fs"
+          }
+      ]
+  }
+
+can be used on top to have a new 512 MiB partition "my_app_data" in
+addition to existing partitions. Notably the "userdata" data partition
+will be shrunk in order to make room for the newly added partition.
+
+Additionally, 'bpttool make_table' generates a .bpt-file - in addition
+to the binary GPT partition tables - that is complete in the sense
+that it can be used as input to generate the same output without
+additional command-line options.
+
+Also, expanded A/B partitions in input files are folded and then
+expanded again. This allows for setups as the following:
+
+ $ bpttool make_table \
+    --input prev_output.bpt \
+    --ab_suffixes "-A,-B,-C" \
+    --output_json new_output.bpt
+    [...]
+
+where if prev_output.bpt contained the partitions "system_a",
+"system_b" (for the default A/B suffixes) then new_output.bpt would
+contain partitions "system-A", "system-B", and "system-C".
+
+-- DISK IMAGE GENERATION
+
+Disk images may be created given an unfolded .bpt file. 'bpttool
+make_disk_image' generates the output disk image file.
+
+To generate a disk image, use the following subcommand:
+
+  $ bpttool make_disk_image \
+      --output disk-image.bin \
+      --input /path/to/bpt-file.bpt \
+      --image system_a:/path/to/system.img \
+      --image boot_a:/path/to/boot.img \
+      [...]
+
+where the 'output' argument specifies the name and location of the outputted
+disk image and the 'input' argument is the .bpt file containing valid labels and
+offsets for each partition.  The 'image' argument specifies a mapping  from
+partition name/label to the path of the corresponding image partition image.
+All partitions specified in the .bpt file must be passed in via the 'image'
+argument.
+
+Typically, each of the 'image' argument files are located in the
+ANDROID_PRODUCT_OUT directory after a build is complete.
+
+-- BUILD SYSTEM INTEGRATION NOTES
+
+To generate partition tables in the Android build system, simply add
+the path to a .bpt file to the BOARD_BPT_INPUT_FILES variable.
+
+ BOARD_BPT_INPUT_FILES += "hardware/bsp/vendor/soc/board/board-specific.bpt"
+
+The variable BOARD_BPT_DISK_SIZE can be used to specify or override
+the disk size, for example:
+
+ BOARD_BPT_DISK_SIZE := "10 GiB"
+
+Additional arguments to 'bpttool make_table' can be specified in the
+variable BOARD_BPT_MAKE_TABLE_ARGS.
+
+If BOARD_BPT_INPUT_FILES is set, the build system generates two files
+
+ partition-table.img
+ partition-table.bpt
+
+in ${ANDROID_PRODUCT_OUT} using 'bpttool make_table'. The former is
+the binary partition tables generated using bptool's --output_gpt
+option and the latter is a JSON file generated using the --output_json
+option. These files will also be put in the IMAGES/ directory of
+target-files.zip when running 'm dist'.

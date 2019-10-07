@@ -1,0 +1,8 @@
+{
+    "partitions": [
+        {
+            "label": "system",
+            "size": "256 MiB"
+        }
+    ]
+}

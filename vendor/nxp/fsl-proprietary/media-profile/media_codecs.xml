@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright (C) 2012 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<MediaCodecs>
+	<Include href="media_codecs_google_telephony.xml" />
+    <Settings>
+        <Setting name="max-video-encoder-input-buffers" value="8" />
+        <Setting name="supports-multiple-secure-codecs" value="false" />
+        <Setting name="supports-secure-with-non-secure-codec" value="false" />
+    </Settings>
+    <Decoders>
+        <MediaCodec name="OMX.Freescale.std.video_decoder.sorenson.sw-based" type="video/x-flash-video" >
+            <Quirk name="requires-allocate-on-output-ports" />
+            <Limit name="size" min="64x64" max="1920x1088" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Limit name="blocks-per-second" min="1" max="244800" />
+            <Limit name="bitrate" range="1-20000000"/>
+            <Limit name="concurrent-instances" max="32" />
+        </MediaCodec>
+        <MediaCodec name="OMX.Freescale.std.audio_decoder.flac.sw-based" type="audio/flac">
+            <Limit name="channel-count" max="8" />
+            <Limit name="sample-rate" ranges="8000-192000" />
+            <Limit name="bitrate" range="1-6400000" />
+        </MediaCodec>
+        <MediaCodec name="OMX.Freescale.std.audio_decoder.mp3.sw-based" type="audio/mpeg" >
+            <Limit name="channel-count" max="2" />
+            <Limit name="sample-rate" ranges="8000,11025,12000,16000,22050,24000,32000,44100,48000" />
+            <Limit name="bitrate" range="4000-448000" />
+        </MediaCodec>
+        <MediaCodec name="OMX.Freescale.std.audio_decoder.amrnb.sw-based" type="audio/3gpp" >
+            <Limit name="channel-count" max="1" />
+            <Limit name="sample-rate" ranges="8000,16000" />
+            <Limit name="bitrate" range="4750-23850" />
+        </MediaCodec>
+        <MediaCodec name="OMX.Freescale.std.audio_decoder.amrwb.sw-based" type="audio/amr-wb" >
+            <Limit name="channel-count" max="1" />
+            <Limit name="sample-rate" ranges="8000,16000" />
+            <Limit name="bitrate" range="4750-23850" />
+        </MediaCodec>
+        <MediaCodec name="OMX.Freescale.std.audio_decoder.aac.sw-based" type="audio/aac-fsl" >
+            <Limit name="channel-count" max="6" />
+            <Limit name="sample-rate" ranges="7350,8000,11025,12000,16000,22050,24000,32000,44100,48000,96000" />
+            <Limit name="bitrate" range="8000-256000" />
+        </MediaCodec>
+    </Decoders>
+    <Include href="media_codecs_ac3.xml" />
+    <Include href="media_codecs_ddp.xml" />
+    <Include href="media_codecs_ms.xml" />
+    <Include href="media_codecs_wmv9.xml" />
+    <Include href="media_codecs_ra.xml" />
+    <Include href="media_codecs_rv.xml" />
+    <Include href="media_codecs_google_video.xml" />
+    <Include href="media_codecs_google_audio.xml" />
+</MediaCodecs>

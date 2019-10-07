@@ -1,0 +1,8 @@
+{
+    "partitions": [
+        {
+            "label": "odm",
+            "size": "2 GiB"
+        }
+    ]
+}

@@ -1,0 +1,140 @@
+{
+  "settings": {
+    "ab_suffixes": ["_a", "_b"],
+    "disk_size": 10737418240,
+    "disk_alignment": 4096,
+    "disk_guid": "01234567-89ab-cdef-0123-000000000000"
+  },
+  "partitions": [
+    {
+      "label": "my_data_1",
+      "offset": 20480,
+      "size": 134217728,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000001",
+      "type_guid": "314f99d5-b2bf-4883-8d03-e2f2ce507d6a",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": false,
+      "ab_expanded": false,
+      "position": 1
+    },
+    {
+      "label": "my_data_2",
+      "offset": 134238208,
+      "size": 268435456,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000002",
+      "type_guid": "314f99d5-b2bf-4883-8d03-e2f2ce507d6a",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": false,
+      "ab_expanded": false,
+      "position": 2
+    },
+    {
+      "label": "system_a",
+      "offset": 402673664,
+      "size": 536870912,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000003",
+      "type_guid": "0f2778c4-5cc1-4300-8670-6c88b7e57ed6",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": true,
+      "ab_expanded": true,
+      "position": 3
+    },
+    {
+      "label": "system_b",
+      "offset": 939544576,
+      "size": 536870912,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000004",
+      "type_guid": "0f2778c4-5cc1-4300-8670-6c88b7e57ed6",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": true,
+      "ab_expanded": true,
+      "position": 3
+    },
+    {
+      "label": "my_data_3",
+      "offset": 1476415488,
+      "size": 536870912,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000005",
+      "type_guid": "314f99d5-b2bf-4883-8d03-e2f2ce507d6a",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": false,
+      "ab_expanded": false,
+      "position": 4
+    },
+    {
+      "label": "boot_a",
+      "offset": 2013286400,
+      "size": 33554432,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000006",
+      "type_guid": "bb499290-b57e-49f6-bf41-190386693794",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": true,
+      "ab_expanded": true,
+      "position": 0
+    },
+    {
+      "label": "boot_b",
+      "offset": 2046840832,
+      "size": 33554432,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000007",
+      "type_guid": "bb499290-b57e-49f6-bf41-190386693794",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": true,
+      "ab_expanded": true,
+      "position": 0
+    },
+    {
+      "label": "odm_a",
+      "offset": 2080395264,
+      "size": 1073741824,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000008",
+      "type_guid": "e99d84d7-2c1b-44cf-8c58-effae2dc2558",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": true,
+      "ab_expanded": true,
+      "position": 0
+    },
+    {
+      "label": "odm_b",
+      "offset": 3154137088,
+      "size": 1073741824,
+      "grow": false,
+      "guid": "01234567-89ab-cdef-0123-000000000009",
+      "type_guid": "e99d84d7-2c1b-44cf-8c58-effae2dc2558",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": true,
+      "ab_expanded": true,
+      "position": 0
+    },
+    {
+      "label": "userdata",
+      "offset": 4227878912,
+      "size": 6509518848,
+      "grow": true,
+      "guid": "01234567-89ab-cdef-0123-00000000000a",
+      "type_guid": "0bb7e6ed-4424-49c0-9372-7fbab465ab4c",
+      "flags": "0x0000000000000000",
+      "ignore": false,
+      "ab": false,
+      "ab_expanded": false,
+      "position": 0
+    }
+  ]
+}

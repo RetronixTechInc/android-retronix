@@ -1,0 +1,11 @@
+{
+    "settings": {
+        "disk_size": "50 MiB"
+    },
+    "partitions": [
+        {
+            "label": "delta",
+            "size": "20 MiB"
+        }
+    ]
+}

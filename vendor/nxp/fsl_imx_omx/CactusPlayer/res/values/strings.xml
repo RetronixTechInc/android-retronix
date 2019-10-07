@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cactus Player </string>
+    <string name="waiting">Waiting ...</string>
+    <string name="Error">Error</string>
+    <string name="item">item</string>
+    <string name="Scan">Scanning</string>
+    <string name="SelectAudio">Select Audio</string>
+    <string name="SelectSubtitle">Select Subtitle</string>
+    <string name="CloseSubtitle">Close Subtitle</string>
+    <string name="LoopFile">Loop</string>
+    <string name="CastScreen">CastScreen</string>
+    <string name="OK">"OK"</string>
+    <string name="Cancel">"Cancel"</string>
+    <string name="ClipsNotFound">"No clips found. Perhaps media scanner is not finished yet. Please try later."</string>
+    <string name="Continue">"Continue?"</string>
+    <string name="SubtitleOff">"Subtitle OFF"</string>
+    <string name="noname">"No name"</string>
+    <string name="Remote_control">"Remote Control"</string>
+    <string name="noRemote_control">"No Remote Control"</string>
+    <string name="Warning">Warning</string>
+    <string name="quit">"quit"</string>
+    <string name="PermissionNotGrant">Fail to grant permission.Please grant the storage in Settings,or app maybe crash. Still run it?</string>
+    <array name="str_body">
+        <item>PALY</item>
+        <item>SECOND VIDEO PLAY</item>
+
+    </array>
+</resources>

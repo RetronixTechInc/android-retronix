@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libdrm_vivante
+Description: Userspace interface to Vivante kernel DRM services
+Version: 2.4.84
+Libs: -L${libdir} -ldrm_vivante
+Cflags: -I${includedir} -I${includedir}/libdrm
+Requires.private: libdrm

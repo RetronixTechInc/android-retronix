@@ -1,0 +1,3 @@
+vendor.vehicle.event      u:object_r:evs_prop:s0
+vendor.vehicle.register   u:object_r:evs_prop:s0
+vendor.evs.video.ready      u:object_r:evs_prop:s0
