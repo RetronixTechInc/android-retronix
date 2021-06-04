@@ -29,14 +29,13 @@
 #define DUMP_LOG_FLAG_DUMP_INPUT     0x1
 #define DUMP_LOG_FLAG_DUMP_OUTPUT    0x2
 #define DUMP_LOG_FLAG_DUMP_POSTPROCESS   0x4
-#define TEST_TS_FLAG   0x8
 
 
 #define DEFAULT_BUF_IN_CNT  (3)
 #define DEFAULT_BUF_IN_SIZE (1024*1024)
 
 
-#define DEFAULT_BUF_OUT_CNT    (2)
+#define DEFAULT_BUF_OUT_CNT    (3)
 #define DEFAULT_DMA_BUF_CNT    (9)
 
 #define DEFAULT_FRM_WIDTH       (2048)
@@ -45,11 +44,9 @@
 
 #define FRAME_ALIGN     (512)
 
-#define EXTRA_BUF_OUT_CNT  (0)
+#define EXTRA_BUF_OUT_CNT  (3)
 
-#define DEFUALT_MAX_BUFFER_DEPTH    (13)
-#define DEFUALT_TS_THRESHOLD    (500)
-#define DEFUALT_BSL_THRESHOLD    (64)
+#define MIN_CAPTURE_BUFFER_CNT (3)
 
 typedef struct{
 OMX_U32 type;
@@ -66,7 +63,6 @@ static V4L2_DEC_ROLE role_table[]={
 {OMX_VIDEO_CodingRV,"video_decoder.rv","OMX.Freescale.std.video_decoder.rv.hw-based"},
 {OMX_VIDEO_CodingAVC, "video_decoder.avc","OMX.Freescale.std.video_decoder.avc.hw-based"},
 {OMX_VIDEO_CodingDIVX,"video_decoder.divx","OMX.Freescale.std.video_decoder.divx.hw-based"},
-{OMX_VIDEO_CodingDIV3, "video_decoder.div3","OMX.Freescale.std.video_decoder.div3.hw-based"},
 {OMX_VIDEO_CodingDIV4, "video_decoder.div4","OMX.Freescale.std.video_decoder.div4.hw-based"},
 {OMX_VIDEO_CodingXVID,"video_decoder.xvid","OMX.Freescale.std.video_decoder.xvid.hw-based"},
 {OMX_VIDEO_CodingMJPEG,"video_decoder.mjpeg","OMX.Freescale.std.video_decoder.mjpeg.hw-based"},
@@ -98,9 +94,9 @@ void *filterThreadHandler(void *arg)
     OMX_S32 ret = 0;
     OMX_S32 poll_ret = 0;
 
-    LOG_LOG("[%p]V4l2Dec filterThreadHandler BEGIN \n",base);
+    LOG_LOG("[%p]filterThreadHandler BEGIN \n",base);
     poll_ret = base->pV4l2Dev->Poll(base->nFd);
-    LOG_LOG("[%p]V4l2Dec filterThreadHandler END ret=%x \n",base,poll_ret);
+    LOG_LOG("[%p]filterThreadHandler END ret=%x \n",base,poll_ret);
 
     if(poll_ret & V4L2_DEV_POLL_RET_EVENT_RC){
         LOG_LOG("V4L2_DEV_POLL_RET_EVENT_RC \n");
@@ -166,10 +162,9 @@ void *filterThreadHandler(void *arg)
         return NULL;
     }
 
-    if(poll_ret & V4L2_DEV_POLL_RET_EVENT_ERROR){
-        base->nErrCnt = 10;
+    if(poll_ret & V4L2OBJECT_ERROR)
         base->HandleErrorEvent();
-    }
+
     return NULL;
 }
 V4l2Dec::V4l2Dec()
@@ -197,10 +192,6 @@ OMX_ERRORTYPE V4l2Dec::CreateObjects()
     if(ret != OMX_ErrorNone)
         return ret;
 
-    ret = inObj->SetName("dec  in");
-    if(ret != OMX_ErrorNone)
-        return ret;
-
     if(pV4l2Dev->isV4lBufferTypeSupported(nFd,eDevType,V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)){
         nOutputPlane = 2;
         ret = outObj->Create(nFd,V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,nOutputPlane);
@@ -209,15 +200,6 @@ OMX_ERRORTYPE V4l2Dec::CreateObjects()
         nOutputPlane = 1;
         ret = outObj->Create(nFd,V4L2_BUF_TYPE_VIDEO_CAPTURE,nOutputPlane);
     }
-    if(ret != OMX_ErrorNone)
-        return ret;
-    
-    ret = outObj->SetName("dec out");
-    if(ret != OMX_ErrorNone)
-        return ret;
-
-    LOG_LOG("V4l2Dec::CreateObjects success\n");
-
     return ret;
 }
 OMX_ERRORTYPE V4l2Dec::SetDefaultPortSetting()
@@ -265,8 +247,8 @@ OMX_ERRORTYPE V4l2Dec::SetDefaultPortSetting()
     nMaxBufCntThr = -1;
 
     //this will start decoding without sending the OMX_EventPortSettingsChanged.
-    //android decoders prefer not to send the event, set the default value to OMX_FALSE
-    bSendPortSettingChanged = OMX_FALSE;
+    //android decoders prefer not to send the event, set the default value to OMX_TRUE
+    bSendPortSettingChanged = OMX_TRUE;
 
     pParser = NULL;
     bEnabledFrameParser = OMX_FALSE;
@@ -286,6 +268,11 @@ OMX_ERRORTYPE V4l2Dec::SetDefaultPortSetting()
     bUseDmaOutputBuffer = OMX_FALSE;
     pDmaOutputBuffer = NULL;
 
+    pCodecData = NULL;
+    nCodecDataLen = 0;
+    bReceiveFrame = OMX_FALSE;
+    bNeedCodecData = OMX_FALSE;
+
     eState = V4L2_DEC_STATE_IDLE;
 
     bAndroidNativeBuffer = OMX_FALSE;
@@ -302,11 +289,7 @@ OMX_ERRORTYPE V4l2Dec::SetDefaultPortSetting()
     bRetryHandleEOS = OMX_FALSE;
     bReceiveOutputEOS = OMX_FALSE;
     LOG_LOG("V4l2Dec::SetDefaultPortSetting success\n");
-
-    bFlushing = OMX_FALSE;
-    bHasCodecColorDesc = OMX_FALSE;
-    fsl_osal_memset(&sDecoderColorDesc,0,sizeof(V4l2ColourDesc));
-    fsl_osal_memset(&sParserColorDesc,0,sizeof(V4l2ColourDesc));
+    nOutObjBufferCnt = 0;
 
     return OMX_ErrorNone;
 }
@@ -476,7 +459,7 @@ OMX_ERRORTYPE V4l2Dec::SetParameter(
                     HandleFormatChanged(IN_PORT);
                 }
             }
-            LOG_DEBUG("SetParameter OMX_IndexParamStandardComponentRole.type=0x%x\n",CodingType);
+            LOG_DEBUG("SetParameter OMX_IndexParamStandardComponentRole.type=%d\n",CodingType);
         }
         break;
         case OMX_IndexParamVideoPortFormat:
@@ -495,7 +478,7 @@ OMX_ERRORTYPE V4l2Dec::SetParameter(
                 ports[IN_PORT]->GetPortDefinition(&sPortDef);
                 sInFmt.eCompressionFormat=pPara->eCompressionFormat;
                 sInFmt.eColorFormat=pPara->eColorFormat;
-                sInFmt.xFramerate=pPara->xFramerate;
+                //sInputParam.nFrameRate=pPara->xFramerate/Q16_SHIFT;
                 fsl_osal_memcpy(&(sPortDef.format.video), &sInFmt, sizeof(OMX_VIDEO_PORTDEFINITIONTYPE));
                 ports[IN_PORT]->SetPortDefinition(&sPortDef);
                 LOG_DEBUG("SetParameter OMX_IndexParamVideoPortFormat.format=%x,f2=%x\n",
@@ -542,14 +525,8 @@ OMX_ERRORTYPE V4l2Dec::SetParameter(
             OMX_VIDEO_PARAM_WMVTYPE  *pPara;
             pPara = (OMX_VIDEO_PARAM_WMVTYPE *)pComponentParameterStructure;
             eWmvFormat = pPara->eFormat;
-            LOG_DEBUG("OMX_IndexParamVideoWmv eWmvFormat=%d",eWmvFormat);
-            //this parameter is set after OMX_IndexParamVideoPortFormat input port set
-            //reset inObject format to V4L2_PIX_FMT_VC1_ANNEX_L
-            if(eWmvFormat == OMX_VIDEO_WMVFormatWVC1)
-                PortFormatChanged(IN_PORT);
         }
         break;
-
         default:
             ret = OMX_ErrorNotImplemented;
             break;
@@ -606,7 +583,7 @@ OMX_ERRORTYPE V4l2Dec::GetConfig(
 {
     OMX_ERRORTYPE ret = OMX_ErrorNone;
 
-    switch ((OMX_U32)nParamIndex) {
+    switch (nParamIndex) {
         case OMX_IndexConfigCommonOutputCrop:
         {
             OMX_CONFIG_RECTTYPE *pCropDef;
@@ -649,25 +626,6 @@ OMX_ERRORTYPE V4l2Dec::GetConfig(
                 pCropDef->nTop,pCropDef->nLeft,pCropDef->nWidth,pCropDef->nHeight);
         }
         break;
-        case OMX_IndexConfigDescribeColorInfo:
-        {
-            OMX_CONFIG_VPU_COLOR_DESC *pInfo = (OMX_CONFIG_VPU_COLOR_DESC*)pComponentParameterStructure;
-            V4l2ColourDesc * desc = NULL;
-            if(bHasCodecColorDesc)
-                desc = &sDecoderColorDesc;
-            else
-                desc = &sParserColorDesc;
-
-            // Fix cts testH265ColorAspects, align with stagefright soft decoder.
-            // if sDecoderColorDesc vaule is unspecified, use sParserColorDesc instead.
-            pInfo->primaries = (desc->colourPrimaries != 0) ? desc->colourPrimaries : sParserColorDesc.colourPrimaries;
-            pInfo->transfer = (desc->transferCharacteristics != 0) ? desc->transferCharacteristics : sParserColorDesc.transferCharacteristics;
-            pInfo->matrixCoeffs = (desc->matrixCoeffs != 0 ) ? desc->matrixCoeffs : sParserColorDesc.matrixCoeffs;
-            pInfo->fullRange = desc->fullRange;
-            LOG_DEBUG("GetConfig OMX_IndexConfigDescribeColorInfo primaries=%d,transfer=%d,matrixCoeffs=%d,fullRange=%d"
-                ,desc->colourPrimaries,desc->transferCharacteristics,desc->matrixCoeffs,desc->fullRange);
-            break;
-        }
         default:
             ret = OMX_ErrorNotImplemented;
             break;
@@ -676,7 +634,7 @@ OMX_ERRORTYPE V4l2Dec::GetConfig(
 }
 OMX_ERRORTYPE V4l2Dec::SetConfig(
         OMX_INDEXTYPE nParamIndex,
-        OMX_PTR pComponentConfigStructure)
+        OMX_PTR pComponentParameterStructure)
 {
     OMX_ERRORTYPE ret = OMX_ErrorNone;
 
@@ -684,7 +642,7 @@ OMX_ERRORTYPE V4l2Dec::SetConfig(
         case OMX_IndexConfigCommonOutputCrop:
         {
             OMX_CONFIG_RECTTYPE *pCropDef;
-            pCropDef = (OMX_CONFIG_RECTTYPE*)pComponentConfigStructure;
+            pCropDef = (OMX_CONFIG_RECTTYPE*)pComponentParameterStructure;
             OMX_CHECK_STRUCT(pCropDef, OMX_CONFIG_RECTTYPE, ret);
             if(ret != OMX_ErrorNone)
                 break;
@@ -699,26 +657,6 @@ OMX_ERRORTYPE V4l2Dec::SetConfig(
             LOG_DEBUG("SetConfig OMX_IndexConfigCommonOutputCrop OUT_PORT crop w=%d\n",pCropDef->nWidth);
         }
         break;
-        case OMX_IndexConfigVideoMediaTime:
-            //ignore the value for Qos
-            break;
-        case OMX_IndexConfigDescribeColorInfo:
-        {
-            OMX_CONFIG_VPU_COLOR_DESC *pInfo = (OMX_CONFIG_VPU_COLOR_DESC*)pComponentConfigStructure;
-            if(pInfo->primaries != sParserColorDesc.colourPrimaries ||
-                pInfo->transfer != sParserColorDesc.transferCharacteristics ||
-                pInfo->matrixCoeffs != sParserColorDesc.matrixCoeffs ||
-                pInfo->fullRange != sParserColorDesc.fullRange){
-                    sParserColorDesc.colourPrimaries = pInfo->primaries;
-                    sParserColorDesc.transferCharacteristics = pInfo->transfer;
-                    sParserColorDesc.matrixCoeffs = pInfo->matrixCoeffs;
-                    sParserColorDesc.fullRange = pInfo->fullRange;
-                    LOG_DEBUG("set OMX_IndexConfigDescribeColorInfo primaries=%d,transfer=%d,matrixCoeffs=%d,fullRange=%d"
-                        ,sParserColorDesc.colourPrimaries,sParserColorDesc.transferCharacteristics,sParserColorDesc.matrixCoeffs,
-                        sParserColorDesc.fullRange);
-                }
-            break;
-        }
         default:
             ret = OMX_ErrorNotImplemented;
             break;
@@ -765,10 +703,6 @@ OMX_ERRORTYPE V4l2Dec::ProcessInit()
 
         LOG_LOG("V4l2Dec::ProcessInit pDmaBuffer->Create SUCCESS \n");
     }
-
-    OMX_U32 nTargetFps = sInFmt.xFramerate;
-    pV4l2Dev->SetFrameRate(nFd,nTargetFps);
-    LOG_LOG("nTargetFps=%d,xFramerate=%d",nTargetFps,sInFmt.xFramerate);
 
     return ret;
 }
@@ -1120,13 +1054,14 @@ OMX_ERRORTYPE V4l2Dec::FlushComponent(OMX_U32 nPortIndex)
     LOG_LOG("FlushComponent index=%d,in num=%d,out num=%d\n",nPortIndex,ports[IN_PORT]->BufferNum(),ports[OUT_PORT]->BufferNum());
     fsl_osal_mutex_lock(sMutex);
     if(nPortIndex == IN_PORT){
+        bInputEOS = OMX_FALSE;
 
         #ifdef ENABLE_TS_MANAGER
         tsmFlush(hTsHandle);
         #endif
 
         inObj->Flush();
-
+        nInputCnt = 0;
         while(inObj->HasBuffer()){
             OMX_BUFFERHEADERTYPE *pBufHdr = NULL;
             if(OMX_ErrorNone == inObj->GetBuffer(&pBufHdr)){
@@ -1139,15 +1074,18 @@ OMX_ERRORTYPE V4l2Dec::FlushComponent(OMX_U32 nPortIndex)
             if(bufHdlr != NULL)
                 ports[IN_PORT]->SendBuffer(bufHdlr);
         }
-        nInputCnt = 0;
-        bInputEOS = OMX_FALSE;
     }
 
     if(nPortIndex == OUT_PORT){
-        bFlushing = OMX_TRUE;
-        //inThread->pause();
 
-        outObj->Flush(OMX_TRUE);
+        //inThread->pause();
+        bOutputEOS = OMX_FALSE;
+        bReceiveOutputEOS = OMX_FALSE;
+
+        outObj->Flush();
+        bOutputStarted = OMX_FALSE;
+        nOutputCnt = 0;
+        nOutObjBufferCnt = 0;
 
         if(bEnabledPostProcess){
 
@@ -1160,7 +1098,6 @@ OMX_ERRORTYPE V4l2Dec::FlushComponent(OMX_U32 nPortIndex)
                     if(OMX_ErrorNone == outObj->GetBuffer(&pBufHdr)){
                         pBufHdr->bReadyForProcess = OMX_FALSE;
                         pBufHdr->flag = 0;
-                        pBufHdr->ts = -1;
                         if(bDmaBufferAllocated)
                             pDmaBuffer->Add(pBufHdr);
                     }
@@ -1174,7 +1111,6 @@ OMX_ERRORTYPE V4l2Dec::FlushComponent(OMX_U32 nPortIndex)
                     if(OMX_ErrorNone == pPostProcess->GetInputReturnBuffer(&pBufHdr)){
                         pBufHdr->bReadyForProcess = OMX_FALSE;
                         pBufHdr->flag = 0;
-                        pBufHdr->ts = -1;
                         if(bDmaBufferAllocated)
                             pDmaBuffer->Add(pBufHdr);
                     }else
@@ -1205,13 +1141,9 @@ OMX_ERRORTYPE V4l2Dec::FlushComponent(OMX_U32 nPortIndex)
             if(bufHdlr != NULL)
                 ports[OUT_PORT]->SendBuffer(bufHdlr);
         }
-        bOutputStarted = OMX_FALSE;
-        nOutputCnt = 0;
-        bOutputEOS = OMX_FALSE;
-        bReceiveOutputEOS = OMX_FALSE;
-        if(eState == V4L2_DEC_STATE_RUN || eState == V4L2_DEC_STATE_RES_CHANGED)
-            eState = V4L2_DEC_STATE_FLUSHED;
-        bFlushing = OMX_FALSE;
+
+        eState = V4L2_DEC_STATE_FLUSHED;
+
     }
     nErrCnt = 0;
     LOG_DEBUG("FlushComponent index=%d END\n",nPortIndex);
@@ -1224,6 +1156,11 @@ OMX_ERRORTYPE V4l2Dec::DoIdle2Loaded()
     OMX_ERRORTYPE ret = OMX_ErrorNone;
     LOG_LOG("DoIdle2Loaded BEGIN");
 
+    if(pCodecData != NULL) {
+        FSL_FREE(pCodecData);
+        nCodecDataLen = 0;
+    }
+
     if(inThread){
         inThread->destroy();
         FSL_DELETE(inThread);
@@ -1232,6 +1169,8 @@ OMX_ERRORTYPE V4l2Dec::DoIdle2Loaded()
     LOG_LOG("in thread destroy success\n");
     bOutputStarted = OMX_FALSE;
     bReceiveOutputEOS = OMX_FALSE;
+    bReceiveFrame = OMX_FALSE;
+    bNeedCodecData = OMX_FALSE;
 
     bInputEOS = OMX_FALSE;
     bOutputEOS = OMX_FALSE;
@@ -1265,8 +1204,6 @@ OMX_ERRORTYPE V4l2Dec::DoIdle2Loaded()
     if(bSetOutputBufferCount)
         outObj->SetBufferCount(0, V4L2_MEMORY_MMAP, nOutputPlane);
 
-    pV4l2Dev->ResetDecoder(nFd);
-
     ret=SetDefaultSetting();
 
     LOG_LOG("DoIdle2Loaded ret=%x",ret);
@@ -1292,9 +1229,6 @@ OMX_ERRORTYPE V4l2Dec::DoLoaded2Idle()
         LOG_ERROR("Create Ts manager failed.\n");
         return OMX_ErrorUndefined;
     }
-    LOG_LOG("DoLoaded2Idle ENABLE_TS_MANAGER\n");
-    #else
-    LOG_LOG("DoLoaded2Idle no ENABLE_TS_MANAGER\n");
     #endif
     return OMX_ErrorNone;
 }
@@ -1346,7 +1280,7 @@ OMX_ERRORTYPE V4l2Dec::ProcessDataBuffer()
             LOG_LOG("V4l2Dec eState V4L2_DEC_STATE_START_INPUT \n");
 
             ret = inThread->start();
-            if(ret == OMX_ErrorNone && eState == V4L2_DEC_STATE_START_INPUT){
+            if(ret == OMX_ErrorNone){
                 eState = V4L2_DEC_STATE_WAIT_RES;
             }
             break;
@@ -1403,7 +1337,7 @@ OMX_ERRORTYPE V4l2Dec::ProcessDataBuffer()
             if(bEnabledPostProcess && pPostProcess->OutputBufferAdded()){
                 ret_other = ProcessPostBuffer();
                 if(ret_other == OMX_ErrorNone){
-                    LOG_LOG("ProcessPostBuffer OMX_ErrorNone");
+                    LOG_LOG("ProcessOutputBuffer OMX_ErrorNone");
                     return OMX_ErrorNone;
                 }
             }
@@ -1450,15 +1384,10 @@ OMX_ERRORTYPE V4l2Dec::ProcessInputBuffer()
     }
 
 #ifdef ENABLE_TS_MANAGER
-    if(OMX_TRUE != tsmHasEnoughSlot(hTsHandle)) {
-        fsl_osal_mutex_unlock(sMutex);
-        return OMX_ErrorNoMore;
-    }
-#else
-    if(bEnabledPostProcess && pPostProcess->HasEnoughInput()){
-        fsl_osal_mutex_unlock(sMutex);
-        return OMX_ErrorNoMore;
-    }
+        if(OMX_TRUE != tsmHasEnoughSlot(hTsHandle)) {
+            fsl_osal_mutex_unlock(sMutex);
+            return OMX_ErrorNoMore;
+        }
 #endif
 
     ports[IN_PORT]->GetBuffer(&pBufferHdr);
@@ -1467,7 +1396,7 @@ OMX_ERRORTYPE V4l2Dec::ProcessInputBuffer()
         fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorNoMore;
     }
-    LOG_LOG("V4l2Dec Get Inbuffer %p,len=%d,ts=%lld,flag=%x,offset=%d,nInputCnt=%d\n", pBufferHdr->pBuffer, pBufferHdr->nFilledLen, pBufferHdr->nTimeStamp, pBufferHdr->nFlags,pBufferHdr->nOffset,nInputCnt);
+    LOG_LOG("Get Inbuffer %p,len=%d,ts=%lld,flag=%x,offset=%d,nInputCnt=%d\n", pBufferHdr->pBuffer, pBufferHdr->nFilledLen, pBufferHdr->nTimeStamp, pBufferHdr->nFlags,pBufferHdr->nOffset,nInputCnt);
 
     ret = ProcessInBufferFlags(pBufferHdr);
     if(ret != OMX_ErrorNone){
@@ -1522,6 +1451,19 @@ OMX_ERRORTYPE V4l2Dec::ProcessInBufferFlags(OMX_BUFFERHEADERTYPE *pInBufferHdr)
 {
     if(pInBufferHdr->nFlags & OMX_BUFFERFLAG_STARTTIME){
         bNewSegment = OMX_TRUE;
+
+        if (bNeedCodecData && pCodecData && nCodecDataLen > 0 && pInBufferHdr->nFilledLen > 0) {
+            // RTSP streaming suspend/resume will return eos buffer before first IDR frame,
+            // need send codecdata again before IDR frame, otherwise v4l2 firmware can't start.
+            fsl_osal_memmove(pInBufferHdr->pBuffer + nCodecDataLen, pInBufferHdr->pBuffer, pInBufferHdr->nFilledLen);
+            fsl_osal_memcpy(pInBufferHdr->pBuffer, pCodecData, nCodecDataLen);
+            pInBufferHdr->nFilledLen += nCodecDataLen;
+            bNeedCodecData = OMX_FALSE;
+        }
+
+        if (!bReceiveFrame && pInBufferHdr->nFilledLen > 0)
+            bReceiveFrame = OMX_TRUE;
+
     }
 
     #ifdef ENABLE_TS_MANAGER
@@ -1536,24 +1478,9 @@ OMX_ERRORTYPE V4l2Dec::ProcessInBufferFlags(OMX_BUFFERHEADERTYPE *pInBufferHdr)
             LOG_LOG("Set ts manager to AI mode. ts=%lld\n",pInBufferHdr->nTimeStamp);
             tsmReSync(hTsHandle, pInBufferHdr->nTimeStamp, MODE_AI);
         }
-        nMaxBufCntThr = DEFUALT_MAX_BUFFER_DEPTH;
-        nMaxDurationMsThr = DEFUALT_TS_THRESHOLD;
-        LOG_LOG("nDurationThr: %d, nBufCntThr: %d\n", nMaxDurationMsThr, nMaxBufCntThr);
-        //debug v4l2 driver threshold, so do not trig ts manager threshold
-        tsmSetDataDepthThreshold(hTsHandle, nMaxDurationMsThr *2, nMaxBufCntThr);
-        pV4l2Dev->SetFrameDepth(nFd, nMaxBufCntThr);
-        pV4l2Dev->SetTsThreshold(nFd, nMaxDurationMsThr);
-        pV4l2Dev->SetBsThreshold(nFd, DEFUALT_BSL_THRESHOLD);
-    }
-    #else
-    if(pInBufferHdr->nFlags & OMX_BUFFERFLAG_STARTTIME) {
-        nMaxBufCntThr = DEFUALT_MAX_BUFFER_DEPTH;
-        nMaxDurationMsThr = DEFUALT_TS_THRESHOLD;
-        pV4l2Dev->SetFrameDepth(nFd, nMaxBufCntThr);
-        //pV4l2Dev->SetTsThreshold(nFd, nMaxDurationMsThr);
-        pV4l2Dev->SetBsThreshold(nFd, DEFUALT_BSL_THRESHOLD);
-        LOG_LOG("nDurationThr: %d, nBufCntThr: %d\n", nMaxDurationMsThr, nMaxBufCntThr);
 
+        LOG_LOG("nDurationThr: %d, nBufCntThr: %d\n", nMaxDurationMsThr, nMaxBufCntThr);
+        tsmSetDataDepthThreshold(hTsHandle, nMaxDurationMsThr, nMaxBufCntThr);
     }
     #endif
 
@@ -1567,8 +1494,31 @@ OMX_ERRORTYPE V4l2Dec::ProcessInBufferFlags(OMX_BUFFERHEADERTYPE *pInBufferHdr)
             pV4l2Dev->StopDecoder(nFd);
 
             ports[IN_PORT]->SendBuffer(pInBufferHdr);
+
+            if (!bReceiveFrame)
+                bNeedCodecData = OMX_TRUE;
+
             return OMX_ErrorNoMore;
         }
+    }
+
+    // MA-10250: backup codecdata to send again if rtsp return eos after suspend/resume.
+    if((pInBufferHdr->nFlags & OMX_BUFFERFLAG_CODECCONFIG) && pInBufferHdr->nFilledLen > 0) {
+        if(pCodecData == NULL) {
+            pCodecData = FSL_MALLOC(pInBufferHdr->nFilledLen);
+            if(pCodecData == NULL) {
+                SendEvent(OMX_EventError, OMX_ErrorInsufficientResources, 0, NULL);
+                return OMX_ErrorInsufficientResources;
+            }
+        } else {
+            pCodecData = FSL_REALLOC(pCodecData, nCodecDataLen + pInBufferHdr->nFilledLen);
+            if(pCodecData == NULL) {
+                SendEvent(OMX_EventError, OMX_ErrorInsufficientResources, 0, NULL);
+                return OMX_ErrorInsufficientResources;
+            }
+        }
+        fsl_osal_memcpy((char *)pCodecData + nCodecDataLen, pInBufferHdr->pBuffer, pInBufferHdr->nFilledLen);
+        nCodecDataLen += pInBufferHdr->nFilledLen;
     }
 
     return OMX_ErrorNone;
@@ -1591,8 +1541,8 @@ OMX_ERRORTYPE V4l2Dec::ProcessOutputBuffer()
         fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorNoMore;
     }
-    LOG_LOG("V4l2Dec Get output buffer %p,len=%d,alloLen=%d,flag=%x,bufferCnt=%d\n",
-        pBufferHdr->pBuffer,pBufferHdr->nFilledLen,pBufferHdr->nAllocLen,pBufferHdr->nFlags,ports[OUT_PORT]->BufferNum());
+    LOG_LOG("Get output buffer %p,len=%d,alloLen=%d,flag=%x,ts=%lld,bufferCnt=%d\n",
+        pBufferHdr->pBuffer,pBufferHdr->nFilledLen,pBufferHdr->nAllocLen,pBufferHdr->nFlags,pBufferHdr->nTimeStamp,ports[OUT_PORT]->BufferNum());
 
     if(pBufferHdr->nFlags & OMX_BUFFERFLAG_EOS)
         bOutputEOS = OMX_TRUE;
@@ -1604,18 +1554,25 @@ OMX_ERRORTYPE V4l2Dec::ProcessOutputBuffer()
         LOG_LOG("reset nAllocLen to %d\n",pBufferHdr->nAllocLen);
     }
 
+    #ifdef ENABLE_TS_MANAGER
     pBufferHdr->nTimeStamp = -1;
+    #endif
 
     LOG_LOG("Set output buffer BEGIN,pBufferHdr=%p \n",pBufferHdr);
     if(bEnabledPostProcess)
         ret = pPostProcess->AddOutputFrame(pBufferHdr);
     else{
-        OMX_U32 flag = 0;
+        OMX_U32 flag = V4L2_OBJECT_FLAG_NO_AUTO_START;
         if(bAndroidNativeBuffer)
             flag = V4L2_OBJECT_FLAG_NATIVE_BUFFER;
 
         ret = outObj->SetBuffer(pBufferHdr,flag);
 
+        if(OMX_ErrorNone == ret){
+            nOutObjBufferCnt++;
+            if(MIN_CAPTURE_BUFFER_CNT == nOutObjBufferCnt)
+                ret = outObj->Start();
+        }
     }
     LOG_LOG("ProcessOutputBuffer ret=%x\n",ret);
 
@@ -1641,7 +1598,7 @@ OMX_ERRORTYPE V4l2Dec::ReturnBuffer(OMX_BUFFERHEADERTYPE *pBufferHdr,OMX_U32 nPo
             pV4l2Dev->StopDecoder(nFd);
 
         ports[IN_PORT]->SendBuffer(pBufferHdr);
-        LOG_LOG("V4l2Dec ReturnBuffer input =%p,ts=%lld,len=%d,offset=%d flag=%x nInputCnt=%d\n",
+        LOG_LOG("ReturnBuffer input =%p,ts=%lld,len=%d,offset=%d flag=%x nInputCnt=%d\n",
             pBufferHdr->pBuffer, pBufferHdr->nTimeStamp,pBufferHdr->nFilledLen,pBufferHdr->nOffset,pBufferHdr->nFlags, nInputCnt);
 
     }else if(nPortIndex == OUT_PORT) {
@@ -1660,18 +1617,12 @@ OMX_ERRORTYPE V4l2Dec::ReturnBuffer(OMX_BUFFERHEADERTYPE *pBufferHdr,OMX_U32 nPo
         dumpOutputBuffer(pBufferHdr);
 
         #ifdef ENABLE_TS_MANAGER
-        if(!(pBufferHdr->nFlags & OMX_BUFFERFLAG_CODECCONFIG)){
-            if(nDebugFlag & TEST_TS_FLAG){
-                OMX_TICKS target_ts = tsmGetFrmTs(hTsHandle, NULL);
-                if(target_ts != pBufferHdr->nTimeStamp && !bFlushing)
-                    LOG_ERROR("DEBUG TS MANAGER expected ts=%lld,curr=%lld",target_ts,pBufferHdr->nTimeStamp);
-            }else
-                pBufferHdr->nTimeStamp = tsmGetFrmTs(hTsHandle, NULL);
-        }
+        if(!(pBufferHdr->nFlags & OMX_BUFFERFLAG_CODECCONFIG))
+            pBufferHdr->nTimeStamp = tsmGetFrmTs(hTsHandle, NULL);
         #endif
         nOutputCnt++;
 
-        LOG_LOG("V4l2Dec ReturnBuffer output buffer,ts=%lld,ptr=%p, offset=%d, len=%d,flags=%x,alloc len=%d nOutputCnt=%d\n",
+        LOG_LOG("ReturnBuffer output buffer,ts=%lld,ptr=%p, offset=%d, len=%d,flags=%x,alloc len=%d nOutputCnt=%d\n",
             pBufferHdr->nTimeStamp, pBufferHdr->pBuffer, pBufferHdr->nOffset, pBufferHdr->nFilledLen,pBufferHdr->nFlags,pBufferHdr->nAllocLen,nOutputCnt);
         ports[OUT_PORT]->SendBuffer(pBufferHdr);
 
@@ -1682,74 +1633,6 @@ OMX_ERRORTYPE V4l2Dec::ReturnBuffer(OMX_BUFFERHEADERTYPE *pBufferHdr,OMX_U32 nPo
     }
 
     return OMX_ErrorNone;
-}
-OMX_ERRORTYPE static convertIsoColorAspectsToCodecAspects(V4l2ColourDesc * pIsoColorAspects, V4l2ColourDesc * pCodecAspects)
-{
-    OMX_ERRORTYPE ret = OMX_ErrorNone;
-
-    static const OMX_S32 sPrimariesMap[] = {
-        0/* ColorAspects::PrimariesUnspecified */,
-        1/* ColorAspects::PrimariesBT709_5 */,
-        0/* ColorAspects::PrimariesUnspecified */,
-        0/* ColorAspects::PrimariesUnspecified */,
-        2/* ColorAspects::PrimariesBT470_6M */,
-        3/* ColorAspects::PrimariesBT601_6_625 */,
-        4/* ColorAspects::PrimariesBT601_6_525 main */,
-        4/* ColorAspects::PrimariesBT601_6_525 */,
-        // ITU T.832 201201 ends here
-        5/* ColorAspects::PrimariesGenericFilm */,
-        6/* ColorAspects::PrimariesBT2020 */,
-        0xff/* ColorAspects::PrimariesOther XYZ */,
-    };
-
-    static const OMX_S32 sTransfersMap[] = {
-        0/* ColorAspects::TransferUnspecified */,
-        3/* ColorAspects::TransferSMPTE170M main */,
-        0/* ColorAspects::TransferUnspecified */,
-        0/* ColorAspects::TransferUnspecified */,
-        4/* ColorAspects::TransferGamma22 */,
-        5/* ColorAspects::TransferGamma28 */,
-        3/* ColorAspects::TransferSMPTE170M */,
-        0x40/* ColorAspects::TransferSMPTE240M */,
-        1/* ColorAspects::TransferLinear */,
-        0xff/* ColorAspects::TransferOther log 100:1 */,
-        0xff/* ColorAspects::TransferOther log 316:1 */,
-        0x41/* ColorAspects::TransferXvYCC */,
-        0x42/* ColorAspects::TransferBT1361 */,
-        2/* ColorAspects::TransferSRGB */,
-        // ITU T.832 201201 ends here
-        3/* ColorAspects::TransferSMPTE170M */,
-        3/* ColorAspects::TransferSMPTE170M */,
-        6/* ColorAspects::TransferST2084 */,
-        0x43/* ColorAspects::TransferST428 */,
-        7/* ColorAspects::TransferHLG */,
-    };
-
-    static const OMX_S32 sMatrixCoeffsMap[] = {
-        //change the first value from 0xff to 0
-        0/* ColorAspects::MatrixOther */, 
-        1/* ColorAspects::MatrixBT709_5 */,
-        0/* ColorAspects::MatrixUnspecified */,
-        0/* ColorAspects::MatrixUnspecified */,
-        2/* ColorAspects::MatrixBT470_6M */,
-        3/* ColorAspects::MatrixBT601_6 */,
-        3/* ColorAspects::MatrixBT601_6 main */,
-        4/* ColorAspects::MatrixSMPTE240M */,
-        0xff/* ColorAspects::MatrixOther YCgCo */,
-        // -- ITU T.832 201201 ends here
-        5/* ColorAspects::MatrixBT2020 */,
-        6/* ColorAspects::MatrixBT2020Constant */,
-    };
-
-    if(pIsoColorAspects->colourPrimaries < sizeof(sPrimariesMap))
-        pCodecAspects->colourPrimaries = sPrimariesMap[pIsoColorAspects->colourPrimaries];
-    if(pIsoColorAspects->transferCharacteristics < sizeof(sTransfersMap))
-        pCodecAspects->transferCharacteristics = sTransfersMap[pIsoColorAspects->transferCharacteristics];
-    if(pIsoColorAspects->matrixCoeffs < sizeof(sMatrixCoeffsMap))
-        pCodecAspects->matrixCoeffs = sMatrixCoeffsMap[pIsoColorAspects->matrixCoeffs];
-    pCodecAspects->fullRange = (pIsoColorAspects->fullRange ? 1 /* RangeFull */: 2 /* RangeLimited */);
-
-    return ret;
 }
 OMX_ERRORTYPE V4l2Dec::HandleFormatChanged(OMX_U32 nPortIndex)
 {
@@ -1823,11 +1706,8 @@ OMX_ERRORTYPE V4l2Dec::HandleFormatChanged(OMX_U32 nPortIndex)
             bSuppress = OMX_TRUE;
         }
     }
-    GetColorAspectInfo();
 
-    fsl_osal_mutex_lock(sMutex);
-
-    if(bSendPortSettingChanged || (bResourceChanged && !bSuppress)){
+    if(!bSendPortSettingChanged || (bResourceChanged && !bSuppress)){
         OMX_U32 calcBufferSize = 0;
         sPortDef.format.video.nFrameWidth = pad_width;
         sPortDef.format.video.nFrameHeight = pad_height;
@@ -1853,23 +1733,14 @@ OMX_ERRORTYPE V4l2Dec::HandleFormatChanged(OMX_U32 nPortIndex)
 
         bSendEvent = OMX_TRUE;
         bSetOutputBufferCount = OMX_FALSE;
-
+        bSendPortSettingChanged = OMX_TRUE;
         SendEvent(OMX_EventPortSettingsChanged, OUT_PORT, 0, NULL);
         LOG_LOG("send OMX_EventPortSettingsChanged \n");
     }else{
         LOG_LOG("HandleFormatChanged do not send OMX_EventPortSettingsChanged\n");
-        ports[nPortIndex]->SetPortDefinition(&sPortDef);
-        fsl_osal_memcpy(&sOutFmt, &sPortDef.format.video, sizeof(OMX_VIDEO_PORTDEFINITIONTYPE));
-
         eState = V4L2_DEC_STATE_RUN;
         outObj->Start();
     }
-
-    fsl_osal_mutex_unlock(sMutex);
-
-    //do not support fixed stride in adaptive playback mode
-    //send crop change for only first time, after that send resolution change event each time
-    bSendPortSettingChanged = OMX_TRUE;
 
     (void)outObj->GetCrop(&sCropDef);
 
@@ -1996,11 +1867,7 @@ OMX_ERRORTYPE V4l2Dec::HandleFormatChangedForIon(OMX_U32 nPortIndex)
     LOG_DEBUG("HandleFormatChangedForIon nDmaBufferSize=%d,%d,%d nDmaBufferCnt=%d,nOutBufferCnt=%d\n",
         nDmaBufferSize[0],nDmaBufferSize[1],nDmaBufferSize[2],nDmaBufferCnt,nOutBufferCnt);
 
-    GetColorAspectInfo();
-
-    fsl_osal_mutex_lock(sMutex);
-
-    if(bSendPortSettingChanged || (bResourceChanged && !bSuppress)){
+    if(!bSendPortSettingChanged || (bResourceChanged && !bSuppress)){
 
         ports[nPortIndex]->SetPortDefinition(&sPortDef);
 
@@ -2020,6 +1887,7 @@ OMX_ERRORTYPE V4l2Dec::HandleFormatChangedForIon(OMX_U32 nPortIndex)
 
         bSendEvent = OMX_TRUE;
         bSetOutputBufferCount = OMX_FALSE;
+        bSendPortSettingChanged = OMX_TRUE;
 
         SendEvent(OMX_EventPortSettingsChanged, OUT_PORT, 0, NULL);
 
@@ -2029,18 +1897,10 @@ OMX_ERRORTYPE V4l2Dec::HandleFormatChangedForIon(OMX_U32 nPortIndex)
         fsl_osal_memcpy(&sOutFmt, &sPortDef.format.video, sizeof(OMX_VIDEO_PORTDEFINITIONTYPE));
 
         LOG_LOG("HandleFormatChanged do not send OMX_EventPortSettingsChanged\n");
-
         eState = V4L2_DEC_STATE_RUN;
-        LOG_LOG("HandleFormatChanged eState=%d\n",eState);
+        outObj->Stop();
         outObj->Start();
-
     }
-
-    fsl_osal_mutex_unlock(sMutex);
-
-    //do not support fixed stride in adaptive playback mode
-    //send crop change for only first time, after that send resolution change event each time
-    bSendPortSettingChanged = OMX_TRUE;
 
     (void)outObj->GetCrop(&sCropDef);
 
@@ -2107,7 +1967,6 @@ OMX_ERRORTYPE V4l2Dec::HandleEOSEvent()
             if(ret == OMX_ErrorNone && pDmaBufHdlr != NULL){
                 pDmaBufHdlr->bReadyForProcess = OMX_FALSE;
                 pDmaBufHdlr->flag |= DMA_BUF_EOS;
-                pDmaBufHdlr->ts = -1;
                 LOG_LOG("AddInputFrame OMX_BUFFERFLAG_EOS 1");
                 ret = pPostProcess->AddInputFrame(pDmaBufHdlr);
                 fsl_osal_mutex_unlock(sMutex);
@@ -2219,7 +2078,6 @@ OMX_ERRORTYPE V4l2Dec::ProcessPostBuffer()
     if(OMX_ErrorNone == pPostProcess->GetInputReturnBuffer(&buf)){
         buf->bReadyForProcess = OMX_FALSE;
         buf->flag = 0;
-        buf->ts = -1;
         ret = pDmaBuffer->Add(buf);
         if(OMX_ErrorNone != ret){
             fsl_osal_mutex_unlock(sMutex);
@@ -2241,10 +2099,14 @@ OMX_ERRORTYPE V4l2Dec::ProcessPostBuffer()
     }
     LOG_LOG("ProcessPostBuffer vaddr1=%lx,vaddr2=%lx",buf->plane[0].vaddr,buf->plane[1].vaddr);
     buf->bReadyForProcess = OMX_FALSE;
-    buf->ts = -1;
-
-    ret = outObj->SetBuffer(buf, 0);
+    ret = outObj->SetBuffer(buf, V4L2_OBJECT_FLAG_NO_AUTO_START);
     LOG_LOG("ProcessPostBuffer ret=%d\n",ret);
+
+    if(OMX_ErrorNone == ret){
+        nOutObjBufferCnt++;
+        if(MIN_CAPTURE_BUFFER_CNT == nOutObjBufferCnt)
+            ret = outObj->Start();
+    }
 
     fsl_osal_mutex_unlock(sMutex);
     return ret;
@@ -2273,9 +2135,7 @@ OMX_ERRORTYPE V4l2Dec::AllocateDmaBuffer()
 
 OMX_ERRORTYPE V4l2Dec::HandleSkipEvent()
 {
-    #ifdef ENABLE_TS_MANAGER
-        tsmGetFrmTs(hTsHandle, NULL);
-    #endif
+    tsmGetFrmTs(hTsHandle, NULL);
     return OMX_ErrorNone;
 }
 
@@ -2336,21 +2196,7 @@ void V4l2Dec::dumpPostProcessBuffer(DmaBufferHdr *pBufferHdr)
 
     return;
 }
-OMX_ERRORTYPE V4l2Dec::GetColorAspectInfo()
-{
-    V4l2ColourDesc tmp;
-    LOG_DEBUG("GetColorAspectInfo BEGIN");
-    if(pV4l2Dev->GetColourDesc(nFd, &tmp) == OMX_ErrorNone){
-        convertIsoColorAspectsToCodecAspects(&tmp, &sDecoderColorDesc);
-        bHasCodecColorDesc = OMX_TRUE;
-        LOG_DEBUG("GetColorAspectInfo bHasCodecColorDesc in p=%d,t=%d,m=%d,r=%d,out p=%d,t=%d,m=%d,r=%d",
-            tmp.colourPrimaries, tmp.transferCharacteristics,
-            tmp.matrixCoeffs, tmp.fullRange,
-            sDecoderColorDesc.colourPrimaries, sDecoderColorDesc.transferCharacteristics,
-            sDecoderColorDesc.matrixCoeffs, sDecoderColorDesc.fullRange );
-    }
-    return OMX_ErrorNone;
-}
+
 /**< C style functions to expose entry point for the shared library */
 extern "C"
 {

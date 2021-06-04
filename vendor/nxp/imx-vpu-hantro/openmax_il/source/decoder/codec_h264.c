@@ -215,7 +215,6 @@ static CODEC_STATE decoder_decode_h264(CODEC_PROTOTYPE * arg,
     case H264DEC_ADVANCED_TOOLS:
         stat = CODEC_NEED_MORE;
         break;
-    case H264DEC_FIELD_DECODED:
     case H264DEC_STRM_PROCESSED:
         stat = CODEC_NEED_MORE;
         break;

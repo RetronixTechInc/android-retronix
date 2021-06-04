@@ -224,7 +224,6 @@ struct Vp9DecContainer {
   u32 num_pp_buffers;
   BufferQueue pp_bq;  /* raster/dscale buffer queue for free raster output buffer. */
   u32 min_buffer_num; /* Minimum external buffer needed. */
-  u32 ext_buffer_size;    /* size of external buffers allocated already */
 #endif
 
   u32 intra_only;
@@ -292,7 +291,6 @@ struct Vp9DecContainer {
   u32 min_dec_pic_height;
 
   u32 secure_mode;
-  u32 cts_test;
 };
 
 #endif /* #ifdef VP9HWD_CONTAINER_H */

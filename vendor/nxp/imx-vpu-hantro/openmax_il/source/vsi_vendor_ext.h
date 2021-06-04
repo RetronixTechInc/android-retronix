@@ -283,7 +283,6 @@ typedef struct OMX_VIDEO_PARAM_G2CONFIGTYPE {
     OMX_U32 nGuardSize;
     OMX_BOOL bEnableAdaptiveBuffers;
     OMX_U32 bEnableSecureMode;
-    OMX_U32 bEnableCtsTest;     /* used for VP9 adaptive CTS test */
     OMX_BOOL bEnableRingBuffer;
     OMX_BOOL bEnableFetchOnePic;
 } OMX_VIDEO_PARAM_G2CONFIGTYPE;

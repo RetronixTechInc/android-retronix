@@ -7,13 +7,6 @@
  *
  */
 
-/**
- *  Copyright 2019 NXP
- *
- *  The following programs are the sole property of NXP,
- *  and contain its proprietary and confidential information.
- */
-
 #include "PlatformResourceMgr.h"
 #include "PlatformResourceMgrItf.h"
 
@@ -56,8 +49,6 @@ OMX_ERRORTYPE PlatformResourceMgr::AddHwBuffer(
 
     pData->pVirtualAddr = pVirtualAddr;
     pData->pPhyiscAddr = pPhyiscAddr;
-    pData->pCpuAddr = NULL;
-    pData->nSize = 0;
     pData->nFd = -1;
     pData->pFdAddr = NULL;
 
@@ -160,43 +151,7 @@ OMX_ERRORTYPE PlatformResourceMgr::ModifyFdAndAddr(OMX_PTR pVirtualAddr,OMX_S32 
 
     pData->nFd = fd;
     pData->pFdAddr = pAddr;
-
-    fsl_osal_mutex_unlock(lock);
-    return OMX_ErrorNone;
-}
-
-OMX_ERRORTYPE PlatformResourceMgr::ModifyCpuAddr(OMX_PTR pVirtualAddr, OMX_PTR pCpuAddr, OMX_U32 nSize)
-{
-    PLATFORM_DATA *pData = NULL;
-
-    fsl_osal_mutex_lock(lock);
-    pData = (PLATFORM_DATA*) SearchData(pVirtualAddr);
-    if(pData == NULL) {
-        fsl_osal_mutex_unlock(lock);
-        return OMX_ErrorResourcesLost;
-    }
-
-    pData->pCpuAddr = pCpuAddr;
-    pData->nSize = nSize;
-    fsl_osal_mutex_unlock(lock);
-    return OMX_ErrorNone;
-}
-
-OMX_ERRORTYPE PlatformResourceMgr::GetCpuAddr(OMX_PTR pVirtualAddr, OMX_PTR * pCpuAddr, OMX_U32 * nSize)
-{
-    PLATFORM_DATA *pData = NULL;
-    if(pCpuAddr == NULL || nSize == NULL)
-        return OMX_ErrorBadParameter;
-
-    fsl_osal_mutex_lock(lock);
-    pData = (PLATFORM_DATA*) SearchData(pVirtualAddr);
-    if(pData == NULL) {
-        fsl_osal_mutex_unlock(lock);
-        return OMX_ErrorInsufficientResources;
-    }
-
-    *pCpuAddr = pData->pCpuAddr;
-    *nSize = pData->nSize;
+    
     fsl_osal_mutex_unlock(lock);
     return OMX_ErrorNone;
 }
@@ -272,21 +227,5 @@ OMX_ERRORTYPE GetFdAndAddr(OMX_PTR pVirtualAddr, OMX_S32 *pfd,OMX_PTR *ppAddr)
         return OMX_ErrorResourcesLost;
 
     return gPlatformResMgr->GetFdAndAddr(pVirtualAddr,pfd,ppAddr);
-}
-
-OMX_ERRORTYPE ModifyCpuAddr(OMX_PTR pVirtualAddr, OMX_PTR pCpuAddr, OMX_U32 nSize)
-{
-    if(gPlatformResMgr == NULL)
-        return OMX_ErrorResourcesLost;
-
-    return gPlatformResMgr->ModifyCpuAddr(pVirtualAddr, pCpuAddr, nSize);
-}
-
-OMX_ERRORTYPE GetCpuAddr(OMX_PTR pVirtualAddr, OMX_PTR * pCpuAddr, OMX_U32 * nSize)
-{
-    if(gPlatformResMgr == NULL)
-        return OMX_ErrorResourcesLost;
-
-    return gPlatformResMgr->GetCpuAddr(pVirtualAddr, pCpuAddr, nSize);
 }
 /* File EOF */

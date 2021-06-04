@@ -1,6 +1,6 @@
 /**
  *  Copyright (c) 2010-2016, Freescale Semiconductor Inc.,
- *  Copyright 2017-2019 NXP
+ *  Copyright 2017-2018 NXP
  *  All Rights Reserved.
  *
  *  The following programs are the sole property of Freescale Semiconductor Inc.,
@@ -100,7 +100,6 @@ class VideoFilter : public ComponentBase {
         OMX_S64 nMediaTime;
         OMX_S64 nAnchorTime;
         OMX_S32 nScale;
-        OMX_TICKS mLastTimestamp;
         OMX_ERRORTYPE InitComponent();
         OMX_ERRORTYPE DeInitComponent();
         OMX_ERRORTYPE ProcessDataBuffer();

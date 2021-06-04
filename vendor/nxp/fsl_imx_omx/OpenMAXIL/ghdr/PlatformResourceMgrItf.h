@@ -8,13 +8,6 @@
  */
 
 /**
- *  Copyright 2019 NXP
- *
- *  The following programs are the sole property of NXP,
- *  and contain its proprietary and confidential information.
- */
-
-/**
  *  @file PlatformResourceMgrItf.h
  *  @brief Interface definition of PlatformResourceMgr
  *  @ingroup State
@@ -34,8 +27,6 @@ OMX_ERRORTYPE RemoveHwBuffer(OMX_PTR pVirtualAddr);
 OMX_ERRORTYPE GetHwBuffer(OMX_PTR pVirtualAddr, OMX_PTR *ppPhyiscAddr);
 OMX_ERRORTYPE GetFdAndAddr(OMX_PTR pVirtualAddr, OMX_S32 *pfd, OMX_PTR *ppAddr);
 OMX_ERRORTYPE ModifyFdAndAddr(OMX_PTR pVirtualAddr, OMX_S32 nfd, OMX_PTR pFdAddr);
-OMX_ERRORTYPE ModifyCpuAddr(OMX_PTR pVirtualAddr, OMX_PTR pCpuAddr, OMX_U32 nSize);
-OMX_ERRORTYPE GetCpuAddr(OMX_PTR pVirtualAddr, OMX_PTR * pCpuAddr, OMX_U32 * nSize);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

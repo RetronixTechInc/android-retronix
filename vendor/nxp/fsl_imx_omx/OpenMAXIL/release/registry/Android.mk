@@ -26,9 +26,6 @@ endif
 ifeq ($(BOARD_SOC_TYPE), IMX8MM)
 LOCAL_SRC_FILES := component_register_evk_8mm
 endif
-ifeq ($(BOARD_SOC_TYPE), IMX8MN)
-LOCAL_SRC_FILES := component_register_evk_8mn
-endif
 
 LOCAL_MODULE_TAGS := eng
 include $(BUILD_PREBUILT)
@@ -133,17 +130,6 @@ LOCAL_VENDOR_MODULE := $(FSL_OMX_TARGET_OUT_VENDOR)
 LOCAL_MODULE := component_register_wmv9
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SRC_FILES := ../../../../../../$(FSL_RESTRICTED_CODEC_PATH)/fsl-restricted-codec/fsl_ms_codec/component_register_wmv9_v4l2
-LOCAL_MODULE_TAGS := eng
-include $(BUILD_PREBUILT)
-endif
-
-HAVE_RV = $(shell test -d $(FSL_RESTRICTED_CODEC_PATH)/fsl-restricted-codec/fsl_real_dec && echo yes)
-ifeq ($(HAVE_RV), yes)
-include $(CLEAR_VARS)
-LOCAL_VENDOR_MODULE := $(FSL_OMX_TARGET_OUT_VENDOR)
-LOCAL_MODULE := component_register_rv
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES := ../../../../../../$(FSL_RESTRICTED_CODEC_PATH)/fsl-restricted-codec/fsl_real_dec/component_register_rv_v4l2
 LOCAL_MODULE_TAGS := eng
 include $(BUILD_PREBUILT)
 endif

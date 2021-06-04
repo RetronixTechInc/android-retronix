@@ -146,7 +146,6 @@ struct Vp9DecConfig {
   u32 use_ringbuffer;
   u32 use_fetch_one_pic;
   u32 use_secure_mode;      /* Secure mode */
-  u32 use_cts_test;      /* all output buffers are reallocted in this mode if resolution change to bigger */
   enum DecPictureFormat output_format;
   enum DecPicturePixelFormat pixel_format;
 };

@@ -52,7 +52,6 @@
             <Limit name="blocks-per-second" min="1" max="1036800" />
             <Limit name="bitrate" range="1-50000000" />
             <Limit name="concurrent-instances" max="32" />
-            <Feature name="adaptive-playback" />
         </MediaCodec>
         <MediaCodec name="OMX.Freescale.std.video_decoder.avc.v3.hw-based.secure" type="video/avc" >
             <Quirk name="requires-allocate-on-output-ports"/>
@@ -63,7 +62,6 @@
             <Limit name="bitrate" range="1-50000000" />
             <Limit name="concurrent-instances" max="32" />
             <Feature name="secure-playback" required="true" />
-            <Feature name="adaptive-playback" />
         </MediaCodec>
         <MediaCodec name="OMX.Freescale.std.video_decoder.hevc.hw-based" type="video/hevc" >
             <Quirk name="requires-allocate-on-output-ports" />
@@ -73,7 +71,6 @@
             <Limit name="blocks-per-second" min="1" max="2073600" />
             <Limit name="bitrate" range="1-100000000"/>
             <Limit name="concurrent-instances" max="32" />
-            <Feature name="adaptive-playback" />
         </MediaCodec>
         <MediaCodec name="OMX.Freescale.std.video_decoder.hevc.hw-based.secure" type="video/hevc" >
             <Quirk name="requires-allocate-on-output-ports" />
@@ -84,17 +81,15 @@
             <Limit name="bitrate" range="1-100000000"/>
             <Limit name="concurrent-instances" max="32" />
             <Feature name="secure-playback" required="true" />
-            <Feature name="adaptive-playback" />
         </MediaCodec>
         <MediaCodec name="OMX.Freescale.std.video_decoder.vp9.hw-based" type="video/x-vnd.on2.vp9" >
             <Quirk name="requires-allocate-on-output-ports" />
-            <Limit name="size" min="72x72" max="1936x1104" />
+            <Limit name="size" min="72x72" max="1920x1088" />
             <Limit name="alignment" value="2x2" />
             <Limit name="block-size" value="16x16" />
             <Limit name="blocks-per-second" min="1" max="2073600" />
             <Limit name="bitrate" range="1-100000000"/>
             <Limit name="concurrent-instances" max="32" />
-            <Feature name="adaptive-playback" />
         </MediaCodec>
         <MediaCodec name="OMX.Freescale.std.video_decoder.vp8.hw-based" type="video/x-vnd.on2.vp8" >
             <Quirk name="requires-allocate-on-output-ports" />
@@ -104,7 +99,6 @@
             <Limit name="blocks-per-second" min="1" max="244800" />
             <Limit name="bitrate" range="1-20000000"/>
             <Limit name="concurrent-instances" max="32" />
-            <Feature name="adaptive-playback" />
         </MediaCodec>
         <MediaCodec name="OMX.Freescale.std.video_decoder.sorenson.sw-based" type="video/x-flash-video" >
             <Quirk name="requires-allocate-on-output-ports" />

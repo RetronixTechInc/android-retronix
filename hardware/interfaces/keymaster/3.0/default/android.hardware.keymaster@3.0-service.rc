@@ -1,3 +1,0 @@
-service vendor.keymaster-3-0-software /vendor/bin/hw/android.hardware.keymaster@3.0-service
-    user system
-    group system drmrpc

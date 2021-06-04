@@ -1,6 +1,6 @@
 /**
  *  Copyright (c) 2010-2016, Freescale Semiconductor Inc.,
- *  Copyright 2017-2019 NXP
+ *  Copyright 2017-2018 NXP
  *  All Rights Reserved.
  *
  *  The following programs are the sole property of Freescale Semiconductor Inc.,
@@ -4414,8 +4414,7 @@ OMX_PTR VpuDecoder::AllocateInputBuffer(OMX_U32 nSize)
     }
     VPU_COMP_LOG("AllocateInputBuffer fd=%d,phyaddr=%p",vpuMem.nCpuAddr,vpuMem.nPhyAddr);
     //register memory info into resource manager, use nCpuAddr as keywords for search
-    if(OMX_ErrorNone != AddHwBuffer((OMX_PTR)vpuMem.nPhyAddr, (OMX_PTR)vpuMem.nCpuAddr) ||
-            OMX_ErrorNone != ModifyCpuAddr((OMX_PTR)vpuMem.nCpuAddr, (OMX_PTR)vpuMem.nVirtAddr, (OMX_U32)vpuMem.nSize))
+    if(OMX_ErrorNone!=AddHwBuffer((OMX_PTR)vpuMem.nPhyAddr, (OMX_PTR)vpuMem.nCpuAddr))
     {
         VPU_DecFreeMem_Wrapper(&vpuMem,&sMemOperator);
         VPU_COMP_ERR_LOG("%s:add hw buffer failure \r\n",__FUNCTION__);
@@ -4442,12 +4441,7 @@ OMX_ERRORTYPE VpuDecoder::FreeInputBuffer(OMX_PTR pBuffer)
     vpuMem.nCpuAddr = (unsigned long)pBuffer;
     vpuMem.nVirtAddr = NULL;
     vpuMem.nPhyAddr = NULL;
-
-    if (OMX_ErrorNone != GetCpuAddr(pBuffer, (OMX_PTR*)&vpuMem.nVirtAddr, (OMX_U32*)&vpuMem.nSize)) {
-        VPU_COMP_LOG("%s: GetCpuAddr failure \r\n",__FUNCTION__);
-    }
-
-    VPU_COMP_LOG("FreeInputBuffer virt=%d fd=%d size %d\n",vpuMem.nVirtAddr,vpuMem.nCpuAddr,vpuMem.nSize);
+    VPU_COMP_LOG("FreeInputBuffer virt=%d fd=%d",pBuffer,vpuMem.nCpuAddr);
 
     //release physical memory through vpu
     ret=VPU_DecFreeMem_Wrapper(&vpuMem,&sMemOperator);

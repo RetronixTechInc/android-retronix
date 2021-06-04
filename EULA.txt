@@ -1,4 +1,4 @@
-LA_OPT_NXP_Software_License v8 June 2019
+LA_OPT_NXP_Software_License v7 April 2019
 
 IMPORTANT.  Read the following NXP Software License Agreement ("Agreement")
 completely. By selecting the "I Accept" button at the end of this page, or by
@@ -428,9 +428,6 @@ Agreement with respect to the Amazon software.
 
 Amphion Semiconductor Ltd.: Distribution of Amphion software must be a part of,
 or embedded within, Authorized Systems that include an Amphion Video Decoder.
-
-Aquantia Corp.: You may use Aquantia's API binaries solely to flash the API
-software to an NXP Product which mates with an Aquantia device.
 
 Atheros: Use of Atheros software is limited to evaluation and demonstration
 only.  Permitted distributions must be similarly limited. Further rights must

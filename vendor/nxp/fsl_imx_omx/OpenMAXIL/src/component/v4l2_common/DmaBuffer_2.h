@@ -28,7 +28,6 @@ typedef struct {
     DmaBufferPlane plane[MAX_PLANE_CNT];
     OMX_U32 flag;
     OMX_BOOL bReadyForProcess;
-    OMX_TICKS ts;
 }DmaBufferHdr;
 
 #endif

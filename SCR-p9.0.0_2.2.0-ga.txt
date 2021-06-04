@@ -1,0 +1,536 @@
+NXP Software Content Register
+
+Release - Android p9.0.0_2.2.0-ga
+2019-Apr
+
+License File: EULA.txt  NXP Proprietary LA_OPT_NXP_Software_License v7 April 2019 - Production Use - Section 2.3 applies
+Repository tag for this release is:  p9.0.0_2.2.0-ga
+
+repo init -u https://source.codeaurora.org/external/imx/imx-manifest -b imx-android-pie -m imx-p9.0.0_2.2.0-ga.xml
+
+--------------------------------------------
+NXP Proprietary Packages
+--------------------------------------------
+Package:                   vendor/nxp/fsl-codec
+Outgoing License:          NXP Proprietary
+Release Location:          Android package on NXP.com
+Type of content:           Binaries and header files
+Description and comments:  Codecs and parsers for AAC, AMR, APE, AVI, FLAC, FLV, H263, MKV, MP3, MP4, MPG2,
+                           NB_AMR, OGG, PEQ, WAV, WB_AMR, G.711, G.723, G.726, G.729ab
+Origin:                    NXP (proprietary)
+
+--------------------------------------------
+Package:                   vendor/nxp/fsl-proprietary
+Outgoing License:          NXP Proprietary
+Release Location:          Android package on NXP.com
+Type of content:           Binaries and header files
+Origin:                    NXP (proprietary)
+                           Vivante Corp.
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+                           Khronos Group (MIT) - http://www.khronos.org/opencl/
+
+--------------------------------------------
+Package:                   vendor/nxp/fsl_imx_omx
+Outgoing License:          NXP Proprietary
+Release Location:          Android package on NXP.com
+Type of content:           Source code
+Origin:                    NXP (proprietary)
+                           The Khronos Group Inc. (MIT) - https://www.khronos.org/
+                           PacketVideo (Apache-2.0) - http://www.packetvideo.com/
+
+--------------------------------------------
+Package:                   vendor/nxp/mcu-sdk-auto
+Outgoing License:          NXP Proprietary
+Release Location:          Android package on NXP.com
+Type of content:           Source code
+Description and comments:  MCU sdk for Android automative
+Origin:                    NXP (proprietary)
+                           Amazon (MIT) - https://aws.amazon.com/freertos/
+                           ARM CMSIS (Apache-2.0) - http://silver.arm.com
+                           Mentor Graphics Corporation (BSD-3-Clause) - https://github.com/OpenAMP/open-amp
+
+--------------------------------------------
+Package:                   vendor/nxp/linux-firmware-imx
+Outgoing License:          NXP Proprietary
+Release Location:          Android package on NXP.com
+Type of content:           Binaries
+Description and comments:  BSP firmware - DDR, HDMI
+Origin:                    NXP (proprietary)
+                           DDR:   Synopsys (proprietary)
+                           HDMI:  Cadence Design Systems, Inc. (proprietary)
+
+--------------------------------------------
+Package:                   vendor/nxp/imx-g2d-pxp
+Outgoing License:          NXP Proprietary
+Release Location:          Android package on NXP.com
+Type of content:           Source code
+Description and comments:  g2d library based on pxp
+Origin:                    NXP (proprietary)
+
+--------------------------------------------
+Package:                   vendor/nxp/imx-vpu-cnm
+Outgoing License:          NXP Proprietary
+Release Location:          Android package on NXP.com
+Type of content:           Source code
+Description and comments:  VPU library
+Origin:                    NXP (proprietary)
+                           Chips & Media, Inc. (proprietary)
+
+--------------------------------------------
+Package:                   vendor/nxp/imx-vpu-hantro
+Outgoing License:          NXP Proprietary
+Release Location:          Android package on NXP.com
+Type of content:           Source code
+Description and comments:  VPU library
+Origin:                    NXP (proprietary)
+                           Verisilicon (BSD-3-clause)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+                           The Khronos Group - OpenMAX (MIT) - https://www.khronos.org/openmax/
+                           webm (BSD-3-clause) - https://bugs.chromium.org/p/webm/issues/list
+                           md5 (BSD-3-clause) - https://bugs.chromium.org/p/webm/issues/list
+
+--------------------------------------------
+Package:                   vendor/nxp/qca-wifi-bt
+Outgoing License:          NXP Proprietary AND QUALCOMM_ATHEROS_LICENSE_AGREEMENT.pdf
+Release Location:          Android package on NXP.com
+Type of content:           Binaries
+Origin:                    Qualcomm Technologies, Inc (proprietary)
+
+--------------------------------------------
+Repository:                vendor/nxp/imx-firmware
+Outgoing License:          LA_OPT_NXP_Software_License v5 January 2019 - Production Use - Section 2.3 applies
+License File:              COPYING
+Type of content:           Binary
+Description and comments:  BSP firmware - Broadcom Bluetooh and WIFI
+Release Location:          https://github.com/NXP/imx-firmware
+Origin:                    Broadcom Corporation (proprietary)
+                           Cypress Semiconductor Corporation (proprietary)
+
+--------------------------------------------
+NXP provided open source repos
+--------------------------------------------
+Repository:                device/fsl
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/android-imx/device/fsl
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+                           Broadcom Corporation (Apache-2.0)
+
+--------------------------------------------
+Repository:                vendor/nxp-opensource/fsl_imx_demo
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/android-imx/platform/packages/apps/fsl_imx_demo/
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                vendor/nxp-opensource/imx
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/android-imx/platform/hardware/imx/
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                vendor/nxp-opensource/imx-lib
+Outgoing License:          LGPL-2.1+
+License File:              COPYING-LGPL-2.1
+Release Location:          https://source.codeaurora.org/external/imx/imx-lib
+Description and comments:  BSP libraries
+Origin:                    NXP (LGPL-2.1+))
+
+--------------------------------------------
+Repository:                vendor/nxp-opensource/imx-mkimage
+Outgoing License:          GPL-2.0
+License File:              COPYING
+Release Location:          https://source.codeaurora.org/external/imx/imx-mkimage
+Description and comments:  Make Image BootLoader
+Origin:                    NXP (GPL-2.0)
+                           Das U-Boot - Universal Bootloader (GPL-2.0+) - http://www.denx.de/wiki/U-Boot/WebHome
+
+--------------------------------------------
+Repository:                vendor/nxp-opensource/libdrm-imx
+Outgoing License:          MIT
+License File:              COPYING
+Release Location:          https://source.codeaurora.org/external/imx/libdrm-imx
+Description and comments:  i.MX DRM Direct Rendering Manager
+Origin:                    NXP (MIT)
+
+--------------------------------------------
+Repository:                vendor/nxp-opensource/kernel_imx
+Outgoing License:          GPL-2.0
+License File:              COPYING
+Description and comments:  The Linux kernel with i.MX-specific drivers
+Release Location:          https://source.codeaurora.org/external/imx/linux-imx
+Origin:                    NXP (GPL-2.0)
+                           kernel.org (GPL-2.0+) - https://www.kernel.org/
+--------------------------------------------
+Repository:                vendor/nxp-opensource/uboot-imx
+Outgoing License:          GPL-2.0+
+License File:              README
+Description and comments:  Bootloader with i.MX-specific capabilities
+Release Location:          https://source.codeaurora.org/external/imx/uboot-imx
+Origin:                    NXP (GPL-2.0)
+                           Das U-Boot - Universal Bootloader (GPL-2.0+) - http://www.denx.de/wiki/U-Boot/WebHome
+                           Android Open Source Project (BSD-2-Clause) - https://source.android.com/
+                           zlib (zlib license) - http://www.zlib.net/
+
+--------------------------------------------
+Repository:                vendor/nxp-opensource/arm-trusted-firmware
+Outgoing License:          BSD-3-clause
+License File:              license.rst
+Release Location:          https://source.codeaurora.org/external/imx/imx-atf
+Origin:                    NXP (BSD-3-clause)
+                           arm-trusted-firmware v1.4 - ARM Limited (BSD-3-clause) - http://github.com/ARM-software/arm-trusted-firmware/
+
+--------------------------------------------
+Modified AOSP Repos
+--------------------------------------------
+Repository:                platform/bootable/recovery
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/bootable/recovery
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/art
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/art
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/build
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/build
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/build/soong
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/build/soong
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/development
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/development
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/external/avb
+Outgoing License:          MIT
+License File:              LICENSE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/external/avb
+Origin:                    NXP (MIT)
+                           The Android Open Source Project (MIT) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/external/skia
+Outgoing License:          BSD-3-clause
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/external/skia
+Origin:                    NXP (BSD-3-clause)
+                           The Android Open Source Project (MIT) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/external/tinyalsa
+Outgoing License:          BSD-3-clause
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/external/tinyalsa
+Origin:                    NXP (BSD-3-clause)
+                           The Android Open Source Project (BSD-3-clause) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/external/nanopb-c
+Outgoing License:          Public domain
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/external/nanopb-c
+Origin:                    NXP (Public domain)
+                           The Android Open Source Project (Public domain) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/external/wpa_supplicant_8
+Outgoing License:          BSD/GPL-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/external/wpa_supplicant_8
+Origin:                    NXP (BSD/GPL-2.0)
+                           The Android Open Source Project (BSD/GPL-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/frameworks/av
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/frameworks/av
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/frameworks/base
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/frameworks/base
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/frameworks/native
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/frameworks/native
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/frameworks/opt/net/ethernet
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/frameworks/opt/net/ethernet
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/frameworks/opt/net/wifi
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/frameworks/opt/net/wifi
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/hardware/broadcom/libbt
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/hardware/broadcom/libbt
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/hardware/interfaces
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/hardware/interfaces
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/hardware/qcom/bt
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/hardware/qcom/bt
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/hardware/qcom/wlan
+Outgoing License:          Apache-2.0, BSD-3-clause
+License File:              ./NOTICE
+                           ./qcwcn/wpa_supplicant_8_lib/NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/hardware/qcom/wlan
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+                           ./qcwcn/wpa_supplicant_8_lib/ (BSD-3-clause)
+
+--------------------------------------------
+Repository:                platform/packages/apps/Camera2
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/Camera2
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/apps/Car/Hvac
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/Car/Hvac
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/apps/Gallery
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/Gallery
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/apps/Gallery2
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/Gallery2
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/apps/Launcher3
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/Launcher3
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/apps/LegacyCamera
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/LegacyCamera
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/apps/Settings
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/Settings
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/apps/SoundRecorder
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/SoundRecorder
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/apps/UnifiedEmail
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/apps/UnifiedEmail
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/packages/services/Car
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/packages/services/Car
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/system/core
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/system/core
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/system/extras
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/system/extras
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/system/libhidl
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/system/libhidl
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/system/libhwbinder
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/system/libhwbinder
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/system/media
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/system/media
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/system/tools/bpt
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/system/tools/bpt
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/system/vold
+Outgoing License:          Apache-2.0
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/system/vold
+Origin:                    NXP (Apache-2.0)
+                           The Android Open Source Project (Apache-2.0) - https://source.android.com/
+
+--------------------------------------------
+Repository:                platform/system/sepolicy
+Outgoing License:          Public domain
+License File:              NOTICE
+Release Location:          https://source.codeaurora.org/external/imx/aosp/platform/system/sepolicy
+Origin:                    NXP (Public domain)
+                           The Android Open Source Project (Public domain) - https://source.android.com/
+
+--------------------------------------------
+Tools
+--------------------------------------------
+Package:                  fsl-sdcard-partition.sh
+Outgoing License:         NXP Proprietary
+Description and Comments: Script used on Linux PC to flash i.MX Android images via dd.
+Origin:                   NXP (proprietary)
+
+--------------------------------------------
+Package:                  fastboot_imx_flashall.sh
+Outgoing License:         NXP Proprietary
+Description and Comments: Script used on Linux PC to flash i.MX Android images via fastboot.
+Origin:                   NXP (proprietary)
+
+--------------------------------------------
+Package:                  fastboot_imx_flashall.bat
+Outgoing License:         NXP Proprietary
+Description and Comments: Script used on Windows PC to flash i.MX Android images via fastboot.
+Origin:                   NXP (proprietary)
+
+--------------------------------------------
+Package:                  uuu_imx_android_flash.sh
+Outgoing License:         NXP Proprietary
+Description and Comments: Script used on Linux PC to flash i.MX Android images via uuu and fastboot.
+Origin:                   NXP (proprietary)
+
+--------------------------------------------
+Package:                  uuu_imx_android_flash.bat
+Outgoing License:         NXP Proprietary
+Description and Comments: Script used on Windows PC to flash i.MX Android images via uuu and fastboot.
+Origin:                   NXP (proprietary)
+
+--------------------------------------------
+Package:                   uuu_1.2.135 (mfgtools)
+Binaries:                  uuu [Linux]
+                           uuu.exe [Windows]
+Outgoing License:          BSD-3-clause
+License File:              LICENSE
+Package Category:          Tools
+Type of content:           Source
+Description and comments:  NXP I.MX Chip image deploy tools. Use uuu.
+Release Location:          https://github.com/nxpmicro/mfgtools -b uuu_1.2.135
+Origin:                    NXP (BSD-3-clause)
+                           zlib (zlib) - https://github.com/madler/zlib
+                           libusb (LGPL-2.1) [libusb-1.0.dll] - https://github.com/libusb/libusb
+                           bzip2 (BSD-4-clause) - https://github.com/enthought/bzip2-1.0.6/tree/288acf97a15d558f96c24c89f578b724d6e06b0c
+                           Android Open Source Project (Apache-2.0) [sparse_format.h] - https://developer.android.com/
+
+--------------------------------------------

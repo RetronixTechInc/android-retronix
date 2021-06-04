@@ -34,16 +34,12 @@ LOCAL_SRC_FILES := lib/lib_nb_amr_dec_v2_arm9_elinux.so
 endif
 ifeq ($(TARGET_ARCH),arm64)
 LOCAL_POST_INSTALL_CMD := cd $(FSL_CODEC_OUT_PATH); \
-                          if [ -d lib ]; then \
-                              ln -sf ./lib_nb_amr_dec_v2_arm9_elinux.so lib/lib_nb_amr_dec.so; \
-                              ln -sf ./lib_aac_dec_v2_arm12_elinux.so lib/lib_aac_dec.so; \
-                              ln -sf ./lib_mp3_dec_v2_arm12_elinux.so lib/lib_mp3_dec.so; \
-                          fi; \
-                          if [ -d lib64 ]; then \
-                              ln -sf ./lib_nb_amr_dec_v2_arm9_elinux.so lib64/lib_nb_amr_dec.so; \
-                              ln -sf ./lib_aac_dec_v2_arm12_elinux.so lib64/lib_aac_dec.so; \
-                              ln -sf ./lib_mp3_dec_v2_arm12_elinux.so lib64/lib_mp3_dec.so; \
-                          fi;
+                          ln -sf ./lib_nb_amr_dec_v2_arm9_elinux.so lib/lib_nb_amr_dec.so; \
+                          ln -sf ./lib_nb_amr_dec_v2_arm9_elinux.so lib64/lib_nb_amr_dec.so; \
+                          ln -sf ./lib_aac_dec_v2_arm12_elinux.so lib/lib_aac_dec.so; \
+                          ln -sf ./lib_aac_dec_v2_arm12_elinux.so lib64/lib_aac_dec.so; \
+                          ln -sf ./lib_mp3_dec_v2_arm12_elinux.so lib/lib_mp3_dec.so; \
+                          ln -sf ./lib_mp3_dec_v2_arm12_elinux.so lib64/lib_mp3_dec.so;
 else
 LOCAL_POST_INSTALL_CMD := cd $(FSL_CODEC_OUT_PATH); \
                           ln -sf ./lib_nb_amr_dec_v2_arm9_elinux.so lib/lib_nb_amr_dec.so; \
@@ -67,12 +63,8 @@ LOCAL_SRC_FILES_64 := lib64/lib_wb_amr_dec_arm_android.so
 LOCAL_MODULE_PATH_32 := $(FSL_CODEC_OUT_PATH)/lib/
 LOCAL_SRC_FILES_32 := lib/lib_wb_amr_dec_arm9_elinux.so
 LOCAL_POST_INSTALL_CMD := cd $(FSL_CODEC_OUT_PATH); \
-                          if [ -d lib ]; then \
-                              ln -sf ./lib_wb_amr_dec_arm9_elinux.so lib/lib_wb_amr_dec.so; \
-                          fi; \
-                          if [ -d lib64 ]; then \
-                              ln -sf ./lib_wb_amr_dec_arm9_elinux.so lib64/lib_wb_amr_dec.so; \
-                          fi;
+                          ln -sf ./lib_wb_amr_dec_arm9_elinux.so lib/lib_wb_amr_dec.so; \
+                          ln -sf ./lib_wb_amr_dec_arm9_elinux.so lib64/lib_wb_amr_dec.so;
 else
 LOCAL_POST_INSTALL_CMD := cd $(FSL_CODEC_OUT_PATH); \
                           ln -sf ./lib_wb_amr_dec_arm9_elinux.so lib/lib_wb_amr_dec.so;
@@ -96,12 +88,8 @@ LOCAL_SRC_FILES_64 := lib64/lib_flac_dec_arm_android.so
 LOCAL_MODULE_PATH_32 := $(FSL_CODEC_OUT_PATH)/lib/
 LOCAL_SRC_FILES_32 := lib/lib_flac_dec_v2_arm11_elinux.so
 LOCAL_POST_INSTALL_CMD := cd $(FSL_CODEC_OUT_PATH); \
-                          if [ -d lib ]; then \
-                              ln -sf ./lib_flac_dec_v2_arm11_elinux.so lib/lib_flac_dec.so; \
-                          fi; \
-                          if [ -d lib64 ]; then \
-                              ln -sf ./lib_flac_dec_v2_arm11_elinux.so lib64/lib_flac_dec.so; \
-                          fi;
+                          ln -sf ./lib_flac_dec_v2_arm11_elinux.so lib/lib_flac_dec.so; \
+                          ln -sf ./lib_flac_dec_v2_arm11_elinux.so lib64/lib_flac_dec.so;
 else
 LOCAL_POST_INSTALL_CMD := cd $(FSL_CODEC_OUT_PATH); \
                           ln -sf ./lib_flac_dec_v2_arm11_elinux.so lib/lib_flac_dec.so;

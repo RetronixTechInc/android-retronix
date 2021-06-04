@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018-2019 NXP
+ *  Copyright 2018 NXP
  *
  *  The following programs are the sole property of NXP,
  *  and contain its proprietary and confidential information.
@@ -134,7 +134,7 @@ static int AlignWidth(int width, int align)
   else if (width - align < MIN_WIDTH)
     return MIN_WIDTH;
   else
-    return ((width + align - 1) / align * align);
+    return ((width) / align * align);
 }
 
 
@@ -145,7 +145,7 @@ static int AlignHeight(int height, int align)
   else if (height - align < MIN_HEIGHT)
     return MIN_HEIGHT;
   else
-    return (height + align - 1) / align * align;
+    return (height) / align * align;
 }
 
 int VpuEncLogLevelParse(int * pLogLevel)

@@ -4,7 +4,7 @@
  *	and contain its proprietary and confidential information.
  *	Copyright (c) 2016, Freescale Semiconductor Inc.,
  *	All Rights Reserved
- *	Copyright 2017-2019 NXP
+ *	Copyright 2017-2018 NXP
  *
  *	History :
  *	Date	(y.m.d)		Author			Version			Description
@@ -500,8 +500,6 @@ VpuDecRetCode VPU_DecOpen(VpuDecHandle *pOutHandle, VpuDecOpenParam * pInParam,V
     case VPU_V_VP9:
       if(pObj->config.g2_conf.bEnableTiled)
         pObj->config_tile = true;
-      /* NVJM850-66: support vp9 resolution change to pass cts testVP9_adaptiveSmallDrc */
-      pObj->config.g2_conf.bEnableCtsTest = 1;
       pObj->codec = HantroHwDecOmx_decoder_create_vp9(pObj->pdwl,
           &pObj->config.g2_conf);
       VPU_LOG("open VP9 \r\n");

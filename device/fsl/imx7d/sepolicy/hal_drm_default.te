@@ -1,2 +1,0 @@
-# Allow DRM HAL to use vendor-binder service
-vndbinder_use(hal_drm_default);

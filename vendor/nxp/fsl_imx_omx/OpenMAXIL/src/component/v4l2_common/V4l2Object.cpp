@@ -11,7 +11,6 @@
 #include <poll.h>
 
 #if 0
-
 #undef LOG_DEBUG
 #define LOG_DEBUG printf
 #undef LOG_LOG
@@ -21,9 +20,6 @@
 #define FRMAE_WIDTH_LIMITATION 4096
 #define FRMAE_HEIGHT_LIMITATION 3072
 #define BUFFER_NUM_LIMITATION 32
-
-#define V4L2_NXP_BUF_FLAG_CODECCONFIG      0x00200000
-#define V4L2_NXP_BUF_FLAG_TIMESTAMP_INVALID    0x00400000
 
 OMX_ERRORTYPE V4l2Object::Create(OMX_S32 dev,enum v4l2_buf_type type,OMX_U32 plane_num)
 {
@@ -80,19 +76,10 @@ OMX_ERRORTYPE V4l2Object::Create(OMX_S32 dev,enum v4l2_buf_type type,OMX_U32 pla
         return ret;
     }
     pBufferMap = NULL;
+    LOG_LOG("[%p] V4l2Object::V4l2Object,type=%d,plane_num=%d,FD=%d \n",this,type,plane_num,dev);
     bChange = OMX_FALSE;
     bMetadataBuffer = OMX_FALSE;
-
     return ret;
-}
-OMX_ERRORTYPE V4l2Object::SetName(const char * name)
-{
-    if(name != NULL)
-        fsl_osal_strcpy((fsl_osal_char*)o_name, name);
-
-    LOG_LOG("[%s] V4l2Object::SetName,type=%d,plane_num=%d,FD=%d \n",o_name,eBufferType,nPlanesNum,mFd);
-
-    return OMX_ErrorNone;
 }
 OMX_ERRORTYPE V4l2Object::ReleaseResource()
 {
@@ -126,7 +113,7 @@ OMX_ERRORTYPE V4l2Object::ReleaseResource()
     if(sMutex != NULL)
         fsl_osal_mutex_destroy(sMutex);
 
-    LOG_LOG("[%s] ReleaseResource\n",o_name);
+    LOG_LOG("[%p] ReleaseResource\n",this);
 
     return OMX_ErrorNone;
 }
@@ -180,7 +167,7 @@ OMX_ERRORTYPE V4l2Object::SetFormat(V4l2ObjectFormat * pFormat)
         return OMX_ErrorBadParameter;
 
     if(!IsFormatSupported(pFormat->format)){
-        LOG_ERROR("[%s]V4l2Object::SetFormat format not supported,format=%x \n",o_name,pFormat->format);
+        LOG_ERROR("[%p]V4l2Object::SetFormat format not supported,format=%x \n",this,pFormat->format);
         return OMX_ErrorFormatNotDetected;
     }
     fsl_osal_memset(&format, 0, sizeof(struct v4l2_format));
@@ -250,7 +237,7 @@ OMX_ERRORTYPE V4l2Object::SetFormat(V4l2ObjectFormat * pFormat)
 #endif
     result = ioctl (mFd, VIDIOC_S_FMT, &format);
 
-    LOG_DEBUG("[%s] SetFormat ret=%d width=%d,height=%d,stride=%d,buffersize=%d,format=%x\n",o_name,result,pFormat->width,pFormat->height,pFormat->stride,pFormat->bufferSize[0],pFormat->format);
+    LOG_DEBUG("[%p] SetFormat ret=%d width=%d,height=%d,stride=%d,buffersize=%d,format=%x\n",this,result,pFormat->width,pFormat->height,pFormat->stride,pFormat->bufferSize[0],pFormat->format);
 
     if(result != 0)
         return OMX_ErrorUnsupportedSetting;
@@ -311,9 +298,9 @@ OMX_ERRORTYPE V4l2Object::GetFormat(V4l2ObjectFormat * pFormat)
         pFormat->bufferSize[0] = format.fmt.pix.sizeimage;
         pFormat->plane_num = 1;
     }
-    LOG_DEBUG("[%s] GetFormat SUCCESS width=%d,height=%d,size[0]=%d,size[1]=%d,format=%x,stride=%d\n",o_name
+    LOG_DEBUG("[%p] GetFormat SUCCESS width=%d,height=%d,size[0]=%d,size[1]=%d,format=%x,stride=%d\n",this
         ,pFormat->width,pFormat->height,pFormat->bufferSize[0],pFormat->bufferSize[1],pFormat->format,pFormat->stride);
-    LOG_LOG("[%s] GetFormat field=%d\n",o_name,format.fmt.pix_mp.field);
+    LOG_LOG("[%p] GetFormat field=%d\n",this,format.fmt.pix_mp.field);
 
     if(pFormat->width > FRMAE_WIDTH_LIMITATION || pFormat->height > FRMAE_HEIGHT_LIMITATION){
         LOG_ERROR("StreamCorrupt width %d, height %d, stride %d", pFormat->width, pFormat->height, pFormat->stride);
@@ -345,7 +332,7 @@ OMX_ERRORTYPE V4l2Object::SetCrop(OMX_CONFIG_RECTTYPE *sCrop)
     if(result < 0)
         return OMX_ErrorUnsupportedSetting;
 
-    LOG_DEBUG("[%s] SetCrop SUCCESS width=%d,height=%d",o_name,sCrop->nWidth,sCrop->nHeight);
+    LOG_DEBUG("[%p] SetCrop SUCCESS width=%d,height=%d",this,sCrop->nWidth,sCrop->nHeight);
 
     return OMX_ErrorNone;
 }
@@ -388,7 +375,7 @@ OMX_ERRORTYPE V4l2Object::GetMinimumBufferCount(OMX_U32 *num)
 
     
     result = ioctl(mFd, VIDIOC_G_CTRL, &ctl);
-    LOG_LOG("[%s] GetMinimumBufferCount ret=%d num=%d\n",o_name,result,ctl.value);
+    LOG_LOG("[%p] GetMinimumBufferCount ret=%d num=%d\n",this,result,ctl.value);
 
     if(result < 0)
         return OMX_ErrorUndefined;
@@ -419,7 +406,7 @@ OMX_ERRORTYPE V4l2Object::SetBufferCount(OMX_U32 count, enum v4l2_memory type,OM
         buf_req.memory = eIOType;
         
         result = ioctl(mFd, VIDIOC_REQBUFS, &buf_req);
-        LOG_DEBUG("[%s] SetBufferCount VIDIOC_REQBUFS count=0,memory=%d,type=%d,ret=%d\n",o_name,eIOType,eBufferType,result);
+        LOG_DEBUG("[%p] SetBufferCount VIDIOC_REQBUFS count=0,memory=%d,type=%d,ret=%d\n",this,eIOType,eBufferType,result);
 
         //delete buffer map
         if(pBufferMap)
@@ -436,7 +423,7 @@ OMX_ERRORTYPE V4l2Object::SetBufferCount(OMX_U32 count, enum v4l2_memory type,OM
         buf_req.count = V4L2_OBJECT_MAX_BUFFER_COUNT;
 
     result = ioctl(mFd, VIDIOC_REQBUFS, &buf_req);
-    LOG_DEBUG("[%s] SetBufferCount VIDIOC_REQBUFS count=%d,memory=%d, type=%d,ret=%d\n",o_name,buf_req.count,type,eBufferType,result);
+    LOG_DEBUG("[%p] SetBufferCount VIDIOC_REQBUFS count=%d,memory=%d, type=%d,ret=%d\n",this,buf_req.count,type,eBufferType,result);
 
     if(result < 0)
         return OMX_ErrorUndefined;
@@ -449,7 +436,7 @@ OMX_ERRORTYPE V4l2Object::SetBufferCount(OMX_U32 count, enum v4l2_memory type,OM
 
     nBufferNum = 0;
     bBufferRequired = OMX_TRUE;
-    LOG_DEBUG("[%s] SetBufferCount count=%d,type=%d,planes_num=%d\n",o_name,count,type,planes_num);
+    LOG_DEBUG("[%p] SetBufferCount count=%d,type=%d,planes_num=%d\n",this,count,type,planes_num);
 
     fsl_osal_memset(pIndex,0,V4L2_OBJECT_MAX_BUFFER_COUNT * sizeof(OMX_U8*));
 
@@ -484,7 +471,7 @@ OMX_ERRORTYPE V4l2Object::BufferMap_Update(OMX_BUFFERHEADERTYPE *inputBuffer,OMX
     pBufferMap[i].v4l2Buffer.type = eBufferType;
     pBufferMap[i].v4l2Buffer.field = V4L2_FIELD_NONE;
 
-    LOG_LOG("[%s]BufferMap_Update omxBuf=%p,vaddr=%p,index=%d",o_name,inputBuffer,pBuf,index);
+    LOG_LOG("[%p]BufferMap_Update omxBuf=%p,vaddr=%p,index=%d",this,inputBuffer,pBuf,index);
     if(eIOType == V4L2_MEMORY_USERPTR)
         ret = BufferMap_UpdateUserPtr(inputBuffer,pBuf,index);
     else if(eIOType == V4L2_MEMORY_DMABUF){
@@ -492,6 +479,48 @@ OMX_ERRORTYPE V4l2Object::BufferMap_Update(OMX_BUFFERHEADERTYPE *inputBuffer,OMX
     }
 
     return ret;
+}
+OMX_ERRORTYPE V4l2Object::BufferMap_UpdateDmaBuf(DmaBufferHdr *inputBuffer,OMX_U8* pBuf,OMX_U32 index)
+{
+    OMX_U32 i = 0;
+
+    if(inputBuffer == NULL || pBuf == NULL || index > V4L2_OBJECT_MAX_BUFFER_COUNT)
+        return OMX_ErrorBadParameter;
+
+    i = index;
+    pBufferMap[i].vaddr = pBuf;
+    pBufferMap[i].dmaBuffer = inputBuffer;
+ 
+    pBufferMap[i].v4l2Buffer.index = i;
+    pBufferMap[i].v4l2Buffer.type = eBufferType;
+    pBufferMap[i].v4l2Buffer.field = V4L2_FIELD_NONE; 
+    pBufferMap[i].v4l2Buffer.length = inputBuffer->num_of_plane;
+
+    if(inputBuffer->num_of_plane == 2){
+        pBufferMap[i].fd[0] = inputBuffer->plane[0].fd;
+        pBufferMap[i].fd[1] = inputBuffer->plane[1].fd;
+    }else
+        return OMX_ErrorBadParameter;
+
+    pBufferMap[i].v4l2Buffer.m.planes = &pBufferMap[i].v4l2Plane[0];
+    if(bMultiPlane){
+
+        for (OMX_U32 j = 0; j < inputBuffer->num_of_plane; j++){
+            pBufferMap[i].v4l2Plane[j].m.fd = inputBuffer->plane[j].fd;
+            pBufferMap[i].v4l2Plane[j].length = inputBuffer->plane[j].size;
+            pBufferMap[i].v4l2Plane[j].data_offset = 0;
+            LOG_LOG("[%p]BufferMap_Update index=%d, j=%d,len=%d,fd=%d",this,index, j,pBufferMap[i].v4l2Plane[j].length, pBufferMap[i].v4l2Plane[j].m.fd);
+
+        }
+
+    }else
+        return OMX_ErrorBadParameter;
+
+    pBufferMap[i].v4l2Buffer.memory = V4L2_MEMORY_DMABUF;
+
+    LOG_LOG("[%p]BufferMap_Update DmaBufferHdr=%p,vaddr=%p,index=%d",this,inputBuffer,pBuf,index);
+
+    return OMX_ErrorNone;
 }
 OMX_ERRORTYPE V4l2Object::BufferMap_UpdateUserPtr(OMX_BUFFERHEADERTYPE *inputBuffer,OMX_U8* pBuf,OMX_U32 index)
 {
@@ -527,7 +556,7 @@ OMX_ERRORTYPE V4l2Object::BufferMap_UpdateUserPtr(OMX_BUFFERHEADERTYPE *inputBuf
 
     pBufferMap[i].v4l2Buffer.memory = V4L2_MEMORY_USERPTR;
 
-    LOG_DEBUG("[%s]Update userptr buffer, index=%d,ptr=%p planes=%p\n",o_name,i,pBuf,pBufferMap[i].v4l2Buffer.m.planes);
+    LOG_DEBUG("[%p]Update userptr buffer, index=%d,ptr=%p planes=%p\n",this,i,pBuf,pBufferMap[i].v4l2Buffer.m.planes);
 
     return ret;
 }
@@ -571,105 +600,9 @@ OMX_ERRORTYPE V4l2Object::BufferMap_UpdateDmaBuf(OMX_BUFFERHEADERTYPE *inputBuff
 
     pBufferMap[i].v4l2Buffer.memory = V4L2_MEMORY_DMABUF;
 
-    LOG_DEBUG("[%s]Update dma buffer, index=%d,fd=%d\n",o_name,i,pBuf);
+    LOG_DEBUG("[%p]Update dma buffer, index=%d,fd=%d\n",this,i,pBuf);
     return ret;
 }
-OMX_ERRORTYPE V4l2Object::BufferMap_Update(DmaBufferHdr *inputBuffer,OMX_U8* pBuf,OMX_U32 index)
-{
-    OMX_ERRORTYPE ret = OMX_ErrorNone;
-    OMX_U32 i = 0;
-
-    if(inputBuffer == NULL || pBuf == NULL || index > V4L2_OBJECT_MAX_BUFFER_COUNT)
-        return OMX_ErrorBadParameter;
-
-    i = index;
-    pBufferMap[i].vaddr = pBuf;
-    pBufferMap[i].dmaBuffer = inputBuffer;
-
-    pBufferMap[i].v4l2Buffer.index = i;
-    pBufferMap[i].v4l2Buffer.type = eBufferType;
-    pBufferMap[i].v4l2Buffer.field = V4L2_FIELD_NONE;
-
-    LOG_LOG("[%s]BufferMap_Update dmaBuffer=%p,vaddr=%p,index=%d",o_name,inputBuffer,pBuf,index);
-    if(eIOType == V4L2_MEMORY_USERPTR)
-        ret = BufferMap_UpdateUserPtr(inputBuffer,pBuf,index);
-    else if(eIOType == V4L2_MEMORY_DMABUF){
-        ret = BufferMap_UpdateDmaBuf(inputBuffer,pBuf,index);
-    }
-
-    return ret;
-}
-OMX_ERRORTYPE V4l2Object::BufferMap_UpdateUserPtr(DmaBufferHdr *inputBuffer,OMX_U8* pBuf,OMX_U32 index)
-{
-    OMX_U32 i = 0;
-
-    if(inputBuffer == NULL || pBuf == NULL || index > V4L2_OBJECT_MAX_BUFFER_COUNT)
-        return OMX_ErrorBadParameter;
-
-    i = index;
-    pBufferMap[i].vaddr = pBuf;
-    pBufferMap[i].dmaBuffer = inputBuffer;
- 
-    pBufferMap[i].v4l2Buffer.index = i;
-    pBufferMap[i].v4l2Buffer.type = eBufferType;
-    pBufferMap[i].v4l2Buffer.field = V4L2_FIELD_NONE; 
-    pBufferMap[i].v4l2Buffer.length = inputBuffer->num_of_plane;
-
-    pBufferMap[i].v4l2Buffer.m.planes = &pBufferMap[i].v4l2Plane[0];
-    if(bMultiPlane){
-
-        for (OMX_U32 j = 0; j < inputBuffer->num_of_plane; j++){
-            pBufferMap[i].v4l2Plane[j].m.userptr = (unsigned long)inputBuffer->plane[j].vaddr;
-            pBufferMap[i].v4l2Plane[j].length = inputBuffer->plane[j].size;
-            pBufferMap[i].v4l2Plane[j].data_offset = 0;
-            LOG_LOG("[%s]BufferMap_UpdateUserPtrBuf index=%d, j=%d,len=%d,ptr=%p",o_name,index, j,pBufferMap[i].v4l2Plane[j].length, pBufferMap[i].v4l2Plane[j].m.userptr);
-        }
-
-    }else
-        return OMX_ErrorBadParameter;
-
-    pBufferMap[i].v4l2Buffer.memory = V4L2_MEMORY_USERPTR;
-
-    LOG_LOG("[%s]BufferMap_Update DmaBufferHdr=%p,vaddr=%p,index=%d",o_name,inputBuffer,pBuf,index);
-
-    return OMX_ErrorNone;
-}
-OMX_ERRORTYPE V4l2Object::BufferMap_UpdateDmaBuf(DmaBufferHdr *inputBuffer,OMX_U8* pBuf,OMX_U32 index)
-{
-    OMX_U32 i = 0;
-
-    if(inputBuffer == NULL || pBuf == NULL || index > V4L2_OBJECT_MAX_BUFFER_COUNT)
-        return OMX_ErrorBadParameter;
-
-    i = index;
-    pBufferMap[i].vaddr = pBuf;
-    pBufferMap[i].dmaBuffer = inputBuffer;
- 
-    pBufferMap[i].v4l2Buffer.index = i;
-    pBufferMap[i].v4l2Buffer.type = eBufferType;
-    pBufferMap[i].v4l2Buffer.field = V4L2_FIELD_NONE;
-    pBufferMap[i].v4l2Buffer.length = inputBuffer->num_of_plane;
-
-    pBufferMap[i].v4l2Buffer.m.planes = &pBufferMap[i].v4l2Plane[0];
-    if(bMultiPlane){
-
-        for (OMX_U32 j = 0; j < inputBuffer->num_of_plane; j++){
-            pBufferMap[i].v4l2Plane[j].m.fd = inputBuffer->plane[j].fd;
-            pBufferMap[i].v4l2Plane[j].length = inputBuffer->plane[j].size;
-            pBufferMap[i].v4l2Plane[j].data_offset = 0;
-            LOG_LOG("[%s]BufferMap_Update index=%d, j=%d,len=%d,fd=%d",o_name,index, j,pBufferMap[i].v4l2Plane[j].length, pBufferMap[i].v4l2Plane[j].m.fd);
-        }
-
-    }else
-        return OMX_ErrorBadParameter;
-
-    pBufferMap[i].v4l2Buffer.memory = V4L2_MEMORY_DMABUF;
-
-    LOG_LOG("[%s]BufferMap_Update DmaBufferHdr=%p,vaddr=%p,index=%d",o_name,inputBuffer,pBuf,index);
-
-    return OMX_ErrorNone;
-}
-
 OMX_ERRORTYPE V4l2Object::BufferIndex_FindIndex(OMX_U8* pBuf,OMX_U32 *index)
 {
     OMX_U32 i = 0;
@@ -680,7 +613,7 @@ OMX_ERRORTYPE V4l2Object::BufferIndex_FindIndex(OMX_U8* pBuf,OMX_U32 *index)
 
     for(i = 0; i < V4L2_OBJECT_MAX_BUFFER_COUNT;i++){
         if(pIndex[i] != NULL && pIndex[i] == pBuf){
-            LOG_LOG("[%s]BufferIndex_FindIndex index=%d,%p",o_name,i,pIndex[i]);
+            LOG_LOG("[%p]BufferIndex_FindIndex index=%d,%p",this,i,pIndex[i]);
             bGot = OMX_TRUE;
             *index = i;
             break;
@@ -717,7 +650,7 @@ OMX_ERRORTYPE V4l2Object::BufferIndex_AddIndex(OMX_U8* pBuf,OMX_U32 index)
 {
     if(pIndex[index] == NULL && pBuf != NULL){
         pIndex[index] = pBuf;
-        LOG_LOG("[%s]BufferIndex_AddIndex [%d,%p]",o_name,index,pBuf);
+        LOG_LOG("[%p]BufferIndex_AddIndex [%d,%p]",this,index,pBuf);
         return OMX_ErrorNone;
     }else
         return OMX_ErrorUndefined;
@@ -725,7 +658,7 @@ OMX_ERRORTYPE V4l2Object::BufferIndex_AddIndex(OMX_U8* pBuf,OMX_U32 index)
 OMX_ERRORTYPE V4l2Object::BufferIndex_RemoveIndex(OMX_U32 index)
 {
     pIndex[index] = NULL;
-    LOG_LOG("[%s]BufferIndex_RemoveIndex [%d]",o_name,index);
+    LOG_LOG("[%p]BufferIndex_RemoveIndex [%d]",this,index);
     return OMX_ErrorNone;
 }
 OMX_ERRORTYPE V4l2Object::SetBuffer(OMX_BUFFERHEADERTYPE * inputBuffer,OMX_U32 flags)
@@ -737,10 +670,10 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(OMX_BUFFERHEADERTYPE * inputBuffer,OMX_U32 f
     OMX_ERRORTYPE ret;
 
     if(inputBuffer == NULL || inputBuffer->pBuffer == NULL){
-        LOG_ERROR("[%s]SetBuffer error,%p \n",o_name,inputBuffer);
+        LOG_ERROR("[%p]SetBuffer error,%p \n",this,inputBuffer);
         return OMX_ErrorBadParameter;
     }else
-        LOG_LOG("[%s]SetBuffer hdr=%p,buf=%p,len=%d,size=%d,ts=%lld", o_name,inputBuffer, inputBuffer->pBuffer,inputBuffer->nFilledLen,nBufferSize[0],inputBuffer->nTimeStamp);
+        LOG_LOG("[%p]SetBuffer hdr=%p,buf=%p,len=%d,size=%d,ts=%lld", this,inputBuffer, inputBuffer->pBuffer,inputBuffer->nFilledLen,nBufferSize[0],inputBuffer->nTimeStamp);
 
     fsl_osal_mutex_lock(sMutex);
 
@@ -750,7 +683,7 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(OMX_BUFFERHEADERTYPE * inputBuffer,OMX_U32 f
     if((flags & V4L2_OBJECT_FLAG_METADATA_BUFFER) && nBufLen > 0){
         pVaddr = (OMX_U8*)((OMX_U64 *)(inputBuffer->pBuffer))[0];
         nBufLen = nBufferSize[0] + nBufferSize[1] + nBufferSize[2];
-        LOG_LOG("[%s]SetBuffer metadataBuf %p,len=%d\n",o_name,pVaddr,nBufLen);
+        LOG_LOG("[%p]SetBuffer metadataBuf %p,len=%d\n",this,pVaddr,nBufLen);
     }
     if(flags & V4L2_OBJECT_FLAG_NATIVE_BUFFER){
         OMX_S32 fd = 0;
@@ -769,14 +702,14 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(OMX_BUFFERHEADERTYPE * inputBuffer,OMX_U32 f
         }
 
         if(ret != OMX_ErrorNone){
-            LOG_ERROR("[%s]Set Buffer err 1\n",o_name);
+            LOG_ERROR("[%p]Set Buffer err 1\n",this);
             fsl_osal_mutex_unlock(sMutex);
             return ret;
         }
 
         ret = BufferMap_Update(inputBuffer,pVaddr,index);
         if(ret != OMX_ErrorNone){
-            LOG_ERROR("[%s]Set Buffer err 2\n",o_name);
+            LOG_ERROR("[%p]Set Buffer err 2\n",this);
             fsl_osal_mutex_unlock(sMutex);
             return ret;
         }
@@ -791,14 +724,14 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(OMX_BUFFERHEADERTYPE * inputBuffer,OMX_U32 f
         }
 
         if(ret != OMX_ErrorNone){
-            LOG_ERROR("[%s]Set Buffer err 1\n",o_name);
+            LOG_ERROR("[%p]Set Buffer err 1\n",this);
             fsl_osal_mutex_unlock(sMutex);
             return ret;
         }
 
         ret = BufferMap_Update(inputBuffer,pVaddr,index);
         if(ret != OMX_ErrorNone){
-            LOG_ERROR("[%s]Set Buffer err 2\n",o_name);
+            LOG_ERROR("[%p]Set Buffer err 2\n",this);
             fsl_osal_mutex_unlock(sMutex);
             return ret;
         }
@@ -812,13 +745,6 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(OMX_BUFFERHEADERTYPE * inputBuffer,OMX_U32 f
         pBufferMap[index].v4l2Buffer.timestamp.tv_usec = inputBuffer->nTimeStamp -
             pBufferMap[index].v4l2Buffer.timestamp.tv_sec*1000000;
         pBufferMap[index].v4l2Buffer.flags = (V4L2_BUF_FLAG_TIMESTAMP_MASK | V4L2_BUF_FLAG_TIMESTAMP_COPY);
-    }else
-        pBufferMap[index].v4l2Buffer.flags = V4L2_NXP_BUF_FLAG_TIMESTAMP_INVALID;
-
-    if(inputBuffer->nFlags & OMX_BUFFERFLAG_CODECCONFIG){
-        pBufferMap[index].v4l2Buffer.flags |= V4L2_NXP_BUF_FLAG_CODECCONFIG;
-        //ignore codec data timestamp
-        pBufferMap[index].v4l2Buffer.flags |= V4L2_NXP_BUF_FLAG_TIMESTAMP_INVALID;
     }
 
     //update buffer length
@@ -855,17 +781,16 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(OMX_BUFFERHEADERTYPE * inputBuffer,OMX_U32 f
     if(inputBuffer->nFlags & OMX_BUFFERFLAG_EOS)
         pBufferMap[index].v4l2Buffer.flags |= V4L2_BUF_FLAG_LAST;
 
-    LOG_LOG("[%s]VIDIOC_QBUF len=%d,type=%d plane=%p,ptr=%p,size=%d\n",
-        o_name,nBufLen,pBufferMap[index].v4l2Buffer.type,pBufferMap[index].v4l2Buffer.m.planes,pBufferMap[index].v4l2Buffer.m.planes[0].m.mem_offset,pBufferMap[index].v4l2Buffer.m.planes[0].length);
+    LOG_LOG("VIDIOC_QBUF len=%d,type=%d plane=%p,ptr=%p,size=%d\n",nBufLen,pBufferMap[index].v4l2Buffer.type,pBufferMap[index].v4l2Buffer.m.planes,pBufferMap[index].v4l2Buffer.m.planes[0].m.mem_offset,pBufferMap[index].v4l2Buffer.m.planes[0].length);
     result = ioctl(mFd, VIDIOC_QBUF, &pBufferMap[index].v4l2Buffer);
     if(result < 0){
-        LOG_ERROR("[%s] VIDIOC_QBUF failed ret=%d,index=%d,pVaddr=%p\n",o_name,result,index,pBufferMap[index].vaddr);
+        LOG_ERROR("[%p] VIDIOC_QBUF failed ret=%d,index=%d,pVaddr=%p\n",this,result,index,pBufferMap[index].vaddr);
         fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorUndefined;
     }
-
+    LOG_LOG("VIDIOC_QBUF end\n");
     pQueue->Add(&index);
-    LOG_LOG("[%s]VIDIOC_QBUF success index=%d ts=%lld,size=%d\n",o_name,index,inputBuffer->nTimeStamp,nBufLen);
+    LOG_LOG("[%p]SetBuffer index=%d ts=%lld,size=%d\n",this,index,inputBuffer->nTimeStamp,nBufLen);
 
     fsl_osal_mutex_unlock(sMutex);
 
@@ -916,7 +841,7 @@ OMX_U32 V4l2Object::ProcessBuffer(OMX_U32 flags)
         return V4L2OBJECT_ERROR;
     }
 
-    LOG_LOG("[%s]call VIDIOC_DQBUF BEGIN,flags=%x\n",o_name,flags);
+    LOG_LOG("[%p]call VIDIOC_DQBUF BEGIN,flags=%x\n",this,flags);
     result = ioctl(mFd, VIDIOC_DQBUF, &stV4lBuf);
     if(result < 0){
         LOG_ERROR("[%p]dequeue buffer failed,ret=%d,q size=%d,out size=%d\n",this,result,pQueue->Size(),pOutQueue->Size());
@@ -924,7 +849,7 @@ OMX_U32 V4l2Object::ProcessBuffer(OMX_U32 flags)
         fsl_osal_mutex_unlock(sMutex);
         return V4L2OBJECT_ERROR;
     }
-    LOG_LOG("[%s]call VIDIOC_DQBUF END\n",o_name);
+    LOG_LOG("[%p]call VIDIOC_DQBUF END\n",this);
 
     outIndex = stV4lBuf.index;
 
@@ -934,21 +859,19 @@ OMX_U32 V4l2Object::ProcessBuffer(OMX_U32 flags)
         {
             outLen += stV4lBuf.m.planes[i].bytesused;
             pBufferMap[outIndex].v4l2Plane[i].bytesused = stV4lBuf.m.planes[i].bytesused;
-            LOG_LOG("[%s]VIDIOC_DQBUF i=%d,len=%d \n",o_name,i,stV4lBuf.m.planes[i].bytesused);
+            LOG_LOG("VIDIOC_DQBUF i=%d,len=%d \n",i,stV4lBuf.m.planes[i].bytesused);
         }
     }else{
         outLen = stV4lBuf.bytesused;
     }
     nCnt ++;
 
-    ts = (OMX_S64)stV4lBuf.timestamp.tv_sec *1000000;
-    ts += stV4lBuf.timestamp.tv_usec;
-
     if(pBufferMap[outIndex].omxBuffer != NULL){
         pBufferMap[outIndex].omxBuffer->nFlags = 0;
 
-        LOG_LOG("[%s]ProcessBuffer dq buf index=%d,len=%d,flags=%x,nCnt=%d,ptr=0x%x,len=%d,offset=%d\n",o_name,outIndex,outLen,stV4lBuf.flags,nCnt,stV4lBuf.m.planes[0].m.mem_offset,stV4lBuf.m.planes[0].length,stV4lBuf.m.planes[0].data_offset);
-
+        LOG_LOG("[%p]ProcessBuffer dq buf index=%d,len=%d,flags=%x,nCnt=%d,ptr=0x%x,len=%d,offset=%d\n",this,outIndex,outLen,stV4lBuf.flags,nCnt,stV4lBuf.m.planes[0].m.mem_offset,stV4lBuf.m.planes[0].length,stV4lBuf.m.planes[0].data_offset);
+        ts = (OMX_S64)stV4lBuf.timestamp.tv_sec *1000000;
+        ts += stV4lBuf.timestamp.tv_usec;
         pBufferMap[outIndex].omxBuffer->nTimeStamp = ts;
 
         if(!(flags & V4L2_OBJECT_FLAG_METADATA_BUFFER))
@@ -974,13 +897,12 @@ OMX_U32 V4l2Object::ProcessBuffer(OMX_U32 flags)
         if(stV4lBuf.flags & V4L2_BUF_FLAG_LAST)
            pBufferMap[outIndex].dmaBuffer->flag |= DMA_BUF_EOS;
 
-        pBufferMap[outIndex].dmaBuffer->ts = ts;
     }
 
     
     pOutQueue->Add(&outIndex);
     bProcessing = OMX_FALSE;
-    LOG_LOG("[%s] ProcessBuffer END ret=%d ts=%lld,size=%d\n",o_name,ret,ts,outLen);
+    LOG_LOG("[%p] ProcessBuffer END ret=%d ts=%lld,size=%d\n",this,ret,ts,outLen);
 
     fsl_osal_mutex_unlock(sMutex);
 
@@ -1052,7 +974,7 @@ OMX_ERRORTYPE V4l2Object::GetOutputBuffer(OMX_BUFFERHEADERTYPE ** bufHdlr)
     }
 #endif
     *bufHdlr = pBufferMap[index].omxBuffer;
-    LOG_LOG("[%s]GetOutputBuffer index=%d,bufHdlr=%p,buf=%p\n",o_name,index,pBufferMap[index].omxBuffer,pBufferMap[index].omxBuffer->pBuffer);
+    LOG_LOG("[%p]GetOutputBuffer index=%d,bufHdlr=%p,buf=%p\n",this,index,pBufferMap[index].omxBuffer,pBufferMap[index].omxBuffer->pBuffer);
 
     fsl_osal_mutex_unlock(sMutex);
     return OMX_ErrorNone;
@@ -1067,7 +989,7 @@ OMX_ERRORTYPE V4l2Object::GetBuffer(OMX_BUFFERHEADERTYPE ** bufHdlr)
 
     fsl_osal_mutex_lock(sMutex);
     if(pQueue->Size()==0){
-        LOG_ERROR("[%s]can not get output buffer\n",o_name);
+        LOG_ERROR("[%p]can not get output buffer\n",this);
         fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorNoMore;
     }
@@ -1075,7 +997,7 @@ OMX_ERRORTYPE V4l2Object::GetBuffer(OMX_BUFFERHEADERTYPE ** bufHdlr)
 
     pQueue->Get(&index);
 
-    LOG_LOG("[%s]GetBuffer index=%d\n",o_name,index);
+    LOG_LOG("[%p]GetBuffer index=%d\n",this,index);
 
     *bufHdlr = pBufferMap[index].omxBuffer;
     fsl_osal_mutex_unlock(sMutex);
@@ -1166,7 +1088,7 @@ OMX_PTR V4l2Object::AllocateBuffer(OMX_U32 nSize)
 
         ptr = (OMX_U8 *)pBufferMap[index].mmap_addr[0];
 
-        LOG_DEBUG("[%s] AllocateBuffer multi %p\n",o_name,ptr);
+        LOG_DEBUG("[%p] AllocateBuffer multi %p\n",this,ptr);
 
     }else{
 
@@ -1187,7 +1109,7 @@ OMX_PTR V4l2Object::AllocateBuffer(OMX_U32 nSize)
         if(MAP_FAILED == ptr)
             return NULL;
         fsl_osal_memcpy(&pBufferMap[index].v4l2Buffer,&stV4lBuf,sizeof(struct v4l2_buffer));
-        LOG_DEBUG("[%s] AllocateBuffer single %p\n",o_name,ptr);
+        LOG_DEBUG("[%p] AllocateBuffer single %p\n",this,ptr);
         nBufferSize[0] = nSize;
 
     }
@@ -1197,7 +1119,7 @@ OMX_PTR V4l2Object::AllocateBuffer(OMX_U32 nSize)
 
     BufferIndex_AddIndex(ptr,index);
     
-    LOG_DEBUG("[%s] AllocateBuffer index=%d,bufferNum=%d\n",o_name,index,nBufferNum);
+    LOG_DEBUG("[%p] AllocateBuffer index=%d,bufferNum=%d\n",this,index,nBufferNum);
 
     return (OMX_PTR)pBufferMap[index].vaddr;
 
@@ -1229,32 +1151,20 @@ OMX_ERRORTYPE V4l2Object::FreeBuffer(OMX_PTR buffer)
     fsl_osal_memset(&pBufferMap[index].v4l2Buffer,0,sizeof(struct v4l2_buffer));
     nBufferNum --;
     pBufferMap[index].vaddr = NULL;
-    LOG_DEBUG("[%s] FreeBuffer index=%d,ptr=%p",o_name,index,buffer);
+    LOG_DEBUG("[%p] FreeBuffer index=%d,ptr=%p",this,index,buffer);
 
     BufferIndex_RemoveIndex(index);
     return OMX_ErrorNone;
 }
-OMX_ERRORTYPE V4l2Object::Flush(OMX_BOOL force)
+OMX_ERRORTYPE V4l2Object::Flush(void)
 {
     OMX_U32 i = 0;
-    LOG_DEBUG("[%s] flush BEGIN\n",o_name);
-
-    if(bRunning || force){
-        int result = 0;
-        fsl_osal_mutex_lock(sMutex);
-        LOG_LOG("[%s] call VIDIOC_STREAMOFF",o_name);
-        result = ioctl(mFd, VIDIOC_STREAMOFF, &eBufferType);
-        //when reach eos, the ioctl return -1, ignore the result
-        bRunning = OMX_FALSE;
-        fsl_osal_mutex_unlock(sMutex);
-
-        LOG_LOG("[%s]V4l2Object::Flush VIDIOC_STREAMOFF ret=%d\n",o_name,result);
-    }
-
+    LOG_DEBUG("[%p] flush BEGIN\n",this);
+    Stop();
     while(pOutQueue->Size() > 0){
         pOutQueue->Get(&i);
     }
-    LOG_DEBUG("[%s] flush END\n",o_name);
+    LOG_DEBUG("[%p] flush END\n",this);
 
     return OMX_ErrorNone;
 }
@@ -1271,7 +1181,7 @@ OMX_ERRORTYPE V4l2Object::Start(void)
             bRunning = OMX_TRUE;
         fsl_osal_mutex_unlock(sMutex);
 
-        LOG_LOG("[%s]V4l2Object::Start VIDIOC_STREAMON.ret=%d\n",o_name,result);
+        LOG_LOG("[%p]V4l2Object::Start VIDIOC_STREAMON.ret=%d\n",this,result);
     }
     return OMX_ErrorNone;
 }
@@ -1282,13 +1192,13 @@ OMX_ERRORTYPE V4l2Object::Stop(void)
     if(bRunning){
         int result = 0;
         fsl_osal_mutex_lock(sMutex);
-        LOG_LOG("[%s] call VIDIOC_STREAMOFF",o_name);
+        LOG_LOG("[%p] call VIDIOC_STREAMOFF",this);
         result = ioctl(mFd, VIDIOC_STREAMOFF, &eBufferType);
         //when reach eos, the ioctl return -1, ignore the result
         bRunning = OMX_FALSE;
         fsl_osal_mutex_unlock(sMutex);
 
-        LOG_LOG("[%s]V4l2Object::Stop VIDIOC_STREAMOFF ret=%d\n",o_name,result);
+        LOG_LOG("[%p]V4l2Object::Stop VIDIOC_STREAMOFF ret=%d\n",this,result);
 
     }
     while(OMX_TRUE){
@@ -1296,7 +1206,7 @@ OMX_ERRORTYPE V4l2Object::Stop(void)
             break;
         fsl_osal_sleep(1000);
     }
-    LOG_LOG("[%s]V4l2Object::Stop END\n",o_name);
+    LOG_LOG("[%p]V4l2Object::Stop END\n",this);
 
     return OMX_ErrorNone;
 }
@@ -1316,7 +1226,7 @@ OMX_ERRORTYPE V4l2Object::Select()
     if(V4L2_TYPE_IS_OUTPUT(eBufferType))
         bRead = OMX_FALSE;
        
-    LOG_LOG("[%s]Select Begin read=%d\n",o_name,bRead);
+    LOG_LOG("[%p]Select Begin read=%d\n",this,bRead);
 
     while(OMX_TRUE){
         if(bRead)
@@ -1331,7 +1241,7 @@ OMX_ERRORTYPE V4l2Object::Select()
             break;
         }
     }
-    LOG_LOG("[%s]Select END\n",o_name);
+    LOG_LOG("[%p]Select END\n",this);
     return OMX_ErrorNone;
 }
 OMX_BOOL V4l2Object::isMMap()
@@ -1350,10 +1260,10 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(DmaBufferHdr * inputBuffer,OMX_U32 flags)
     OMX_ERRORTYPE ret;
 
     if(inputBuffer == NULL){
-        LOG_ERROR("[%s]SetBuffer error",o_name);
+        LOG_ERROR("[%p]SetBuffer error");
         return OMX_ErrorBadParameter;
     }else
-        LOG_LOG("[%s]SetBuffer fd0=%d,fd1=%d,size[0]=%d,size[1]=%d", o_name, 
+        LOG_LOG("[%p]SetBuffer fd0=%d,fd1=%d,size[0]=%d,size[1]=%d", this, 
             inputBuffer->plane[0].fd, inputBuffer->plane[1].fd, inputBuffer->plane[0].size, inputBuffer->plane[1].size);
 
     fsl_osal_mutex_lock(sMutex);
@@ -1368,14 +1278,14 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(DmaBufferHdr * inputBuffer,OMX_U32 flags)
     }
 
     if(ret != OMX_ErrorNone){
-        LOG_ERROR("[%s]Set Buffer err 1\n",o_name);
+        LOG_ERROR("[%p]Set Buffer err 1\n",this);
         fsl_osal_mutex_unlock(sMutex);
         return ret;
     }
     
-    ret = BufferMap_Update(inputBuffer,pVaddr,index);
+    ret = BufferMap_UpdateDmaBuf(inputBuffer,pVaddr,index);
     if(ret != OMX_ErrorNone){
-        LOG_ERROR("[%s]Set Buffer err 2\n",o_name);
+        LOG_ERROR("[%p]Set Buffer err 2\n",this);
         fsl_osal_mutex_unlock(sMutex);
         return ret;
     }
@@ -1413,16 +1323,9 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(DmaBufferHdr * inputBuffer,OMX_U32 flags)
     if(inputBuffer->flag & DMA_BUF_EOS)
         pBufferMap[index].v4l2Buffer.flags |= V4L2_BUF_FLAG_LAST;
 
-    if(inputBuffer->ts != -1){
-        //set buffer timestamp 
-        pBufferMap[index].v4l2Buffer.timestamp.tv_sec = inputBuffer->ts/1000000;
-        pBufferMap[index].v4l2Buffer.timestamp.tv_usec = inputBuffer->ts -
-            pBufferMap[index].v4l2Buffer.timestamp.tv_sec*1000000;
-        pBufferMap[index].v4l2Buffer.flags = (V4L2_BUF_FLAG_TIMESTAMP_MASK | V4L2_BUF_FLAG_TIMESTAMP_COPY);
-    }
 
-    LOG_LOG("[%s] VIDIOC_QBUF len=%d,type=%d,planes=%d index=%d, fd0=%d, size=%d, fd1=%d,size=%d\n",
-        o_name,
+    LOG_LOG("[%p] VIDIOC_QBUF len=%d,type=%d,planes=%d index=%d, fd0=%d, size=%d, fd1=%d,size=%d\n",
+        this,
         nBufLen,
         pBufferMap[index].v4l2Buffer.type,
         pBufferMap[index].v4l2Buffer.length,
@@ -1434,13 +1337,13 @@ OMX_ERRORTYPE V4l2Object::SetBuffer(DmaBufferHdr * inputBuffer,OMX_U32 flags)
         );
     result = ioctl(mFd, VIDIOC_QBUF, &pBufferMap[index].v4l2Buffer);
     if(result < 0){
-        LOG_ERROR("[%s] VIDIOC_QBUF failed ret=%d,index=%d\n",o_name,result,index);
+        LOG_ERROR("[%p] VIDIOC_QBUF failed ret=%d,index=%d\n",this,result,index);
         fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorUndefined;
     }
-
+    LOG_LOG("VIDIOC_QBUF end\n");
     pQueue->Add(&index);
-    LOG_LOG("[%s]VIDIOC_QBUF success SetBuffer DMA index=%d end\n",o_name,index);
+    LOG_LOG("[%p]SetBuffer DMA index=%d end\n",this,index);
 
     fsl_osal_mutex_unlock(sMutex);
 
@@ -1476,7 +1379,7 @@ OMX_ERRORTYPE V4l2Object::GetOutputBuffer(DmaBufferHdr ** bufHdlr)
     }
 
     *bufHdlr = pBufferMap[index].dmaBuffer;
-    LOG_LOG("[%s]GetOutputBuffer index=%d,buf=%p\n",o_name,index,pBufferMap[index].dmaBuffer);
+    LOG_LOG("[%p]GetOutputBuffer index=%d,buf=%p\n",this,index,pBufferMap[index].dmaBuffer);
 
     fsl_osal_mutex_unlock(sMutex);
     return OMX_ErrorNone;
@@ -1490,14 +1393,14 @@ OMX_ERRORTYPE V4l2Object::GetBuffer(DmaBufferHdr ** bufHdlr)
 
     fsl_osal_mutex_lock(sMutex);
     if(pQueue->Size()==0){
-        LOG_ERROR("[%s]can not get output buffer\n",o_name);
+        LOG_ERROR("[%p]can not get output buffer\n",this);
         fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorNoMore;
     }
 
     pQueue->Get(&index);
 
-    LOG_LOG("[%s]GetBuffer dma index=%d\n",o_name,index);
+    LOG_LOG("[%p]GetBuffer dma index=%d\n",this,index);
 
     *bufHdlr = pBufferMap[index].dmaBuffer;
     fsl_osal_mutex_unlock(sMutex);

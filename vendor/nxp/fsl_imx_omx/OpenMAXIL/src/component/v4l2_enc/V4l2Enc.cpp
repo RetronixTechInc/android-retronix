@@ -87,9 +87,9 @@ void *filterThreadHandler(void *arg)
     OMX_S32 ret = 0;
     OMX_S32 poll_ret = 0;
 
-    LOG_LOG("[%p]V4l2Enc filterThreadHandler BEGIN \n",base);
+    LOG_LOG("[%p]filterThreadHandler BEGIN \n",base);
     poll_ret = base->pV4l2Dev->Poll(base->nFd);
-    LOG_LOG("[%p]V4l2Enc filterThreadHandler END ret=%x \n",base,poll_ret);
+    LOG_LOG("[%p]filterThreadHandler END ret=%x \n",base,poll_ret);
 
     if(poll_ret & V4L2_DEV_POLL_RET_EVENT_RC){
         LOG_LOG("V4L2_DEV_POLL_RET_EVENT_RC \n");
@@ -165,20 +165,10 @@ OMX_ERRORTYPE V4l2Enc::CreateObjects()
     if(ret != OMX_ErrorNone)
         return ret;
 
-    ret = inObj->SetName("enc  in");
-    if(ret != OMX_ErrorNone)
-        return ret;
-
     if(pV4l2Dev->isV4lBufferTypeSupported(nFd,eDevType,V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)){
         nOutputPlane = 1;
         ret = outObj->Create(nFd,V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,nOutputPlane);
     }
-    if(ret != OMX_ErrorNone)
-        return ret;
-
-    ret = outObj->SetName("enc out");
-    if(ret != OMX_ErrorNone)
-        return ret;
 
     return ret;
 }
@@ -772,8 +762,8 @@ OMX_ERRORTYPE V4l2Enc::ProcessInit()
         ret = OMX_ErrorNone;
     }
 
-    OMX_U32 nTargetFps = sInFmt.xFramerate;
-    ret = pV4l2Dev->SetFrameRate(nFd,nTargetFps);
+    OMX_U32 nTargetFps = sInFmt.xFramerate/Q16_SHIFT;
+    ret = pV4l2Dev->SetEncoderFps(nFd,nTargetFps);
     if(ret != OMX_ErrorNone){
         LOG_WARNING("V4l2Enc::ProcessInit SetEncoderFps has error.\n");
         ret = OMX_ErrorNone;
@@ -1139,7 +1129,6 @@ OMX_ERRORTYPE V4l2Enc::FlushComponent(OMX_U32 nPortIndex)
             while(OMX_ErrorNone == pPreProcess->GetOutputReturnBuffer(&pDmaBufHdr) && pDmaBufHdr != NULL){
                 pDmaBufHdr->bReadyForProcess = OMX_FALSE;
                 pDmaBufHdr->flag = 0;
-                pDmaBufHdr->ts = -1;
                 pDmaBuffer->Add(pDmaBufHdr);
             }
         }
@@ -1156,7 +1145,6 @@ OMX_ERRORTYPE V4l2Enc::FlushComponent(OMX_U32 nPortIndex)
                 if(OMX_ErrorNone == inObj->GetBuffer(&pDmaBufHdr)){
                     pDmaBufHdr->bReadyForProcess = OMX_FALSE;
                     pDmaBufHdr->flag = 0;
-                    pDmaBufHdr->ts = -1;
                     pDmaBuffer->Add(pDmaBufHdr);
                 }
             }else{
@@ -1337,8 +1325,6 @@ OMX_ERRORTYPE V4l2Enc::ProcessDataBuffer()
                 }
                 bCheckPreProcess = OMX_TRUE;
             }
-            if(!bCheckPreProcess)
-                return ret;
 
             fsl_osal_mutex_lock(sMutex);
             ret = ProcessOutputBuffer();
@@ -1352,7 +1338,7 @@ OMX_ERRORTYPE V4l2Enc::ProcessDataBuffer()
             }
 
 
-            if(bEnabledPreProcess && pDmaBuffer != NULL){
+            if(bEnabledPreProcess){
                 ret_other = ProcessPreBuffer();
                 if(ret_other == OMX_ErrorNone)
                     return OMX_ErrorNone;
@@ -1430,7 +1416,7 @@ OMX_ERRORTYPE V4l2Enc::ProcessInputBuffer()
     if(pBufferHdr == NULL){
         return OMX_ErrorNoMore;
     }
-    LOG_LOG("V4l2Enc Get Inbuffer %p,len=%d,ts=%lld,flag=%x,offset=%d\n", pBufferHdr->pBuffer, pBufferHdr->nFilledLen, pBufferHdr->nTimeStamp, pBufferHdr->nFlags,pBufferHdr->nOffset);
+    LOG_LOG("Get Inbuffer %p,len=%d,ts=%lld,flag=%x,offset=%d\n", pBufferHdr->pBuffer, pBufferHdr->nFilledLen, pBufferHdr->nTimeStamp, pBufferHdr->nFlags,pBufferHdr->nOffset);
 
     ret = ProcessInBufferFlags(pBufferHdr);
     if(ret != OMX_ErrorNone)
@@ -1550,7 +1536,7 @@ OMX_ERRORTYPE V4l2Enc::ProcessOutputBuffer()
     if(pBufferHdr == NULL){
         return OMX_ErrorNoMore;
     }
-    LOG_LOG("V4l2Enc Get output buffer %p,len=%d,alloLen=%d,flag=%x,ts=%lld,bufferCnt=%d\n",
+    LOG_LOG("Get output buffer %p,len=%d,alloLen=%d,flag=%x,ts=%lld,bufferCnt=%d\n",
         pBufferHdr->pBuffer,pBufferHdr->nFilledLen,pBufferHdr->nAllocLen,pBufferHdr->nFlags,pBufferHdr->nTimeStamp,ports[OUT_PORT]->BufferNum());
 
     if(!bSendCodecData && pCodecDataBufferHdr == NULL){
@@ -1595,7 +1581,7 @@ OMX_ERRORTYPE V4l2Enc::ReturnBuffer(OMX_BUFFERHEADERTYPE *pBufferHdr,OMX_U32 nPo
         if(pBufferHdr->nFlags & OMX_BUFFERFLAG_EOS)
             HandleEOSEvent(IN_PORT);
         ports[IN_PORT]->SendBuffer(pBufferHdr);
-        LOG_LOG("V4l2Enc ReturnBuffer input =%p,ts=%lld,len=%d,offset=%d flag=%x nInputCnt=%d\n",
+        LOG_LOG("ReturnBuffer input =%p,ts=%lld,len=%d,offset=%d flag=%x nInputCnt=%d\n",
             pBufferHdr->pBuffer, pBufferHdr->nTimeStamp,pBufferHdr->nFilledLen,pBufferHdr->nOffset,pBufferHdr->nFlags, nInputCnt);
 
     }else if(nPortIndex == OUT_PORT) {
@@ -1662,7 +1648,7 @@ OMX_ERRORTYPE V4l2Enc::ReturnBuffer(OMX_BUFFERHEADERTYPE *pBufferHdr,OMX_U32 nPo
         #endif
         nOutputCnt++;
 
-        LOG_LOG("V4l2Enc ReturnBuffer output buffer,ts=%lld,ptr=%p, offset=%d, len=%d,flags=%x,alloc len=%d nOutputCnt=%d\n",
+        LOG_LOG("ReturnBuffer output buffer,ts=%lld,ptr=%p, offset=%d, len=%d,flags=%x,alloc len=%d nOutputCnt=%d\n",
             pBufferHdr->nTimeStamp, pBufferHdr->pBuffer, pBufferHdr->nOffset, pBufferHdr->nFilledLen,pBufferHdr->nFlags,pBufferHdr->nAllocLen,nOutputCnt);
         ports[OUT_PORT]->SendBuffer(pBufferHdr);
 
@@ -1931,10 +1917,8 @@ OMX_ERRORTYPE V4l2Enc::PrepareForPreprocess()
             return OMX_ErrorInsufficientResources;
             
         ret = pPreProcess->Create();
-        if(ret != OMX_ErrorNone){
-            LOG_ERROR("PrepareForPreprocess pPreProcess Create failed");
+        if(ret != OMX_ErrorNone)
             return ret;
-        }
 
         pDmaBuffer = NULL;
         bUseDmaBuffer = OMX_TRUE;
@@ -1953,6 +1937,9 @@ OMX_ERRORTYPE V4l2Enc::PrepareForPreprocess()
         if(ret != OMX_ErrorNone)
             return ret;
 
+        //ret = pPreProcess->Start();
+        //if(ret != OMX_ErrorNone)
+        //    return ret;
     }
 
     if(bUseDmaBuffer && pDmaBuffer == NULL){
@@ -2020,7 +2007,6 @@ OMX_ERRORTYPE V4l2Enc::ProcessPreBuffer()
 
     buf->bReadyForProcess = OMX_FALSE;
     buf->flag = 0;
-    buf->ts = -1;
     ret = pPreProcess->AddOutputFrame(buf);
     LOG_LOG("ProcessPreBuffer ret=%d\n",ret);
 

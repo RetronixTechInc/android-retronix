@@ -185,7 +185,6 @@ enum DecRet Vp9DecInit(Vp9DecInst *dec_inst, const void *dwl, struct Vp9DecConfi
   dec_cont->use_p010_output = (dec_cfg->pixel_format == DEC_OUT_PIXEL_P010) ? 1 : 0;
   dec_cont->pixel_format = dec_cfg->pixel_format;
   dec_cont->secure_mode = dec_cfg->use_secure_mode;
-  dec_cont->cts_test = dec_cfg->use_cts_test;
 
   /* initial setup of instance */
 
@@ -878,70 +877,6 @@ i32 Vp9DecodeHeaders(struct Vp9DecContainer *dec_cont,
     return DEC_STREAM_NOT_SUPPORTED;
   }
 
-  if (dec_cont->cts_test) {
-    Vp9CalculateBufSize(dec_cont, -1);
-    u32 new_buff_size;
-    if (IS_EXTERNAL_BUFFER(dec_cont->ext_buffer_config, REFERENCE_BUFFER)) {
-      new_buff_size = asic_buff->picture_size;
-    } else {
-      new_buff_size = asic_buff->pp_size;
-    }
-
-    if (dec_cont->ext_buffer_size < new_buff_size &&
-      (Vp9CheckSupport(dec_cont) == HANTRO_OK) &&
-      dec->key_frame && dec->resolution_change == 0 &&
-      dec_cont->cts_test && dec_cont->dec_stat == VP9DEC_DECODING) {
-      u32 i = 0;
-      if (dec_cont->bq) {
-        if (dec_cont->asic_buff->out_buffer_i != VP9_UNDEFINED_BUFFER) {
-          /* Workaround for ref counting since this buffer is never used. */
-          Vp9BufferQueueRemoveRef(dec_cont->bq, dec_cont->asic_buff->out_buffer_i);
-          dec_cont->asic_buff->out_buffer_i = VP9_UNDEFINED_BUFFER;
-        }
-
-        for (i = 0; i < VP9_REF_LIST_SIZE; i++) {
-          i32 ref_buffer_i = Vp9BufferQueueGetRef(dec_cont->bq, i);
-          if (ref_buffer_i != VP9_UNDEFINED_BUFFER) {
-            Vp9BufferQueueRemoveRef(dec_cont->bq, ref_buffer_i);
-          }
-        }
-        Vp9BufferQueueWaitPending(dec_cont->bq);
-      }
-      //Vp9AsicReleaseMem(dec_cont);
-      //Vp9AsicReleaseFilterBlockMem(dec_cont);
-      Vp9AsicReleasePictures(dec_cont);
-#ifdef USE_EXTERNAL_BUFFER
-#if 0
-      for (i = 0; i < VP9DEC_MAX_PIC_BUFFERS; i++) {
-        //Vp9BufferQueueEmptyRef(dec_cont->bq, i);
-        dec_cont->asic_buff->display_index[i] = 0;
-      }
-#endif
-
-      dec_cont->buffer_num_added = 0;
-      dec_cont->buffer_index = 0;
-      dec_cont->num_buffers = dec_cont->num_buffers_reserved;
-      dec_cont->num_pp_buffers = 0;
-
-      dec_cont->bq = Vp9BufferQueueInitialize(dec_cont->num_buffers_reserved);
-      if (dec_cont->bq == NULL) {
-        return DEC_MEMFAIL;
-      }
-
-      dec_cont->pp_bq = NULL;
-      if (IS_EXTERNAL_BUFFER(dec_cont->ext_buffer_config, RASTERSCAN_OUT_BUFFER) ||
-          IS_EXTERNAL_BUFFER(dec_cont->ext_buffer_config, DOWNSCALE_OUT_BUFFER)) {
-        dec_cont->pp_bq = Vp9BufferQueueInitialize(0);
-        if (dec_cont->pp_bq == NULL) {
-          Vp9BufferQueueRelease(dec_cont->pp_bq, 1);
-          return DEC_MEMFAIL;
-        }
-      }
-#endif
-      dec_cont->dec_stat = VP9DEC_INITIALIZED;
-    }
-  }
-
   dec_cont->width = dec->width;
   dec_cont->height = dec->height;
 
@@ -990,7 +925,6 @@ enum DecRet Vp9DecAddBuffer(Vp9DecInst dec_inst,
 
   //if (dec_cont->buf_num == 0)
   //  return DEC_EXT_BUFFER_REJECTED;
-  dec_cont->ext_buffer_size = info->size;
 
 #ifdef EXTERNAL_BUFFER_INFO
   printf(__FUNCTION__);
@@ -1020,7 +954,6 @@ enum DecRet Vp9DecAddBuffer(Vp9DecInst dec_inst,
 
     ASSERT(dec_cont->buffer_index < dec_cont->num_buffers);
     asic_buff->pictures[dec_cont->buffer_index] = *info;
-    asic_buff->display_index[dec_cont->buffer_index] = 0;
     dec_cont->buffer_num_added++;
     if (dec_cont->buf_num)
       dec_cont->buf_num--;
@@ -1087,7 +1020,6 @@ enum DecRet Vp9DecAddBuffer(Vp9DecInst dec_inst,
 
     /* Check whether a new buffer is added, or an old buffer is reallocated. */
     asic_buff->pp_pictures[dec_cont->buffer_index] = *info;
-    asic_buff->display_index[dec_cont->buffer_index] = 0;
     if (!asic_buff->realloc_out_buffer) {
       dec_cont->buffer_index++;
       dec_cont->buffer_num_added++;
@@ -1136,7 +1068,6 @@ enum DecRet Vp9DecAddBuffer(Vp9DecInst dec_inst,
     ASSERT(dec_cont->buffer_index < dec_cont->num_buffers);
 
     asic_buff->pp_pictures[dec_cont->buffer_index] = *info;
-    asic_buff->display_index[dec_cont->buffer_index] = 0;
     if (!asic_buff->realloc_out_buffer) {
       dec_cont->buffer_index++;
       dec_cont->buffer_num_added++;

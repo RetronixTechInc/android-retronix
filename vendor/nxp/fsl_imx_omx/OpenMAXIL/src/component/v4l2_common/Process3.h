@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018-2019 NXP
+ *  Copyright 2018 NXP
  *  All Rights Reserved.
  *
  *  The following programs are the sole property of Freescale Semiconductor Inc.,
@@ -87,7 +87,7 @@ public:
     virtual ~Process3();
     OMX_BOOL InputBufferAdded();
     OMX_BOOL OutputBufferAdded();
-    OMX_BOOL HasEnoughInput();
+
 protected:
     PROCESS3_FORMAT sInFormat;
     PROCESS3_FORMAT sOutFormat;
@@ -100,7 +100,6 @@ private:
     Queue* pInReturnQueue;//ready for return
     Queue* pOutQueue;//add output buffer by user
     Queue* pOutReturnQueue;//got and set to out obj
-    fsl_osal_mutex sMutex;//for buffer queue operation
 
     PROCESS3_CALLBACKTYPE* pCallback;
     OMX_PTR pAppData;

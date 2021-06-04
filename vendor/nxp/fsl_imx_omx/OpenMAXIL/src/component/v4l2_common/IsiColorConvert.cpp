@@ -97,18 +97,10 @@ OMX_ERRORTYPE IsiColorConvert::Create()
     if(ret != OMX_ErrorNone)
         return ret;
 
-    ret = inObj->SetName("isi  in");
-    if(ret != OMX_ErrorNone)
-        return ret;
-
     if(pColorDev->isV4lBufferTypeSupported(nFd,V4L2_DEV_TYPE_ISI,V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)){
         ret = outObj->Create(nFd,V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,DMA_BUFFER_PLANE);
         LOG_DEBUG("HandleStart create capture ret=%x",ret);
     }
-    if(ret != OMX_ErrorNone)
-        return ret;
-
-    ret = outObj->SetName("isi out");
     if(ret != OMX_ErrorNone)
         return ret;
 

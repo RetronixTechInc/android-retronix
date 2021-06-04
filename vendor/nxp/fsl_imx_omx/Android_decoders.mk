@@ -121,7 +121,5 @@ ifeq ($(HAVE_FSL_IMX_IPU),true)
 include $(FSL_OMX_PATH)/OpenMAXIL/src/component/ipulib_render/Android.mk
 endif
 
-ifeq ($(BOARD_SOC_TYPE), IMX8MQ)
 include $(FSL_OMX_PATH)/OpenMAXIL/src/component/mx8mq_fb_render/Android.mk
-endif
 

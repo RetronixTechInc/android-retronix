@@ -555,26 +555,15 @@ void EWLEnableHW(const void *inst, u32 offset, u32 val)
 void EWLDisableHW(const void *inst, u32 offset, u32 val)
 {
     hx280ewl_t *enc = (hx280ewl_t *) inst;
-    u32 stats;
 
     assert(enc != NULL && offset < enc->regSize);
 
     offset = offset / 4;
+    *(enc->pRegBase + offset) = val;
 
-    if(offset == 0x04)
-    {
-        *(enc->pRegBase + offset) = val;
-        stats = val;
-        asic_status = val;
-    }
-    else
-    {
-        stats = *(enc->pRegBase + offset);
-        stats = stats & (~1);
-        *(enc->pRegBase + offset) = stats;
-    }
+    asic_status = val;
 
-    PTRACE("EWLDisableHW 0x%02x with value %08x\n", offset * 4, stats);
+    PTRACE("EWLDisableHW 0x%02x with value %08x\n", offset * 4, val);
 }
 
 /*******************************************************************************
@@ -604,56 +593,6 @@ u32 EWLReadReg(const void *inst, u32 offset)
     PTRACE("EWLReadReg 0x%02x --> %08x\n", offset * 4, val);
 
     return val;
-}
-
-/*******************************************************************************
- Function name   : EWLGetShadowReg
- Description     : Retrive the content of a mirror registers. used when IRQ is 
-                   receivedor Status change in polling mode.
- Return type     : u32 
- Argument        : u32 offset
-*******************************************************************************/
-u32 EWLGetShadowReg(const void *inst, u32 offset)
-{
-    u32 val;
-    hx280ewl_t *enc = (hx280ewl_t *) inst;
-
-    assert(offset < enc->regSize);
-
-    if(offset == 0x04)
-    {
-        return asic_status;
-    }
-
-    offset = offset / 4;
-    val = enc->regMirror[offset];
-
-    PTRACE("EWLReadReg 0x%02x --> %08x\n", offset * 4, val);
-
-    return val;
-}
-
-/*******************************************************************************
- Function name   : EWLSetShadowReg
- Description     : Set the content of a mirror register
- Return type     : u32 
- Argument        : u32 offset
-*******************************************************************************/
-void EWLSetShadowReg(const void *inst, u32 offset, u32 val)
-{
-    hx280ewl_t *enc = (hx280ewl_t *) inst;
-
-    assert(enc != NULL && offset < enc->regSize);
-
-    if(offset == 0x04)
-    {
-        asic_status = val;
-    }
-
-    offset = offset / 4;
-    enc->regMirror[offset] = val;
-
-    PTRACE("EWLWriteReg 0x%02x with value %08x\n", offset * 4, val);
 }
 
 /*------------------------------------------------------------------------------
@@ -863,7 +802,7 @@ i32 EWLMallocLinear(const void *instance, u32 size, EWLLinearMem_t * info)
     struct ion_heap_data ihd[heap_cnt];
     memset(&ihd, 0, sizeof(ihd));
     query.cnt = heap_cnt;
-    query.heaps = (unsigned long)&ihd;
+    query.heaps = (u64)&ihd;
     ret = ioctl (enc_ewl->fd_memalloc, ION_IOC_HEAP_QUERY, &query);
     if (ret != 0) {
       PTRACE("can't get ion heaps \n");

@@ -77,7 +77,6 @@ typedef struct
     u32 regSize;             /* IO mem size */
     size_t regBase;
     volatile u32 *pRegBase;  /* IO mem base */
-    u32 regMirror[512];      /* mirror register value when wait ready */
     int semid;
     int sigio_needed;
  #ifdef PCIE_FPGA_VERIFICATION

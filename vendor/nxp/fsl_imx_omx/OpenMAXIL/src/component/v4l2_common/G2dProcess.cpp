@@ -114,7 +114,7 @@ OMX_ERRORTYPE G2dProcess::Process(DmaBufferHdr *inBufHdlr, OMX_BUFFERHEADERTYPE 
     if(ret == 0){
         outBufHdlr->nFilledLen = sOutFormat.bufferSize;
         outBufHdlr->nFlags = OMX_BUFFERFLAG_ENDOFFRAME;
-        outBufHdlr->nTimeStamp = inBufHdlr->ts;
+        outBufHdlr->nTimeStamp = -1;
         if(inBufHdlr->flag & DMA_BUF_EOS)
             outBufHdlr->nFlags |= OMX_BUFFERFLAG_EOS;
         LOG_DEBUG("G2dProcess::Process ts=%lld,len=%d,flag=%x\n",outBufHdlr->nTimeStamp,outBufHdlr->nFilledLen,outBufHdlr->nFlags);

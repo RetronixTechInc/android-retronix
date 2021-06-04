@@ -240,9 +240,6 @@ void Vp9BufferQueueRemoveRef(BufferQueue queue, i32 buffer) {
 #endif /* BUFFER_QUEUE_PRINT_STATUS */
   if (queue == NULL) return;
   struct BQueue* q = (struct BQueue*)queue;
-#ifdef USE_EXTERNAL_BUFFER
-  if (q->n_buffers == 0) return;
-#endif
   assert(buffer >= 0 && buffer < q->n_buffers);
   pthread_mutex_lock(&q->cs);
   DecreaseRefCount(q, buffer);

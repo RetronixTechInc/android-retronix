@@ -2130,9 +2130,7 @@ RESOURCE_NOT_READY:
               consumed = (u32) (next - tmp_stream);
               tmp_stream += consumed;
               strm_len -= consumed;
-            } else
-              tmp_stream = input->stream + input_data_len;
-            dec_cont->stream_pos_updated = 0;
+            }
           }
 
           ASSERT(dec_cont->rlc_mode == 0);
@@ -2369,17 +2367,6 @@ end:
       dec_cont->storage.dpb->current_out->num_err_mbs &&
       !dec_cont->storage.dpb->current_out->corrupted_second_field)
     return_value = H264DEC_PIC_CONSUMED;
-
-  /* If just 1 field is decoded, return FIELD_DECODED intead of PIC_DECODED */
-  if (return_value == H264DEC_PIC_DECODED &&
-      dec_cont->storage.second_field)
-    return_value = H264DEC_FIELD_DECODED;
-
-  /* If PIC_DECODED is set for DPB flush purpose, return STRM_PROCESSED */
-  if (return_value == H264DEC_PIC_DECODED &&
-      dec_cont->dec_stat == H264DEC_NEW_HEADERS)
-    return_value = H264DEC_STRM_PROCESSED;
-
 #ifdef USE_OUTPUT_RELEASE
   if(dec_cont->abort)
     return(H264DEC_ABORTED);

@@ -583,8 +583,7 @@ AUDIO_FILTERRETURNTYPE UniaDecoder::AudioFilterFrame()
 
         AudioRingBuffer.BufferGet(&pBuffer, nFrameLen, &InputLen);
     }
-    //struct timeval tv, tv1;
-    //gettimeofday (&tv, NULL);
+
     //InputOffsetBegin = InputOffset;
     if(pBuffer && InputLen > 0){
         decoderRet = IDecoder->DecodeFrame(uniaHandle,pBuffer,InputLen,
@@ -597,9 +596,6 @@ AUDIO_FILTERRETURNTYPE UniaDecoder::AudioFilterFrame()
         decoderRet = IDecoder->DecodeFrame(uniaHandle,NULL,0,&InputOffset,&pOutBufferHdr->pBuffer,&nActuralLen);
     }
     LOG_LOG("decoderRet=%d,InputLen=%d,InputOffset=%d,nActuralLen=%d",decoderRet,InputLen,InputOffset,nActuralLen);
-    //gettimeofday (&tv1, NULL);
-    //LOG_DEBUG("AudioFilterFrame decode cost: %d\n", (tv1.tv_sec-tv.tv_sec)*1000+(tv1.tv_usec-tv.tv_usec)/1000);
-
     if(decoderRet == ACODEC_SUCCESS || decoderRet == ACODEC_CAPIBILITY_CHANGE){
 
         if((decoderRet & ACODEC_CAPIBILITY_CHANGE) && OMX_ErrorNone == ResetParameterWhenOutputChange()){

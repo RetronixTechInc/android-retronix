@@ -41,6 +41,7 @@ typedef struct {
     OMX_BUFFERHEADERTYPE *omxBuffer;
     DmaBufferHdr *dmaBuffer;
     OMX_U8 *vaddr;
+    OMX_S32 fd[V4L2_OBJECT_MAX_PLANES];
 } V4l2ObjectMap;
 
 typedef struct {
@@ -55,7 +56,6 @@ typedef struct {
 class V4l2Object {
 public:
     OMX_ERRORTYPE Create(OMX_S32 dev,enum v4l2_buf_type type,OMX_U32 plane_num);
-    OMX_ERRORTYPE SetName(const char * name);
     OMX_ERRORTYPE ReleaseResource();
 
     OMX_ERRORTYPE SetFormat(V4l2ObjectFormat* pFormat);
@@ -74,7 +74,7 @@ public:
 
     OMX_PTR AllocateBuffer(OMX_U32 nSize);//map buffer
     OMX_ERRORTYPE FreeBuffer(OMX_PTR buffer);//call unmap
-    OMX_ERRORTYPE Flush(OMX_BOOL force = OMX_FALSE);
+    OMX_ERRORTYPE Flush();
 
     OMX_ERRORTYPE GetBuffer(OMX_BUFFERHEADERTYPE ** bufHdlr);
     OMX_BOOL isMMap();
@@ -86,7 +86,7 @@ public:
     OMX_ERRORTYPE GetBuffer(DmaBufferHdr ** bufHdlr);
 
 private:
-    OMX_U8 o_name[8];
+
     OMX_S32 mFd;
     enum v4l2_buf_type eBufferType;
 
@@ -129,9 +129,7 @@ private:
     OMX_ERRORTYPE BufferMap_UpdateUserPtr(OMX_BUFFERHEADERTYPE *inputBuffer,OMX_U8* pBuf,OMX_U32 index);
     OMX_ERRORTYPE BufferMap_UpdateDmaBuf(OMX_BUFFERHEADERTYPE *inputBuffer,OMX_U8* pBuf,OMX_U32 index);
 
-    OMX_ERRORTYPE BufferMap_Update(DmaBufferHdr *inputBuffer,OMX_U8* pBuf,OMX_U32 index);
     OMX_ERRORTYPE BufferMap_UpdateDmaBuf(DmaBufferHdr *inputBuffer, OMX_U8* pBuf, OMX_U32 index);
-    OMX_ERRORTYPE BufferMap_UpdateUserPtr(DmaBufferHdr *inputBuffer,OMX_U8* pBuf,OMX_U32 index);
 
     OMX_ERRORTYPE BufferIndex_FindIndex(OMX_U8* pBuf,OMX_U32 *index);
     OMX_ERRORTYPE BufferIndex_GetEmptyIndex(OMX_U32 *index);

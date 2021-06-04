@@ -124,20 +124,15 @@ i32 EWLWaitHwRdy(const void *inst, u32 *slicesReady)
 
         if((irq_stats & ASIC_STATUS_ALL))
         {
-            u32 i;
-            u32 irq_status, clr_stats;
-            for(i = 0; i < enc->regSize; i += 4) 
-            {
-              enc->regMirror[i/4] = EWLReadReg(enc, i);
-            }
-            
-            /* clear the status bits */
-            irq_status = enc->regMirror[1];
+            /* clear IRQ and slice ready status */
+            u32 clr_stats = irq_stats & ASIC_STATUS_ALL;
+            irq_stats &= (~(ASIC_STATUS_SLICE_READY|ASIC_IRQ_LINE));
+
             if (clrByWrite1)
-                clr_stats = irq_status;
+              clr_stats = ASIC_STATUS_SLICE_READY | ASIC_IRQ_LINE; //(clr_stats & ASIC_STATUS_SLICE_READY) | ASIC_IRQ_LINE;
             else
-                clr_stats = irq_status & (~0xf7d);
-                
+              clr_stats = irq_stats;
+
             EWLWriteReg(inst, 0x04, clr_stats);
 
             ret = EWL_OK;
@@ -155,20 +150,16 @@ i32 EWLWaitHwRdy(const void *inst, u32 *slicesReady)
 
         if (loop)
         {
-            if(nanosleep(&t, NULL) != 0) 
-            {
+            if(nanosleep(&t, NULL) != 0)
                 PTRACE("EWLWaitHw: Sleep interrupted!\n");
-            }
         }
     }
     while(loop--);
 
     asic_status = irq_stats; /* update the buffered asic status */
 
-    if (slicesReady) 
-    {
+    if (slicesReady)
         PTRACE("EWLWaitHw: slicesReady = %d\n", *slicesReady);
-    }
     PTRACE("EWLWaitHw: asic_status = %x\n", asic_status);
     PTRACE("EWLWaitHw: OK!\n");
 

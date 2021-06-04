@@ -1,21 +1,5 @@
 LOCAL_PATH := $(call my-dir)
 
-# for google video codec settings
-include $(CLEAR_VARS)
-
-LOCAL_SRC_FILES := media_codecs_google_video_1080p.xml
-
-ifeq ($(BOARD_SOC_TYPE), $(filter $(BOARD_SOC_TYPE), IMX8Q IMX8MQ))
-LOCAL_SRC_FILES := media_codecs_google_video.xml
-endif
-
-LOCAL_MODULE := media_codecs_google_video.xml
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_TAGS := eng
-LOCAL_VENDOR_MODULE := true
-include $(BUILD_PREBUILT)
-
-
 #for video recoder profile setting
 include $(CLEAR_VARS)
 
@@ -51,7 +35,7 @@ LOCAL_SRC_FILES :=  media_profiles_8mm.xml
 endif
 
 else
-ifeq ($(BOARD_SOC_TYPE),IMX8MN)
+ifeq ($(BOARD_SOC_TYPE),IMX8Q)
 LOCAL_SRC_FILES :=  media_profiles_720p.xml
 else
 ifeq ($(PRODUCT_MODEL),SABREAUTO-MX6SX)
@@ -151,8 +135,6 @@ HAVE_RV = $(shell test -d $(FSL_RESTRICTED_CODEC_PATH)/fsl-restricted-codec/fsl_
 ifeq ($(HAVE_RV), yes)
 ifeq ($(BOARD_SOC_TYPE),IMX8MQ)
     LOCAL_SRC_FILES = ../../../../$(FSL_RESTRICTED_CODEC_PATH)/fsl-restricted-codec/fsl_real_dec/media_codecs_rv.xml
-else ifeq ($(BOARD_SOC_TYPE),IMX8Q)
-    LOCAL_SRC_FILES = ../../../../$(FSL_RESTRICTED_CODEC_PATH)/fsl-restricted-codec/fsl_real_dec/media_codecs_rv_v4l2.xml
 else ifeq ($(BOARD_SOC_TYPE),IMX6DQ)
     LOCAL_SRC_FILES = ../../../../$(FSL_RESTRICTED_CODEC_PATH)/fsl-restricted-codec/fsl_real_dec/media_codecs_rv_adaptive.xml
 endif
@@ -181,7 +163,7 @@ LOCAL_MODULE_TAGS := eng
 LOCAL_VENDOR_MODULE := true
 include $(BUILD_PREBUILT)
 
-ifneq ($(BOARD_SOC_TYPE),IMX8Q)
+
 include $(CLEAR_VARS)
 ifeq ($(BOARD_HAVE_VPU), true)
 ifeq ($(BOARD_SOC_CLASS),IMX5X)
@@ -193,47 +175,19 @@ else
 LOCAL_SRC_FILES := media_codecs.xml
 endif
 ifeq ($(BOARD_SOC_TYPE),IMX8MQ)
-ifeq ($(BOARD_TYPE),AIY)
-LOCAL_SRC_FILES := imxaiy8mq/media_codecs.xml
-else
 LOCAL_SRC_FILES := imx8mq/media_codecs.xml
 endif
+ifeq ($(BOARD_SOC_TYPE),IMX8Q)
+LOCAL_SRC_FILES := imx8q/media_codecs.xml
 endif
 ifeq ($(BOARD_SOC_TYPE),IMX8MM)
 LOCAL_SRC_FILES := imx8mm/media_codecs.xml
 endif
-ifeq ($(BOARD_SOC_TYPE),IMX8MN)
-LOCAL_SRC_FILES := imx8mn/media_codecs.xml
-endif
-
 LOCAL_MODULE := media_codecs.xml
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE_TAGS := eng
 LOCAL_VENDOR_MODULE := true
 include $(BUILD_PREBUILT)
-endif
-
-ifeq ($(BOARD_SOC_TYPE),IMX8Q)
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES := imx8q/media_codecs_8qm.xml
-LOCAL_MODULE := media_codecs_8qm.xml
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_TAGS := eng
-LOCAL_VENDOR_MODULE := true
-LOCAL_POST_INSTALL_CMD := cd $(TARGET_OUT_VENDOR)/etc; \
-                          ln -sf ./media_codecs_8qm.xml media_codecs.xml;
-include $(BUILD_PREBUILT)
-endif
-
-ifeq ($(BOARD_SOC_TYPE),IMX8Q)
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES := imx8q/media_codecs_8qxp.xml
-LOCAL_MODULE := media_codecs_8qxp.xml
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_TAGS := eng
-LOCAL_VENDOR_MODULE := true
-include $(BUILD_PREBUILT)
-endif
 
 #for media codec performance setting
 include $(CLEAR_VARS)
@@ -243,20 +197,13 @@ else
 LOCAL_SRC_FILES := media_codecs_performance_no_vpu.xml
 endif
 ifeq ($(BOARD_SOC_TYPE),IMX8MQ)
-ifeq ($(BOARD_TYPE),AIY)
-LOCAL_SRC_FILES := imxaiy8mq/media_codecs_performance.xml
-else
 LOCAL_SRC_FILES := imx8mq/media_codecs_performance.xml
-endif
 endif
 ifeq ($(BOARD_SOC_TYPE),IMX8Q)
 LOCAL_SRC_FILES := imx8q/media_codecs_performance.xml
 endif
 ifeq ($(BOARD_SOC_TYPE),IMX8MM)
 LOCAL_SRC_FILES := imx8mm/media_codecs_performance.xml
-endif
-ifeq ($(BOARD_SOC_TYPE),IMX8MN)
-LOCAL_SRC_FILES := imx8mn/media_codecs_performance.xml
 endif
 LOCAL_MODULE := media_codecs_performance.xml
 LOCAL_MODULE_CLASS := ETC

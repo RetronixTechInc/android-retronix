@@ -49,12 +49,6 @@ PRODUCT_COPY_FILES += \
     $(FSL_CODEC_PATH)/fsl-codec/lib64/lib_mp3_dec_arm_android.so:$(FSL_CODEC_OUT_PATH)64/lib_mp3_dec_v2_arm12_elinux.so \
     $(FSL_CODEC_PATH)/fsl-codec/lib64/lib_mp3d_wrap_arm_android.so:$(FSL_CODEC_OUT_PATH)64/lib_mp3d_wrap_arm12_elinux_android.so
 
-# copy dspc asrc binaries
-PRODUCT_COPY_FILES += \
-    $(FSL_CODEC_PATH)/fsl-codec/asrc-dspc/release/lib/lib_dspc_asrc_coef_android.so:$(FSL_CODEC_OUT_PATH)64/lib_dspc_asrc_coef_android.so \
-    $(FSL_CODEC_PATH)/fsl-codec/asrc-dspc/release/lib/lib_dspc_asrc_android.so:$(FSL_CODEC_OUT_PATH)64/lib_dspc_asrc_android.so \
-    $(FSL_CODEC_PATH)/fsl-codec/asrc-dspc/release/exe/asrc-test_android:vendor/bin/asrc-test_android
-
 # when version >= pi9, parsers are not copied here, but handled by Android.mk
 ifeq ($(ANDROID_VERSION_LE_O), true)
 PRODUCT_COPY_FILES += \

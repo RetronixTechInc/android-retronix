@@ -1,3 +1,25 @@
+ifeq ($(FSL_CODEC_PATH),)
+	FSL_CODEC_PATH := device
+endif
+ifeq ($(IMX_VPU_CNM_PATH),)
+	IMX_VPU_CNM_PATH := external
+endif
+ifeq ($(IMX_PATH),)
+	IMX_PATH := hardware
+endif
+ifeq ($(IMX_LIB_PATH),)
+	IMX_LIB_PATH := external
+endif
+ifeq ($(IMX_VPU_HANTRO_PATH),)
+	IMX_VPU_HANTRO_PATH := external
+endif
+ifeq ($(FSL_PROPRIETARY_PATH),)
+	FSL_PROPRIETARY_PATH := device
+endif
+ifeq ($(FSL_IMX_OMX_PATH),)
+	FSL_IMX_OMX_PATH := external
+endif
+
 ifeq ($(PREBUILT_FSL_IMX_OMX),true)
 	HAVE_FSL_IMX_CODEC := false
 else
@@ -66,56 +88,6 @@ ifeq ($(findstring x8.1,x$(PLATFORM_VERSION)), x8.1)
 endif
 ifeq ($(findstring x9.0,x$(PLATFORM_VERSION)), x9.0)
 	ANDROID_VERSION_MACRO := 900
-endif
-
-OLD_VERSION := $(shell if [ $(ANDROID_VERSION_MACRO) -lt 800 ];then echo "true";fi)
-ifeq ($(OLD_VERSION), true)
-ifeq ($(FSL_CODEC_PATH),)
-    FSL_CODEC_PATH := device
-endif
-ifeq ($(IMX_VPU_CNM_PATH),)
-    IMX_VPU_CNM_PATH := external
-endif
-ifeq ($(IMX_PATH),)
-    IMX_PATH := hardware
-endif
-ifeq ($(IMX_LIB_PATH),)
-    IMX_LIB_PATH := external
-endif
-ifeq ($(IMX_VPU_HANTRO_PATH),)
-    IMX_VPU_HANTRO_PATH := external
-endif
-ifeq ($(FSL_PROPRIETARY_PATH),)
-    FSL_PROPRIETARY_PATH := device
-endif
-ifeq ($(FSL_IMX_OMX_PATH),)
-    FSL_IMX_OMX_PATH := external
-endif
-
-else
-
-ifeq ($(FSL_CODEC_PATH),)
-    FSL_CODEC_PATH := vendor/nxp
-endif
-ifeq ($(IMX_VPU_CNM_PATH),)
-    IMX_VPU_CNM_PATH := vendor/nxp
-endif
-ifeq ($(IMX_PATH),)
-    IMX_PATH := vendor/nxp-opensource
-endif
-ifeq ($(IMX_LIB_PATH),)
-    IMX_LIB_PATH := vendor/nxp-opensource
-endif
-ifeq ($(IMX_VPU_HANTRO_PATH),)
-    IMX_VPU_HANTRO_PATH := vendor/nxp
-endif
-ifeq ($(FSL_PROPRIETARY_PATH),)
-    FSL_PROPRIETARY_PATH := vendor/nxp
-endif
-ifeq ($(FSL_IMX_OMX_PATH),)
-    FSL_IMX_OMX_PATH := vendor/nxp
-endif
-
 endif
 
 FSL_OMX_CFLAGS += $(ANDROID_VERSION_LIST) -DANDROID_VERSION=$(ANDROID_VERSION_MACRO)

@@ -1,6 +1,6 @@
 /**
  *  Copyright (c) 2010-2016, Freescale Semiconductor Inc.,
- *  Copyright 2017-2019 NXP
+ *  Copyright 2017-2018 NXP
  *  All Rights Reserved.
  *
  *  The following programs are the sole property of Freescale Semiconductor Inc.,
@@ -132,7 +132,6 @@ OMX_ERRORTYPE VideoFilter:: SetDefaultSetting()
     bThreadedPreProcess = OMX_FALSE;
     bEnableAndroidNativeHandleBuffer = OMX_FALSE;
     bUpdateColorAspects = OMX_FALSE;
-    mLastTimestamp = 0x7FFFFFFFFFFFFFFFLL;
     return ret;
 }
 
@@ -680,26 +679,6 @@ OMX_ERRORTYPE VideoFilter::ProcessInputBuffer()
             }
 
             bNeedInputBuffer = OMX_FALSE;
-
-            // for encoder, check if frame rate is changed, update sInFmt
-            if (sInFmt.eCompressionFormat == OMX_VIDEO_CodingUnused &&
-                    sOutFmt.eCompressionFormat == (OMX_VIDEO_CODINGTYPE)OMX_VIDEO_CodingVP8) {
-                OMX_U32 frameDuration, frameRate;
-                if (pInBufferHdr->nTimeStamp > mLastTimestamp) {
-                    frameDuration = (OMX_U32)(pInBufferHdr->nTimeStamp - mLastTimestamp);
-                } else {
-                    frameDuration = (OMX_U32)OMX_TICKS_PER_SECOND/(sInFmt.xFramerate/Q16_SHIFT);
-                }
-
-                frameRate = (OMX_TICKS_PER_SECOND + frameDuration/2) / frameDuration;
-                if (frameRate != (sInFmt.xFramerate/Q16_SHIFT)) {
-                    sInFmt.xFramerate = frameRate * Q16_SHIFT;
-                    InputFmtChanged();
-                    LOG_DEBUG("frame rate is changed to frameRate %d\n", frameRate);
-                }
-            }
-
-            mLastTimestamp = pInBufferHdr->nTimeStamp;
 
             tsmSetBlkTs(hTsHandle, pInBufferHdr->nFilledLen, pInBufferHdr->nTimeStamp);
         }

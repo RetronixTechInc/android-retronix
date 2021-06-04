@@ -514,8 +514,6 @@ OMX_ERRORTYPE SoftHevcDec::InitFilter()
     initDecoder();
 
     bInEos = OMX_FALSE;
-    if(nInputSize == 0)
-        bInEos = OMX_TRUE;
     bOutEos = OMX_FALSE;
     bInFlush = OMX_FALSE;
 
@@ -758,7 +756,7 @@ OMX_ERRORTYPE SoftHevcDec::SetInputBuffer(
 
 bail:
     bInEos = bLast;
-    if(nSize == 0){
+    if(nSize == 0 && !bLast){
         nInputSize = 0;
         pInBuffer = NULL;
     }
@@ -1153,13 +1151,6 @@ OMX_ERRORTYPE SoftHevcDec::GetOutputBuffer(OMX_PTR *ppBuffer,OMX_S32* pOutSize)
     OMX_U8* ysrc = (OMX_U8*)pInternalBuffer;
     OMX_U8* usrc = (OMX_U8*)pInternalBuffer + nWidth*nHeight;
     OMX_U8* vsrc = usrc+ nWidth*nHeight/4;
-
-    if(bOutEos){
-        *ppBuffer = pOutBuffer;
-        *pOutSize = 0;
-        pOutBuffer = NULL;
-        return OMX_ErrorNone;
-    }
 
 
     fsl_osal_memset(pOutBuffer,0,nOutBufferSize);

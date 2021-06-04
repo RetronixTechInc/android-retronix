@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018-2019 NXP
+ *  Copyright 2018 NXP
  *  All Rights Reserved.
  *
  *  The following programs are the sole property of Freescale Semiconductor Inc.,
@@ -11,7 +11,7 @@
 #undef LOG_DEBUG
 #define LOG_DEBUG printf
 #endif
-#define INPUT_BUFFER_THRESHOLD_CNT (2)
+
 
 void *Process3ThreadHandler(void *arg)
 {
@@ -19,7 +19,6 @@ void *Process3ThreadHandler(void *arg)
 
     Process3 *base = (Process3*)arg;
     LOG_DEBUG("Process3 ThreadHandler run once in=%d,out=%d\n",base->pInQueue->Size(),base->pOutQueue->Size());
-    fsl_osal_mutex_lock(base->sMutex);
 
     while(base->pInQueue->Size() > 0 && base->pOutQueue->Size() > 0){
         if(base->eBufMode == PROCESS3_BUF_DMA_IN_OMX_OUT){
@@ -63,8 +62,6 @@ void *Process3ThreadHandler(void *arg)
             }
         }
     }
-
-    fsl_osal_mutex_unlock(base->sMutex);
 
     LOG_DEBUG("Process3 ThreadHandler run end\n");
     return NULL;
@@ -135,11 +132,6 @@ OMX_ERRORTYPE Process3::Create(PROCESS3_BUFFER_MODE buf_mode)
         return ret;
     }
 
-    if(E_FSL_OSAL_SUCCESS != fsl_osal_mutex_init(&sMutex, fsl_osal_mutex_normal)) {
-        ret = OMX_ErrorInsufficientResources;
-        return ret;
-    }
-
     bOutputStarted = OMX_FALSE;
     bInputStarted = OMX_FALSE;
     bRunning = OMX_FALSE;
@@ -157,20 +149,17 @@ OMX_ERRORTYPE Process3::Flush()
     fsl_osal_ptr pMsgIn;
     fsl_osal_ptr pMsgOut;
 
-    fsl_osal_mutex_lock(sMutex);
     //clear output queue before flush
     while(pOutQueue->Size() >0){
         pMsgOut = NULL;
         pOutQueue->Get(&pMsgOut);
         pOutReturnQueue->Add(&pMsgOut);
     }
-    fsl_osal_mutex_unlock(sMutex);
 
     pThread->flush();
 
     LOG_DEBUG("Process3::Flush end \n");
 
-    fsl_osal_mutex_lock(sMutex);
     while(pInQueue->Size() >0){
         pMsgIn = NULL;
         pInQueue->Get(&pMsgIn);
@@ -193,7 +182,6 @@ OMX_ERRORTYPE Process3::Flush()
         pOutQueue->Get(&pMsgOut);
         pOutReturnQueue->Add(&pMsgOut);
     }
-    fsl_osal_mutex_unlock(sMutex);
 
     bOutputStarted = OMX_FALSE;
 
@@ -242,9 +230,6 @@ OMX_ERRORTYPE Process3::Destroy()
         pOutReturnQueue->Free();
         FSL_DELETE(pOutReturnQueue);
     }
-
-    if(sMutex != NULL)
-        fsl_osal_mutex_destroy(sMutex);
 
     return OMX_ErrorNone;
 }
@@ -382,15 +367,11 @@ OMX_ERRORTYPE Process3::GetOutputBuffer(DmaBufferHdr **bufHdlr)
     if(bufHdlr == NULL || !(eBufMode & PROCESS3_DMA_OUT))
         return OMX_ErrorBadParameter;
 
-    fsl_osal_mutex_lock(sMutex);
-
     if(pOutQueue->Size() > 0){
         pOutQueue->Get(bufHdlr);
-        fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorNone;
     }else{
         *bufHdlr = NULL;
-        fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorNoMore;
     }
 }
@@ -400,15 +381,11 @@ OMX_ERRORTYPE Process3::GetOutputBuffer(OMX_BUFFERHEADERTYPE **bufHdlr)
     if(bufHdlr == NULL || !(eBufMode & PROCESS3_OMX_OUT))
         return OMX_ErrorBadParameter;
 
-    fsl_osal_mutex_lock(sMutex);
-
     if(pOutQueue->Size() > 0){
         pOutQueue->Get(bufHdlr);
-        fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorNone;
     }else{
         *bufHdlr = NULL;
-        fsl_osal_mutex_unlock(sMutex);
         return OMX_ErrorNoMore;
     }
 }
@@ -493,10 +470,4 @@ OMX_BOOL Process3::InputBufferAdded()
 {
     return bInputStarted;
 }
-OMX_BOOL Process3::HasEnoughInput()
-{
-    if(pInQueue->Size() > INPUT_BUFFER_THRESHOLD_CNT){
-        return OMX_TRUE;
-    }
-    return OMX_FALSE;
-}
+

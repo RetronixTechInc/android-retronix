@@ -453,7 +453,7 @@ u16x DecodeNormal6( strmData_t * const strm_data, const u16x col_mb,
         }
         if( k == INVALID_TILE_VLC ) {
           /* Error handling */
-          DPRINT(("DecodeNormal6: Invalid VLC code word encountered.\n"));
+          EPRINT(("DecodeNormal6: Invalid VLC code word encountered.\n"));
           rv = HANTRO_NOK;
           k = 0;
         }
@@ -490,7 +490,7 @@ u16x DecodeNormal6( strmData_t * const strm_data, const u16x col_mb,
         }
         if( k == INVALID_TILE_VLC ) {
           /* Error handling */
-          DPRINT(("DecodeNormal6: Invalid VLC code word encountered.\n"));
+          EPRINT(("DecodeNormal6: Invalid VLC code word encountered.\n"));
           rv = HANTRO_NOK;
           k = 0;
         }
@@ -611,7 +611,7 @@ u16x DecodeNormal6( strmData_t * const strm_data, const u16x col_mb,
         }
         if( k == INVALID_TILE_VLC ) {
           /* Error handling */
-          DPRINT(("DecodeNormal6: Invalid VLC code word encountered.\n"));
+          EPRINT(("DecodeNormal6: Invalid VLC code word encountered.\n"));
           rv = HANTRO_NOK;
           k = 0;
         }
@@ -648,7 +648,7 @@ u16x DecodeNormal6( strmData_t * const strm_data, const u16x col_mb,
         }
         if( k == INVALID_TILE_VLC ) {
           /* Error handling */
-          DPRINT(("DecodeNormal6: Invalid VLC code word encountered.\n"));
+          EPRINT(("DecodeNormal6: Invalid VLC code word encountered.\n"));
           rv = HANTRO_NOK;
           k = 0;
         }

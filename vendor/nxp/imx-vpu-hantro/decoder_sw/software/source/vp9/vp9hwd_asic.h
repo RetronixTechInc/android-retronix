@@ -83,5 +83,5 @@ void Vp9AsicReset(struct Vp9DecContainer *dec_cont);
 #endif
 
 void Vp9FixChromaRFCTable(struct Vp9DecContainer *dec_cont);
-void Vp9CalculateBufSize(struct Vp9DecContainer *dec_cont, i32 index);
+
 #endif /* __VP9_ASIC_H__ */

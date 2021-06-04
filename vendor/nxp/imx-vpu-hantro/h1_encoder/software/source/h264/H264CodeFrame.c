@@ -234,7 +234,6 @@ h264EncodeFrame_e H264CodeFrame(h264Instance_s * inst)
             EncAsicStop(asic->ewl);
             /* Release HW so that it can be used by other codecs */
             EWLReleaseHw(asic->ewl);
-            go_on = 0;
 
         }
         else

@@ -330,9 +330,6 @@ OMX_ERRORTYPE AacDec::UniaDecoderGetDecoderProp(AUDIOFORMAT *formatType, OMX_BOO
         *formatType = AAC;
     if (isHwBased)
         *isHwBased = (fsl_osal_strcmp(decoderLibName, DSP_WRAPPER_LIB_NAME) == 0 ? OMX_TRUE : OMX_FALSE);
-
-    if(*isHwBased)
-        *formatType = AAC_PLUS;
     return OMX_ErrorNone;
 }
 

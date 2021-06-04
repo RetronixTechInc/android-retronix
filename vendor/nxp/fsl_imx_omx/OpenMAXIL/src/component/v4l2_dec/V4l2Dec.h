@@ -66,6 +66,11 @@ private:
     DmaBuffer * pDmaOutputBuffer;
     OMX_BOOL bUseDmaOutputBuffer;
 
+    OMX_PTR pCodecData;
+    OMX_U32 nCodecDataLen;
+    OMX_BOOL bReceiveFrame;
+    OMX_BOOL bNeedCodecData;
+
     V4l2DecState eState;
 
     OMX_BOOL bAndroidNativeBuffer;
@@ -83,11 +88,7 @@ private:
     OMX_BOOL bRetryHandleEOS;
     OMX_BOOL bReceiveOutputEOS;
     OMX_U32 nErrCnt;
-
-    OMX_BOOL bFlushing;
-    OMX_BOOL bHasCodecColorDesc;
-    V4l2ColourDesc sDecoderColorDesc;
-    V4l2ColourDesc sParserColorDesc;
+    OMX_U32 nOutObjBufferCnt;
 
     OMX_ERRORTYPE CreateObjects() override;
     OMX_ERRORTYPE SetRoleFormat(OMX_STRING role);
@@ -110,7 +111,6 @@ private:
     OMX_ERRORTYPE ProcessInBufferFlags(OMX_BUFFERHEADERTYPE *pInBufferHdr);
     OMX_ERRORTYPE ProcessOutputBuffer();
     OMX_ERRORTYPE ProcessPostBuffer();
-    OMX_ERRORTYPE GetColorAspectInfo();
 
     void dumpInputBuffer(OMX_BUFFERHEADERTYPE *pBufferHdr);
     void dumpOutputBuffer(OMX_BUFFERHEADERTYPE *pBufferHdr);

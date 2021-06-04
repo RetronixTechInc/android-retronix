@@ -1081,18 +1081,16 @@ void Vp9CalculateBufSize(struct Vp9DecContainer *dec_cont, i32 index) {
   asic_buff->picture_size = luma_size + chroma_size + dir_mvs_size + luma_table_size + chroma_table_size;
   asic_buff->pp_size = pp_luma_size + pp_chroma_size;
 
-  if (index >= 0) {
-    asic_buff->pictures_c_offset[index] = luma_size;
-    asic_buff->dir_mvs_offset[index] = asic_buff->pictures_c_offset[index] + chroma_size;
-    if (dec_cont->use_video_compressor) {
-      asic_buff->cbs_y_tbl_offset[index] = asic_buff->dir_mvs_offset[index] + dir_mvs_size;
-      asic_buff->cbs_c_tbl_offset[index] = asic_buff->cbs_y_tbl_offset[index] + luma_table_size;
-    } else {
-      asic_buff->cbs_y_tbl_offset[index] = 0;
-      asic_buff->cbs_c_tbl_offset[index] = 0;
-    }
-    asic_buff->pp_c_offset[index] = pp_luma_size;
+  asic_buff->pictures_c_offset[index] = luma_size;
+  asic_buff->dir_mvs_offset[index] = asic_buff->pictures_c_offset[index] + chroma_size;
+  if (dec_cont->use_video_compressor) {
+    asic_buff->cbs_y_tbl_offset[index] = asic_buff->dir_mvs_offset[index] + dir_mvs_size;
+    asic_buff->cbs_c_tbl_offset[index] = asic_buff->cbs_y_tbl_offset[index] + luma_table_size;
+  } else {
+    asic_buff->cbs_y_tbl_offset[index] = 0;
+    asic_buff->cbs_c_tbl_offset[index] = 0;
   }
+  asic_buff->pp_c_offset[index] = pp_luma_size;
 }
 
 i32 Vp9GetRefFrm(struct Vp9DecContainer *dec_cont, u32 id) {
@@ -1290,7 +1288,6 @@ i32 Vp9FreeSegmentMap(struct Vp9DecContainer *dec_cont) {
       asic_buff->segment_map.virtual_address = NULL;
       asic_buff->segment_map.size = 0;
     }
-    asic_buff->segment_map_size = 0;
   }
 
   return HANTRO_OK;

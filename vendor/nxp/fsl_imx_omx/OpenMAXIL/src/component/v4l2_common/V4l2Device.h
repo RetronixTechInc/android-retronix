@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018-2019 NXP
+ *  Copyright 2018 NXP
  *  All Rights Reserved.
  *
  *  The following programs are the sole property of Freescale Semiconductor Inc.,
@@ -23,7 +23,7 @@ V4L2_DEV_TYPE_ISI,
 #define V4L2_DEV_POLL_RET_OUTPUT 4
 #define V4L2_DEV_POLL_RET_CAPTURE 8
 #define V4L2_DEV_POLL_RET_EVENT_SKIP 0x10
-#define V4L2_DEV_POLL_RET_EVENT_ERROR 0x20
+
 
 typedef struct {
     OMX_S32 nBitRate;/*unit: bps*/
@@ -40,13 +40,6 @@ typedef struct {
     OMX_S32 nLevel;
 } V4l2EncInputParam;
 
-typedef struct {
-    OMX_U32 colourPrimaries;
-    OMX_U32 transferCharacteristics;
-    OMX_U32 matrixCoeffs;
-    OMX_U32 fullRange;
-} V4l2ColourDesc;
-
 class V4l2Dev{
 public:
     OMX_S32 Open(V4l2DEV_TYPE type, OMX_U8* name);
@@ -61,12 +54,8 @@ public:
     OMX_S32 Poll(OMX_S32 fd);
     OMX_S32 DqEvent(OMX_S32 fd);
     OMX_ERRORTYPE GetFrameAlignment(OMX_S32 fd, OMX_U32 format, OMX_U32 *width, OMX_U32 *height);
-    OMX_ERRORTYPE SetFrameRate(OMX_S32 fd, OMX_U32 framerate);
-    OMX_ERRORTYPE SetFrameDepth(OMX_S32 fd, OMX_U32 framedepth);
-    OMX_ERRORTYPE SetTsThreshold(OMX_S32 fd, OMX_U32 ts);
-    OMX_ERRORTYPE SetBsThreshold(OMX_S32 fd, OMX_U32 bsl);
-    OMX_ERRORTYPE GetColourDesc(OMX_S32 fd, V4l2ColourDesc * desc);
-    OMX_ERRORTYPE ResetDecoder(OMX_S32 fd);
+    OMX_ERRORTYPE SetEncoderFps(OMX_S32 fd, OMX_U32 framerate);
+
 private:
     OMX_ERRORTYPE SetCtrl(OMX_S32 fd,OMX_U32 id, OMX_S32 value);
 

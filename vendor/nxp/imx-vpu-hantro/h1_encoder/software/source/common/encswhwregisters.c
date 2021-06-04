@@ -155,20 +155,5 @@ u32 EncAsicGetRegisterValue(const void *ewl, u32 *regMirror, regName name)
     return value;
 }
 
-u32 EncAsicGetShadowValue(const void *ewl, u32 *regMirror, regName name)
-{
-    const regField_s *field;
-    u32 value;
-
-    field = &asicRegisterDesc[name];
-
-    ASSERT(field->base < ASIC_SWREG_AMOUNT*4);
-
-    value = regMirror[field->base/4] = EWLGetShadowReg(ewl, field->base);
-    value = (value & field->mask) >> field->lsb;
-
-    return value;
-}
-
 
 

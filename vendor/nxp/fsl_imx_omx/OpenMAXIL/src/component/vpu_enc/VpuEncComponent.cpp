@@ -5,7 +5,7 @@
  *  The following programs are the sole property of Freescale Semiconductor Inc.,
  *  and contain its proprietary and confidential information.
  *
- *  Copyright 2018-2019 NXP
+ *  Copyright 2018 NXP
  */
 #include "VpuEncComponent.h"
 #include "Mem.h"
@@ -2769,19 +2769,6 @@ FilterBufRetCode VpuEncoder::FilterOneBuffer()
 	}
 	sEncEncParam.nSkipPicture=0;
 	sEncEncParam.nEnableAutoSkip=sVpuEncInputPara.nEnableAutoSkip;
-
-    // check if frame rate is dynamically changed
-    if (sVpuEncInputPara.nFrameRate != sInFmt.xFramerate/Q16_SHIFT) {
-        OMX_S32 bps, kbps;
-        bps = sVpuEncInputPara.nBitRate * sVpuEncInputPara.nFrameRate / (sInFmt.xFramerate/Q16_SHIFT);
-        kbps = bps/1000;
-        if(VPU_ENC_RET_SUCCESS == VPU_EncConfig(nHandle, VPU_ENC_CONF_BIT_RATE, &kbps)){
-            sVpuEncInputPara.nFrameRate = sInFmt.xFramerate/Q16_SHIFT;
-            sVpuEncInputPara.nBitRate = bps;
-        } else {
-            VPU_ENC_COMP_ERR_LOG("%s: vpu config failure: config=0x%X\r\n",__FUNCTION__,(UINT32)VPU_ENC_CONF_BIT_RATE);
-        }
-    }
 
 	//encode frame
 	ret=VPU_EncEncodeFrame(nHandle, &sEncEncParam);

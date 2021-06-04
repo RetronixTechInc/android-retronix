@@ -858,7 +858,6 @@ static enum DecRet Vp9Init(const void** inst, struct DecConfig config,
   dec_cfg.use_fetch_one_pic = config.use_fetch_one_pic;
   dec_cfg.use_ringbuffer = config.use_ringbuffer;
   dec_cfg.output_format = format;
-  dec_cfg.use_cts_test = 0;
   if (config.use_8bits_output)
     dec_cfg.pixel_format = DEC_OUT_PIXEL_CUT_8BIT;
   else if (config.use_p010_output)

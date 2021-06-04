@@ -36,11 +36,11 @@ static V4L2_FORMAT_TABLE codec_format_table[]={
     //{V4L2_PIX_FMT_VC1_ANNEX_L, OMX_VIDEO_WMVFormatWVC1,0},
     {v4l2_fourcc('H', 'E', 'V', 'C'),OMX_VIDEO_CodingHEVC,0},
     {v4l2_fourcc('H', 'E', 'V', 'C'),11,0},//backup for vpu test
-    {v4l2_fourcc('V', 'P', '6', '0'), OMX_VIDEO_CodingVP6,0},
     {v4l2_fourcc('D', 'I', 'V', 'X'), OMX_VIDEO_CodingXVID,0},
+    {v4l2_fourcc('V', 'P', '6', '0'), OMX_VIDEO_CodingVP6,0},
     {v4l2_fourcc('D', 'I', 'V', 'X'), OMX_VIDEO_CodingDIVX,0},
-    {v4l2_fourcc('D', 'I', 'V', 'X'), OMX_VIDEO_CodingDIV4,0},
     {v4l2_fourcc('D', 'I', 'V', 'X'), OMX_VIDEO_CodingDIV3,0},
+    {v4l2_fourcc('D', 'I', 'V', 'X'), OMX_VIDEO_CodingDIV4,0},
     {v4l2_fourcc('R', 'V', '0', '0'), OMX_VIDEO_CodingRV,0},
 };
 
@@ -125,8 +125,8 @@ OMX_BOOL V4l2Filter::ConvertV4l2FormatToOmxColorFormat(OMX_U32 v4l2_format,OMX_C
 }
 OMX_BOOL V4l2Filter::ConvertV4l2FormatToOmxCodecFormat(OMX_U32 v4l2_format,OMX_VIDEO_CODINGTYPE *codec_format)
 {
-    OMX_U32 i = 0;
-    OMX_BOOL bGot = OMX_FALSE;
+    OMX_U32 i=0;
+    OMX_BOOL bGot=OMX_FALSE;
     OMX_U32 out = 0;
     for(i = 0; i < sizeof(codec_format_table)/sizeof(V4L2_FORMAT_TABLE);i++){
         if(v4l2_format == codec_format_table[i].v4l2_format){
@@ -135,9 +135,6 @@ OMX_BOOL V4l2Filter::ConvertV4l2FormatToOmxCodecFormat(OMX_U32 v4l2_format,OMX_V
             break;
         }
     }
-
-    if(v4l2_format == v4l2_fourcc('D', 'I', 'V', 'X'))
-        bGot = OMX_FALSE;
 
     return bGot;
 }
@@ -437,8 +434,6 @@ void V4l2Filter::ParseVpuLogLevel(const char* name)
 
     nDebugFlag=level;
     LOG_LOG("ParseVpuLogLevel name=%s, flag=%x",name, nDebugFlag);
-    if(nDebugFlag != 0)
-        LOG_INFO("ParseVpuLogLevel nDebugFlag=%x",nDebugFlag);
     return;
 }
 

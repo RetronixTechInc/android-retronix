@@ -107,7 +107,7 @@ i32 FindIndex(struct Vp9DecContainer *dec_cont, const u32 *address, u32 buffer_t
 
   for (i = 0; i < (i32)num_buffers; i++)
     if ((*(pictures + i)).virtual_address == address) break;
-  //ASSERT((u32)i < num_buffers);
+  ASSERT((u32)i < num_buffers);
   return i;
 }
 #endif
@@ -240,9 +240,6 @@ enum DecRet Vp9DecPictureConsumed(Vp9DecInst dec_inst,
     else
       buffer = FindIndex(dec_cont, pic.output_luma_base, DOWNSCALE_OUT_BUFFER);
 
-    if (buffer >= dec_cont->num_pp_buffers)
-      return DEC_PARAM_ERROR;
-
     Vp9BufferQueueRemoveRef(dec_cont->pp_bq, buffer);
 
     pthread_mutex_lock(&dec_cont->sync_out);
@@ -258,8 +255,6 @@ enum DecRet Vp9DecPictureConsumed(Vp9DecInst dec_inst,
    * bases addresses will be set when Vp9DecPictureConsumed() is called. */
   if (IS_EXTERNAL_BUFFER(dec_cont->ext_buffer_config, REFERENCE_BUFFER)) {
     u32 buffer = FindIndex(dec_cont, pic.output_luma_base, REFERENCE_BUFFER);
-    if (buffer >= dec_cont->num_buffers)
-      return DEC_PARAM_ERROR;
 
     /* Remove the reference to the buffer. */
     Vp9BufferQueueRemoveRef(dec_cont->bq, buffer);
@@ -302,8 +297,18 @@ enum DecRet Vp9DecNextPicture(Vp9DecInst dec_inst,
   }
   if (i == NO_OUTPUT_MARKER)
     return DEC_OK;
+#ifndef USE_EXTERNAL_BUFFER
+  ASSERT(i >= 0 && (u32)i < dec_cont->num_buffers);
+#else
+  if (IS_EXTERNAL_BUFFER(dec_cont->ext_buffer_config, REFERENCE_BUFFER)) {
+    ASSERT(i >= 0 && (u32)i < dec_cont->num_buffers);
+  }
 
-  ASSERT(i >= 0 && (u32)i < VP9DEC_MAX_PIC_BUFFERS);
+  if (IS_EXTERNAL_BUFFER(dec_cont->ext_buffer_config, RASTERSCAN_OUT_BUFFER) ||
+      IS_EXTERNAL_BUFFER(dec_cont->ext_buffer_config, DOWNSCALE_OUT_BUFFER)) {
+    ASSERT(i >= 0 && (u32)i < dec_cont->num_pp_buffers);
+  }
+#endif
 
   *output = dec_cont->asic_buff->picture_info[i];
 #if 0

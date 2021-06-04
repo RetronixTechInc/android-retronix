@@ -1,8 +1,0 @@
-{
-    "partitions": [
-        {
-            "label": "userdata",
-            "flags": "0x0420000000000000"
-        }
-    ]
-}

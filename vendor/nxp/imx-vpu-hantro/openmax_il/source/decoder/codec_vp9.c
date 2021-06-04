@@ -719,7 +719,6 @@ CODEC_PROTOTYPE *HantroHwDecOmx_decoder_create_vp9(const void *DWLInstance,
     dec_cfg.dscale_cfg.down_scale_y = 1;
 #endif
     dec_cfg.use_secure_mode = this->secure_mode = g2Conf->bEnableSecureMode;
-    dec_cfg.use_cts_test = g2Conf->bEnableCtsTest;
     DBGT_PDEBUG("Output format %u, pixel format %u, RFC %u",
         dec_cfg.output_format, dec_cfg.pixel_format, dec_cfg.use_video_compressor);
     enum DecRet ret = Vp9DecInit(&this->instance, DWLInstance, &dec_cfg);

@@ -1560,7 +1560,6 @@ int main(int argc, char **argv) {
     case H264DEC_PENDING_FLUSH:
       eos = 1;
     case H264DEC_PIC_DECODED:
-    case H264DEC_FIELD_DECODED:
       /* case H264DEC_FREEZED_PIC_RDY: */
       /* Picture is now ready */
       pic_rdy = 1;
@@ -2867,7 +2866,7 @@ static void printDecodeReturn(i32 retval) {
     DEBUG_PRINT(("H264DEC_BUF_EMPTY\n"));
     break;
   case H264DEC_NO_DECODING_BUFFER:
-    DEBUG_PRINT(("\r"));//DEBUG_PRINT(("H264DEC_NO_DECODING_BUFFER\n"));
+    DEBUG_PRINT(("H264DEC_NO_DECODING_BUFFER\n"));
     break;
   case H264DEC_PIC_RDY:
     DEBUG_PRINT(("H264DEC_PIC_RDY\n"));

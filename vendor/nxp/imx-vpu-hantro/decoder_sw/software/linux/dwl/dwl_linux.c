@@ -1068,7 +1068,7 @@ i32 DWLMallocLinear(const void *instance, u32 size, struct DWLLinearMem *info) {
   struct ion_heap_data ihd[heap_cnt];
   memset(&ihd, 0, sizeof(ihd));
   query.cnt = heap_cnt;
-  query.heaps = (unsigned long)&ihd;
+  query.heaps = (u64)&ihd;
   ret = ioctl (dec_dwl->fd_memalloc, ION_IOC_HEAP_QUERY, &query);
   if (ret != 0) {
     DWL_DEBUG("can't get ion heaps \n");

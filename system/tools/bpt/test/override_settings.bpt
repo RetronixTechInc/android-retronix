@@ -1,7 +1,0 @@
-{
-  "settings": {
-    "ab_suffixes": ["-0", "-1"],
-    "disk_size": 16106127360,
-    "disk_alignment": 512
-  }
-}

@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018-2019 NXP
+ *  Copyright 2018 NXP
  *  All Rights Reserved.
  *
  *  The following programs are the sole property of Freescale Semiconductor Inc.,
@@ -25,22 +25,7 @@
 #endif
 #define VPU_DEC_NODE "/dev/video12"
 #define VPU_ENC_NODE "/dev/video13"
-
-#define V4L2_CID_USER_FRAME_DEPTH (V4L2_CID_USER_BASE + 0x1200)
-#define V4L2_CID_USER_TS_THRESHOLD     (V4L2_CID_USER_BASE + 0x1101)
-#define V4L2_CID_USER_BS_L_THRESHOLD	(V4L2_CID_USER_BASE + 0x1102)
-#define V4L2_CID_USER_BS_H_THRESHOLD	(V4L2_CID_USER_BASE + 0x1103)
-#define V4L2_CID_USER_FRAME_COLORDESC   (V4L2_CID_USER_BASE + 0x1104)
-#define V4L2_CID_USER_FRAME_TRANSFERCHARS   (V4L2_CID_USER_BASE + 0x1105)
-#define V4L2_CID_USER_FRAME_MATRIXCOEFFS    (V4L2_CID_USER_BASE + 0x1106)
-#define V4L2_CID_USER_FRAME_FULLRANGE       (V4L2_CID_USER_BASE + 0x1107)
-#define V4L2_CID_USER_FRAME_VUIPRESENT      (V4L2_CID_USER_BASE + 0x1108)
-
-#define V4L2_EVENT_DECODE_ERROR                (V4L2_EVENT_PRIVATE_START + 1)
-#define V4L2_EVENT_SKIP                        (V4L2_EVENT_PRIVATE_START + 2)
-
-#define IMX_V4L2_DEC_CMD_START         (0x09000000)
-#define IMX_V4L2_DEC_CMD_RESET         (IMX_V4L2_DEC_CMD_START + 1)
+#define V4L2_EVENT_SKIP 0x8
 
 OMX_ERRORTYPE V4l2Dev::LookupNode(V4l2DEV_TYPE type, OMX_U8* name)
 {
@@ -189,9 +174,6 @@ OMX_S32 V4l2Dev::Open(V4l2DEV_TYPE type, OMX_U8* name)
 
         if(type == V4L2_DEV_TYPE_DECODER){
             sub.type = V4L2_EVENT_SKIP;
-            ioctl(fd, VIDIOC_SUBSCRIBE_EVENT, &sub);
-
-            sub.type = V4L2_EVENT_DECODE_ERROR;
             ioctl(fd, VIDIOC_SUBSCRIBE_EVENT, &sub);
         }
 
@@ -361,10 +343,8 @@ OMX_ERRORTYPE V4l2Dev::StopDecoder(OMX_S32 fd)
     cmd.flags = V4L2_DEC_CMD_STOP_IMMEDIATELY;
 
     ret = ioctl(fd, VIDIOC_DECODER_CMD, &cmd);
-    if(ret < 0){
-        LOG_DEBUG("V4l2Dev::StopDecoder ret=%x\n",ret);
+    if(ret < 0)
         return OMX_ErrorUndefined;
-    }
 
     LOG_DEBUG("V4l2Dev::StopDecoder SUCCESS\n");
     return OMX_ErrorNone;
@@ -465,9 +445,6 @@ OMX_S32 V4l2Dev::DqEvent(OMX_S32 fd)
                 ret |= V4L2_DEV_POLL_RET_EVENT_SKIP;
                 LOG_DEBUG("[%p]DqEvent V4L2_DEV_POLL_RET_EVENT_SKIP\n",this);
                 break;
-            case V4L2_EVENT_DECODE_ERROR:
-                ret |= V4L2_DEV_POLL_RET_EVENT_ERROR;
-                LOG_DEBUG("[%p]DqEvent V4L2_DEV_POLL_RET_EVENT_ERROR\n",this);
             default:
                 break;
         }
@@ -514,7 +491,7 @@ OMX_ERRORTYPE V4l2Dev::GetFrameAlignment(OMX_S32 fd, OMX_U32 format, OMX_U32 *wi
 
     return OMX_ErrorUndefined;
 }
-OMX_ERRORTYPE V4l2Dev::SetFrameRate(OMX_S32 fd, OMX_U32 framerate)
+OMX_ERRORTYPE V4l2Dev::SetEncoderFps(OMX_S32 fd, OMX_U32 framerate)
 {
     struct v4l2_streamparm parm;
     int ret = 0;
@@ -524,148 +501,15 @@ OMX_ERRORTYPE V4l2Dev::SetFrameRate(OMX_S32 fd, OMX_U32 framerate)
 
     memset(&parm, 0, sizeof(parm));
     parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    parm.parm.capture.timeperframe.numerator = Q16_SHIFT;
+    parm.parm.capture.timeperframe.numerator = 1;
     parm.parm.capture.timeperframe.denominator = framerate;
     LOG_DEBUG("set frame rate =%d",framerate);
     ret = ioctl(fd, VIDIOC_S_PARM, &parm);
     if (ret) {
-        LOG_ERROR("SetFrameRate fail\n");
-        return OMX_ErrorUndefined;
-    }
-
-    return OMX_ErrorNone;
-}
-OMX_ERRORTYPE V4l2Dev::SetFrameDepth(OMX_S32 fd, OMX_U32 framedepth)
-{
-    int ret = 0;
-    struct v4l2_control control;
-
-    if (fd < 0 || 0 == framedepth)
-        return OMX_ErrorBadParameter;
-
-    control.id = V4L2_CID_USER_FRAME_DEPTH;
-    control.value = framedepth;
-
-    LOG_DEBUG("set SetFrameDepth =%d",framedepth);
-    ret = ioctl(fd, VIDIOC_S_CTRL, &control);
-    if (ret) {
-        LOG_ERROR("SetFrameDepth fail\n");
-        return OMX_ErrorUndefined;
-    }
-
-    return OMX_ErrorNone;
-}
-OMX_ERRORTYPE V4l2Dev::SetTsThreshold(OMX_S32 fd, OMX_U32 ts)
-{
-    int ret = 0;
-    struct v4l2_control control;
-
-    if (fd < 0)
-        return OMX_ErrorBadParameter;
-
-    control.id =  V4L2_CID_USER_TS_THRESHOLD;
-    control.value = ts;
-
-    LOG_DEBUG("set ts threshold =%d",ts);
-    ret = ioctl(fd, VIDIOC_S_CTRL, &control);
-    if (ret) {
-        LOG_ERROR("SetTsThreshold fail\n");
-        return OMX_ErrorUndefined;
-    }
-
-    return OMX_ErrorNone;
-}
-OMX_ERRORTYPE V4l2Dev::SetBsThreshold(OMX_S32 fd, OMX_U32 bsl)
-{
-    int ret = 0;
-    struct v4l2_control control;
-
-    if (fd < 0)
-        return OMX_ErrorBadParameter;
-
-    control.id =  V4L2_CID_USER_BS_L_THRESHOLD;
-    control.value = bsl;
-
-    LOG_DEBUG("set bsl threshold =%d",bsl);
-    ret = ioctl(fd, VIDIOC_S_CTRL, &control);
-    if (ret) {
-        LOG_ERROR("SetBsThreshold fail\n");
+        LOG_ERROR("SetEncoderFps fail\n");
         return OMX_ErrorUndefined;
     }
 
     return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE V4l2Dev::GetColourDesc(OMX_S32 fd, V4l2ColourDesc * desc)
-{
-    OMX_ERRORTYPE return_ret = OMX_ErrorUnsupportedSetting;
-    int ret = 0;
-    struct v4l2_control control;
-
-    if (fd < 0 || desc == NULL)
-        return OMX_ErrorBadParameter;
-
-    control.id =  V4L2_CID_USER_FRAME_FULLRANGE;
-    control.value = 0;
-
-    ret = ioctl(fd, VIDIOC_G_CTRL, &control);
-    if (ret) {
-        LOG_ERROR("GetColourDesc V4L2_CID_USER_FRAME_FULLRANGE OMX_ErrorUndefined\n");
-        return OMX_ErrorUndefined;
-    }
-
-    desc->fullRange = control.value;
-    return_ret = OMX_ErrorNone;
-
-    control.id =  V4L2_CID_USER_FRAME_COLORDESC;
-    control.value = 0;
-
-    ret = ioctl(fd, VIDIOC_G_CTRL, &control);
-    if (ret) {
-        LOG_ERROR("GetColourDesc V4L2_CID_USER_FRAME_COLORDESC OMX_ErrorUndefined\n");
-        return return_ret;
-    }
-    desc->colourPrimaries = control.value;
-
-
-    control.id =  V4L2_CID_USER_FRAME_TRANSFERCHARS;
-    control.value = 0;
-    ret = ioctl(fd, VIDIOC_G_CTRL, &control);
-    if (ret) {
-        LOG_ERROR("GetColourDesc V4L2_CID_USER_FRAME_TRANSFERCHARS OMX_ErrorUndefined\n");
-        return return_ret;
-    }
-    desc->transferCharacteristics = control.value;
-
-
-    control.id =  V4L2_CID_USER_FRAME_MATRIXCOEFFS;
-    control.value = 0;
-    ret = ioctl(fd, VIDIOC_G_CTRL, &control);
-    if (ret) {
-        LOG_ERROR("GetColourDesc V4L2_CID_USER_FRAME_MATRIXCOEFFS OMX_ErrorUndefined\n");
-        return return_ret;
-    }
-    desc->matrixCoeffs = control.value;
-    LOG_DEBUG("GetColourDesc return_ret=%d, p=%d,t=%d,m=%d,r=%d\n",return_ret,
-        desc->colourPrimaries,desc->transferCharacteristics,desc->matrixCoeffs,desc->fullRange);
-    return return_ret;
-}
-OMX_ERRORTYPE V4l2Dev::ResetDecoder(OMX_S32 fd)
-{
-    int ret = 0;
-    struct v4l2_decoder_cmd cmd;
-    fsl_osal_memset(&cmd, 0, sizeof(struct v4l2_decoder_cmd));
-
-    cmd.cmd = IMX_V4L2_DEC_CMD_RESET;
-    cmd.flags = V4L2_DEC_CMD_STOP_IMMEDIATELY;
-
-    ret = ioctl(fd, VIDIOC_DECODER_CMD, &cmd);
-    if(ret < 0){
-        LOG_DEBUG("V4l2Dev::ResetDecoder ret=%x\n",ret);
-        return OMX_ErrorUndefined;
-    }
-
-    LOG_DEBUG("V4l2Dev::ResetDecoder SUCCESS\n");
-    return OMX_ErrorNone;
-
-}

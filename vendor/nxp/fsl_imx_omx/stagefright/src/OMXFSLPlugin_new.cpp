@@ -558,8 +558,7 @@ FSLOMXWrapper::FSLOMXWrapper(const char *name)
 
     #ifdef HANTRO_VPU
     if(strstr(name,"hw-based")){
-        // GRALLOC_USAGE_PRIVATE_2 is aligned with USAGE_PADDING_BUFFER in imx/display/display/Memory.h
-        nNativeBuffersUsage |= GRALLOC_USAGE_PRIVATE_2;
+        nNativeBuffersUsage |= GRALLOC_USAGE_PRIVATE_3;
     }
     #ifdef ALWAYS_ENABLE_SECURE_PLAYBACK
     nNativeBuffersUsage |= GRALLOC_USAGE_PROTECTED;
@@ -568,8 +567,7 @@ FSLOMXWrapper::FSLOMXWrapper(const char *name)
 
     #ifdef MALONE_VPU
     if(strstr(name,"hw-based")){
-        // GRALLOC_USAGE_PRIVATE_2 is aligned with USAGE_PADDING_BUFFER in imx/display/display/Memory.h
-        nNativeBuffersUsage |= GRALLOC_USAGE_PRIVATE_2;
+        nNativeBuffersUsage |= GRALLOC_USAGE_PRIVATE_3;
     }
     #endif
 
@@ -1454,7 +1452,7 @@ OMX_ERRORTYPE FSLOMXWrapper::GetExtensionIndex(
         *pIndexType = OMX_IndexParamUseAndroidPrependSPSPPStoIDRFrames;
     else if(!strcmp(cParameterName, "OMX.google.android.index.disableAVCReorder"))
         *pIndexType = OMX_IndexParamVideoDecReorderDisable;
-    #ifdef CHIPSMEDIA_VPU
+    #ifndef HANTRO_VPU
     else if(!strcmp(cParameterName, "OMX.google.android.index.prepareForAdaptivePlayback"))
         *pIndexType = OMX_IndexParamAndroidAdaptivePlayback;
     #endif
@@ -1467,10 +1465,6 @@ OMX_ERRORTYPE FSLOMXWrapper::GetExtensionIndex(
         *pIndexType = OMX_IndexConfigDescribeColorInfo;
     else if(!strcmp(cParameterName, "OMX.google.android.index.describeHDRStaticInfo"))
         *pIndexType = OMX_IndexConfigDescribeHDRColorInfo;
-    #endif
-    #ifdef MALONE_VPU
-    else if(!strcmp(cParameterName, "OMX.google.android.index.describeColorAspects"))
-        *pIndexType = OMX_IndexConfigDescribeColorInfo;
     #endif
     else
         return OMX_GetExtensionIndex(ComponentHandle, cParameterName, pIndexType);

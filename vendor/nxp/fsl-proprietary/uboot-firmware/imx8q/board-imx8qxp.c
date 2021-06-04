@@ -422,13 +422,7 @@ board_parm_rtn_t board_parameter(board_parm_t parm)
             break;
         case BOARD_PARM_KS1_ONOFF_WAKE:
             rtn = BOARD_KS1_ONOFF_WAKE;
-            break;
-        case BOARD_PARM_DC0_PLL0_SSC:
-            rtn = BOARD_PARM_RTN_NOT_USED;
-            break;
-        case BOARD_PARM_DC0_PLL1_SSC:
-            rtn = BOARD_PARM_RTN_NOT_USED;
-            break;
+            break;                            
         default :
             ; /* Intentional empty default */
             break;

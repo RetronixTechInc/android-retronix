@@ -1580,7 +1580,6 @@ static const regField_s asicRegisterDesc[] = {
 
 void EncAsicSetRegisterValue(u32 *regMirror, regName name, u32 value);
 u32 EncAsicGetRegisterValue(const void *ewl, u32 *regMirror, regName name);
-u32 EncAsicGetShadowValue(const void *ewl, u32 *regMirror, regName name);
 void EncAsicWriteRegisterValue(const void *ewl, u32 *regMirror, regName name, u32 value);
 
 #ifdef ADDRESS_WIDTH_64

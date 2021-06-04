@@ -351,8 +351,7 @@ u32 HevcDecode(struct HevcDecContainer *dec_cont, const u8 *byte_strm, u32 strm_
           }
 
           if ((tmp != HANTRO_OK) || (no_output_of_prior_pics_flag != 0) ||
-              (nal_unit.nal_unit_type == NAL_CODED_SLICE_CRA &&
-              storage->no_rasl_output) ||
+              (nal_unit.nal_unit_type == NAL_CODED_SLICE_CRA) ||
               (storage->dpb->no_reordering) || (old_sps == NULL) /*||
                        (old_sps->pic_width != new_sps->pic_width) ||
                        (old_sps->pic_height != new_sps->pic_height) ||

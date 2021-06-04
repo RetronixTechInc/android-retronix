@@ -49,7 +49,6 @@ namespace android {
 #define MAX_AUDIO_BUFFER_SIZE (16*1024)
 #define MAX_TEXT_BUFFER_SIZE (1024)
 #define MAX_TRACK_COUNT 32
-#define SEEK_CHECK_TOLERANCE (2*1000000)// 2 seconds
 
 struct FslMediaSource : public MediaTrack {
     explicit FslMediaSource(
@@ -2457,19 +2456,15 @@ status_t FslExtractor::HandleSeekOperation(uint32_t index,int64_t * ts,uint32_t 
     int64_t target;
     bool seek = true;
     bool seek2 = false;
-    int64_t ts2;
     TrackInfo *pInfo2 = NULL;
     if(ts == NULL)
         return UNKNOWN_ERROR;
 
     target = *ts;
-    ts2 = *ts;
     pInfo = &mTracks.editItemAt(index);
 
     if(pInfo == NULL)
         return UNKNOWN_ERROR;
-
-    ALOGD("HandleSeekOperation BEGIN index=%d,target=%" PRId64 ",flag=%x",index,target,flag);
 
     if(mReadMode == PARSER_READ_MODE_FILE_BASED){
         if(pInfo->type == MEDIA_AUDIO && mVideoActived){
@@ -2486,30 +2481,13 @@ status_t FslExtractor::HandleSeekOperation(uint32_t index,int64_t * ts,uint32_t 
             seek2 = true;
             if(pInfo2->type != MEDIA_AUDIO)
                 seek2 = false;
-
-            //check distance between target video position and current audio
-            //do not trig the seconds seek when distance is close.
-            if((target + SEEK_CHECK_TOLERANCE > currentAudioTs) &&
-                (target < currentAudioTs + SEEK_CHECK_TOLERANCE)){
-                seek2 = false;
-                ALOGV("skip audio seek");
-            }
         }
-
 
         if(pInfo->type == MEDIA_AUDIO && mVideoActived && isTrackModeParser()){
             pInfo2 = &mTracks.editItemAt(mVideoIndex);
             seek2 = true;
             if(pInfo2->type != MEDIA_VIDEO)
                 seek2 = false;
-
-            //check distance between target audio postion and current video
-            //do not trig the seconds seek when distance is close.
-            if((target + SEEK_CHECK_TOLERANCE > currentVideoTs) &&
-                (target < currentVideoTs + SEEK_CHECK_TOLERANCE)){
-                seek2 = false;
-                ALOGV("skip video seek");
-            }
         }
     }
 
@@ -2526,7 +2504,7 @@ status_t FslExtractor::HandleSeekOperation(uint32_t index,int64_t * ts,uint32_t 
 
 
     if(seek2 && pInfo2 != NULL){
-        IParser->seek(parserHandle, pInfo2->mTrackNum, (uint64*)&ts2, flag);
+        IParser->seek(parserHandle, pInfo2->mTrackNum, (uint64*)ts, flag);
         //clear temp buffer
         if(pInfo2->buffer != NULL){
             pInfo2->buffer->release();
@@ -2801,7 +2779,7 @@ status_t FslExtractor::CheckInterleaveEos(__unused uint32_t index)
         FslMediaSource *source = pInfo->mSource;
         if(source != NULL && source->started() && source->full()){
             bTrackFull = true;
-            ALOGE("get a full track mTrackNum=%d",pInfo->mTrackNum);
+            ALOGE("get a full track");
             break;
         }
     }

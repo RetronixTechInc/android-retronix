@@ -18,6 +18,5 @@ Origin:                    NXP (proprietary)
                            SECO:  NXP (proprietary)
                            SDMA:  NXP (proprietary)
                            VPU:   Chips & Media, Inc.  (proprietary)
-                           EASRC: NXP (proprietary)
 
 --------------------------------------------

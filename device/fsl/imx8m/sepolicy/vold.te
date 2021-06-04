@@ -1,2 +1,0 @@
-allow vold vendor_configs_file:file { map };
-allow vold proc_swaps:file { read open getattr };

@@ -166,14 +166,6 @@ role_priority=3;
 $
 
 @
-component_name=OMX.Freescale.std.video_decoder.div3.hw-based;
-library_path=lib_omx_v4l2_dec_arm11_elinux.so;
-component_entry_function=VpuDecoderInit;
-component_role=video_decoder.div3;
-role_priority=3;
-$
-
-@
 component_name=OMX.Freescale.std.video_decoder.mjpeg.hw-based;
 library_path=lib_omx_v4l2_dec_arm11_elinux.so;
 component_entry_function=VpuDecoderInit;
