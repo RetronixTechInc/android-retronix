@@ -136,7 +136,8 @@ endif
 
 # Support gpt
 BOARD_BPT_INPUT_FILES += device/fsl/common/partition/device-partitions-7GB.bpt
-ADDITION_BPT_PARTITION = partition-table-14GB:device/fsl/common/partition/device-partitions-14GB.bpt \
+ADDITION_BPT_PARTITION = partition-table-4GB:device/fsl/common/partition/device-partitions-4GB.bpt \
+			  partition-table-14GB:device/fsl/common/partition/device-partitions-14GB.bpt \
                          partition-table-28GB:device/fsl/common/partition/device-partitions-28GB.bpt
 
 TARGET_BOARD_KERNEL_HEADERS := device/fsl/common/kernel-headers
