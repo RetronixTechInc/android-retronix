@@ -524,7 +524,7 @@ echo "uuu script generated, start to invoke uuu with the generated uuu script"
 if [ ${daemon_mode} -eq 1 ]; then
     uuu -d /tmp/uuu.lst
 else
-    uuu /tmp/uuu.lst
+    ./uuu /tmp/uuu.lst
 fi
 
 exit 0
