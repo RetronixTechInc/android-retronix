@@ -31,11 +31,19 @@ $ make 2>&1 | tee build-log.txt<p>
 When the make command is complete, the build-log.txt file contains the execution output.<br>
 Check for any errors.<br>
 
+<h2> Download all images to the Emmc : </h2>
+$: cd out/target/product/sabresd_6dq/<p>
+Switch dip to serial download mode.<br>
+If the Emmc is 4 GB, use sudo <br>
+$: sudo ./uuu_imx_android_flash.sh -f imx6q -c 4 -p sabresd -e<p>
+
 <h2> Download all images to the SD card : </h2>
-The minimum size of the SD card is 8 GB.<br>
+The minimum size of the SD card is 4 GB.<br>
 $: cd out/target/product/sabresd_6dq/<p>
 If the SD card is 8 GB, use sudo <br>
 $: sudo ./fsl-sdcard-partition.sh -f imx6q /dev/sdx<p>
+If the SD card is 4 GB, use sudo <br>
+$: sudo ./fsl-sdcard-partition.sh -f imx6q -c 4 /dev/sdx<p>
 If the SD card is 16 GB, use sudo <br>
 $: sudo ./fsl-sdcard-partition.sh -f imx6q -c 14 /dev/sdx<p>
 
