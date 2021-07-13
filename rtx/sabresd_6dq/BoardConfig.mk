@@ -84,7 +84,7 @@ endif
 endif
 
 KERNEL_NAME := zImage
-BOARD_KERNEL_CMDLINE := console=ttymxc1,115200 init=/init video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32 video=mxcfb1:off video=mxcfb2:off video=mxcfb3:off vmalloc=128M androidboot.console=ttymxc1 consoleblank=0 androidboot.hardware=freescale cma=320M galcore.contiguousSize=33554432 loop.max_part=7
+BOARD_KERNEL_CMDLINE := HPD_DIS console=ttymxc1,115200 init=/init video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32 video=mxcfb1:off video=mxcfb2:off video=mxcfb3:off vmalloc=128M androidboot.console=ttymxc1 consoleblank=0 androidboot.hardware=freescale cma=320M galcore.contiguousSize=33554432 loop.max_part=7
 
 ifeq ($(TARGET_USERIMAGES_USE_UBIFS),true)
 #UBI boot command line.
@@ -105,7 +105,6 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # camera hal v3
 IMX_CAMERA_HAL_V3 := true
-
 
 #define consumer IR HAL support
 IMX6_CONSUMER_IR_HAL := false
