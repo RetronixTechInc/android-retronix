@@ -239,7 +239,7 @@ case ${soc_name%%-*} in
             emmc_num=2; sd_num=1 ;;
     imx6q)
             vid=0x15a2; pid=0x0054; chip=MX6Q;
-            uboot_env_start=0x700; uboot_env_len=0x10;
+            uboot_env_start=0x800; uboot_env_len=0x10;
             emmc_num=0; sd_num=1 ;;
     imx6qp)
             vid=0x15a2; pid=0x0054; chip=MX6Q;
