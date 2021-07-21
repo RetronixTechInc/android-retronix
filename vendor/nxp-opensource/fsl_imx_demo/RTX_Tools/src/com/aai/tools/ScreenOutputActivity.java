@@ -72,7 +72,7 @@ public class ScreenOutputActivity extends PreferenceActivity implements Preferen
 			ContentResolver cv = getContentResolver(); 
 	    	String str_accelerometer_rotation = android.provider.Settings.System.getString(cv,android.provider.Settings.System.ACCELEROMETER_ROTATION); 
 	    	String str_user_rotation = android.provider.Settings.System.getString(cv,android.provider.Settings.System.USER_ROTATION); 
-	    	if("1".equals(str_accelerometer_rotation)){
+	    	if("0".equals(str_accelerometer_rotation)){
 	        	mScreenOrientation.setValue("0");
 	    	} else if(str_user_rotation == null) { 
 	    		mScreenOrientation.setValue("0");

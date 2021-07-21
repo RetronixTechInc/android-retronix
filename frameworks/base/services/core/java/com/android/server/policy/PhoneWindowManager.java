@@ -7282,7 +7282,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     @Override
     public int rotationForOrientationLw(int orientation, int lastRotation, boolean defaultDisplay) {
-        if (true) {
+        if (false) {
             Slog.v(TAG, "rotationForOrientationLw(orient="
                         + orientation + ", last=" + lastRotation
                         + "); user=" + mUserRotation + " "
