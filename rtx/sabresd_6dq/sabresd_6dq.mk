@@ -165,6 +165,10 @@ PRODUCT_PACKAGES += \
     libgpuhelper \
     gatekeeper.imx6
 
+# Retronix packages
+PRODUCT_PACKAGES += \
+    RTX_Tools
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.internel.storage_size=/sys/block/bootdev_size
 

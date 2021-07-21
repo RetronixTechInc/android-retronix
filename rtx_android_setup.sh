@@ -49,12 +49,13 @@ repo sync
 
 # Copy all the proprietary packages to the android build folder
 
-cp -r "$REL_PACKAGE_DIR"/vendor/nxp "$android_builddir"/vendor/
 cp -r "$REL_PACKAGE_DIR"/EULA.txt "$android_builddir"
 cp -r "$REL_PACKAGE_DIR"/SCR* "$android_builddir"
-cp -r "$REL_PACKAGE_DIR"/rtx/sabresd_6dq/* "$android_builddir"/device/fsl/imx6dq/sabresd_6dq/
+cp -rf "$REL_PACKAGE_DIR"/rtx/sabresd_6dq/* "$android_builddir"/device/fsl/imx6dq/sabresd_6dq/
 cp -r "$REL_PACKAGE_DIR"/rtx/tools/* "$android_builddir"/device/fsl/common/tools/
 cp -r "$REL_PACKAGE_DIR"/rtx/partition/* "$android_builddir"/device/fsl/common/partition/
+cp -rf "$REL_PACKAGE_DIR"/frameworks/* "$android_builddir"/frameworks/
+cp -rf "$REL_PACKAGE_DIR"/vendor/* "$android_builddir"/vendor/
 # unset variables
 
 unset android_builddir
