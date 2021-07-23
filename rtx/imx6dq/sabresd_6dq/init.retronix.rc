@@ -1,0 +1,5 @@
+on early-boot
+
+    # Set input/touch orientation 0/90/180/270
+    setprop ro.input.orientation 0
+

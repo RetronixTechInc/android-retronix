@@ -39,6 +39,7 @@ PRODUCT_COPY_FILES += \
     $(IMX_DEVICE_PATH)/ueventd.freescale.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc \
     $(IMX_DEVICE_PATH)/early.init.cfg:$(TARGET_COPY_OUT_VENDOR)/etc/early.init.cfg \
     $(IMX_DEVICE_PATH)/privapp-permissions-imx.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/privapp-permissions-imx.xml \
+    $(IMX_DEVICE_PATH)/init.retronix.rc:root/init.freescale.rc \
     $(LINUX_FIRMWARE_IMX_PATH)/linux-firmware-imx/firmware/vpu/vpu_fw_imx6d.bin:$(TARGET_COPY_OUT_VENDOR)/lib/firmware/vpu/vpu_fw_imx6d.bin \
     $(LINUX_FIRMWARE_IMX_PATH)/linux-firmware-imx/firmware/vpu/vpu_fw_imx6q.bin:$(TARGET_COPY_OUT_VENDOR)/lib/firmware/vpu/vpu_fw_imx6q.bin \
     device/fsl/common/init/init.insmod.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.insmod.sh \
@@ -165,10 +166,6 @@ PRODUCT_PACKAGES += \
     libgpuhelper \
     gatekeeper.imx6
 
-# Retronix packages
-PRODUCT_PACKAGES += \
-    RTX_Tools
-
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.internel.storage_size=/sys/block/bootdev_size
 
@@ -180,3 +177,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.crypto.fde_sector_size=4096 \
     ro.crypto.volume.contents_mode=adiantum \
     ro.crypto.volume.filenames_mode=adiantum
+    
+# Retronix packages
+PRODUCT_PACKAGES += \
+    RTX_Tools
+
+#Set dispaly UI orientation 0/90/180/270
+SF_PRIMARY_DISPLAY_ORIENTATION := 0
+
+
+
