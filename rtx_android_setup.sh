@@ -55,6 +55,9 @@ cp -rf "$REL_PACKAGE_DIR"/rtx/* "$android_builddir"/device/fsl/
 cp -rf "$REL_PACKAGE_DIR"/frameworks/* "$android_builddir"/frameworks/
 cp -rf "$REL_PACKAGE_DIR"/vendor/* "$android_builddir"/vendor/
 cp -rf "$REL_PACKAGE_DIR"/bootable/* "$android_builddir"/bootable/
+cp -rf "$REL_PACKAGE_DIR"/build/* "$android_builddir"/build/
+cp -rf "$REL_PACKAGE_DIR"/system/* "$android_builddir"/system/
+cp -rf "$REL_PACKAGE_DIR"/packages/* "$android_builddir"/packages/
 # unset variables
 
 unset android_builddir

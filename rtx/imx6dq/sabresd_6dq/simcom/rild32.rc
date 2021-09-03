@@ -1,0 +1,12 @@
+service ril-daemon /vendor/bin/hw/rild -l /vendor/lib/libreference-ril.so
+    class main
+    user radio
+    socket rild-gps stream 660 radio system
+    group radio cache inet misc audio log readproc wakelock
+    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW
+
+service pppd_pgrs /system/bin/init.gprs-pppd
+	  user root
+    group radio cache inet misc
+    disabled
+    oneshot

@@ -1,0 +1,14 @@
+#/etc/ppp/gprs-connect-chat
+
+
+ABORT  		'NO CARRIER'   
+ABORT  		'NO DIALTONE'   
+ABORT  		'ERROR' 
+ABORT  		'NO ANSWER' 
+ABORT  		'BUSY' 
+
+TIMEOUT         120
+
+''		AT  
+OK              ATD*99#
+CONNECT         ''

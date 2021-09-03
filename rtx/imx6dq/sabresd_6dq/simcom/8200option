@@ -1,0 +1,22 @@
+#/etc/ppp/peers/ctnet
+#this is ppp script for use china telcom's CDMA data service
+/dev/ttyUSB1
+#/dev/pts/11
+115200
+noauth
+nocrtscts
+connect '/usr/sbin/chat -v -s -f /etc/ppp/7600-chat'
+#disconnect '/system/bin/chat -e -v "" +++ath'
+#user test105
+#password 123456
+debug
+nodetach
+ipcp-accept-local
+ipcp-accept-remote
+usepeerdns
+defaultroute
+#lcp-echo-failure 3
+#lcp-echo-interval 2
+#asyncmap ffffffff
+#idle 480
+nopersist

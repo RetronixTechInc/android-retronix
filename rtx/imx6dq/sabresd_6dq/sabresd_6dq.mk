@@ -7,6 +7,7 @@ IMX_DEVICE_PATH := device/fsl/imx6dq/sabresd_6dq
 $(call inherit-product, device/fsl/imx6dq/ProductConfigCommon.mk)
 $(call inherit-product-if-exists,vendor/google/products/gms.mk)
 $(call inherit-product, build/target/product/go_defaults.mk)
+$(call inherit-product, build/target/product/telephony.mk)
 
 ifneq ($(wildcard $(IMX_DEVICE_PATH)/fstab_nand.freescale),)
 $(shell touch $(IMX_DEVICE_PATH)/fstab_nand.freescale)
@@ -65,6 +66,15 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(IMX_DEVICE_PATH)/seccomp/mediacodec-seccomp.policy:vendor/etc/seccomp_policy/mediacodec.policy \
     $(IMX_DEVICE_PATH)/seccomp/mediaextractor-seccomp.policy:vendor/etc/seccomp_policy/mediaextractor.policy
+
+# Vendor simcom policy files for media components:
+PRODUCT_COPY_FILES += \
+    device/fsl/imx6dq/sabresd_6dq/simcom/rild:vendor/bin/hw/rild \
+    device/fsl/imx6dq/sabresd_6dq/simcom/libril.so:vendor/lib/libril.so \
+    device/fsl/imx6dq/sabresd_6dq/simcom/libreference-ril.so:vendor/lib/libreference-ril.so \
+    device/fsl/imx6dq/sabresd_6dq/simcom/config:system/etc/selinux/config \
+
+PRODUCT_COPY_FILES += device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml
 
 # Audio
 USE_XML_AUDIO_POLICY_CONF := 1
@@ -167,6 +177,7 @@ PRODUCT_PACKAGES += \
     gatekeeper.imx6
 
 PRODUCT_PROPERTY_OVERRIDES += \
+    rild.libpath = /vendor/lib/librefernce-ril.so \
     ro.internel.storage_size=/sys/block/bootdev_size
 
 PRODUCT_PROPERTY_OVERRIDES += ro.frp.pst=/dev/block/by-name/presistdata

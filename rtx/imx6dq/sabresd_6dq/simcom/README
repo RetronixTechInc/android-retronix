@@ -1,0 +1,11 @@
+##############################
+#                            #
+# HOW TO USE THE CONFIG FILE #
+#                            #
+##############################
+
+
+1 put the file 3gdata_call.conf to the directory /etc/
+2 put the file init.gprs-pppd to the directory /etc/
+3 porting the init.rc to one's android system
+4 use SIMCom RIL to setup data call
