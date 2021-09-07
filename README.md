@@ -51,6 +51,19 @@ $: sudo ./fsl-sdcard-partition.sh -f imx6q -c 14 /dev/sdx<p>
 Switch PICO board's dip sw1 to 0000 (SDCARD).<br>
 Plug in micro SD card.<br>
 Power on board, you can see android UI.<br>
+
+<h2> Download pre-build image : </h2>
+1. download pre-build image, pico_android9.0.0.tar.xz
+2. unzip it,
+$: tar -xvf pico_android9.0.0.tar.xz -C .
+$: cd pico_android9.0.0/
+3. download image to emmc,
+Switch dip to serial download mode.<br>
+If the emmc is 4GB, use sudo <br>
+sudo ./uuu_imx_android_flash.sh -f imx6q -c 4 -p sabresd<p>
+4. download image to sdcard,
+If the Emmc is 4 GB, use sudo <br>
+$: sudo ./uuu_imx_android_flash.sh -f imx6q -c 4 -p sabresd<p>
 </body>
 </html>
 
