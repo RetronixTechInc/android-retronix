@@ -75,6 +75,7 @@ PRODUCT_COPY_FILES += \
     device/fsl/imx6dq/sabresd_6dq/simcom/config:system/etc/selinux/config \
 
 PRODUCT_COPY_FILES += device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml
+PRODUCT_COPY_FILES += device/fsl/common/tools/ethtool:system/bin/ethtool
 
 # Audio
 USE_XML_AUDIO_POLICY_CONF := 1
