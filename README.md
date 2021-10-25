@@ -1,13 +1,29 @@
 <h1>android-retronix</h1>  
 Create Retronix PICO Board android6.0.1 BSP.
-
-<h2>clone project then excute "build.sh all"</h2>  
+<h2>Download source code </h2>  
 <p>
-$ clone https://github.com/RetronixTechInc/android-retronix -b RTX_NXP_Android601  
-$ ./build.sh all
+$ create fold : <br>
+ mkdir android601 <br>
+$ enter to fold   :  <br>
+ cd android601 <br>
+$ download repo   :  <br>
+ curl https://dl-ssl.google.com/dl/googlesource/git-repo/repo > repo <br>
+$ chmod repo      :  <br>
+ sudo chmod 777 repo <br>
+$ modify repo add ssl :  <br>
+ import ssl <br>
+ ssl._create_default_https_context = ssl._create_unverified_context <br>
+$ download source :  <br>
+ ./repo init -u git@github.com:RetronixTechInc/android-manifests -b RTX_NXP_Android601 -m RTX_NXP_Android601.xml <br>
+$ sync source code:  <br>
+ ./repo sync <br>
 </p>  
-It will be download repo, init, sync and build uboot,kernel,android BSP.  
+
+<h2>Build source code </h2>  
+<p>  
+$ ./build.sh all <br>
 The BSP images at out/device fold if success. 
+</p>  
 
 <h2>Create SD to write device from build image</h2>  
 Prepare micro SD card the value greater than 4GB.  
