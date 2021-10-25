@@ -1,23 +1,17 @@
 <h1>android-retronix</h1>  
 Create Retronix PICO Board android6.0.1 BSP.
-<h2>Download source code </h2>  
-<p>
-$ create fold : <br>
- mkdir android601 <br>
-$ enter to fold   :  <br>
- cd android601 <br>
-$ download repo   :  <br>
- curl https://dl-ssl.google.com/dl/googlesource/git-repo/repo > repo <br>
-$ chmod repo      :  <br>
- sudo chmod 777 repo <br>
-$ modify repo add ssl :  <br>
- import ssl <br>
- ssl._create_default_https_context = ssl._create_unverified_context <br>
-$ download source :  <br>
- ./repo init -u git@github.com:RetronixTechInc/android-manifests -b RTX_NXP_Android601 -m RTX_NXP_Android601.xml <br>
-$ sync source code:  <br>
- ./repo sync <br>
-</p>  
+<h2>To use this manifest repo, the 'repo' tool must be installed first.</h2>
+$: mkdir ~/bin<br>
+$: curl https://storage.googleapis.com/git-repo-downloads/repo  > ~/bin/repo<br>
+$: chmod a+x ~/bin/repo<br>
+$: export PATH=${PATH}:~/bin<br>
+
+<h2>Download and Setup Source:</h2>
+$git clone https://github.com/RetronixTechInc/android-retronix -b RTX_NXP_Android601<p>
+
+Run setup script to download Android open source and copy proprietary to source folders<br>
+Run from above the folder for setup script to work properly<br>
+$: source ./android-retronix/rtx_android_setup.sh<p>
 
 <h2>Build source code </h2>  
 <p>  
