@@ -29,6 +29,7 @@
 TOP=`pwd`
 ARMCOMMAND="arm-linux-androideabi-"
 
+export LC_ALL=C
 
 #### Target Board ######################################################
 #TARGET_BOARD="a6"
