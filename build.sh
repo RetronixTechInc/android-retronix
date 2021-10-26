@@ -291,7 +291,8 @@ retronix_fold_repo=${ANDROID_SRC_ROOT}/repo
 BRAN=RTX_NXP_Android601
 MANIFEST=RTX_NXP_Android601.xml
 if [ ! -f ${retronix_fold_repo} ] ; then
-    curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > repo
+    #~ curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > repo
+    cp build/repo repo
     sudo chmod a+x ./repo
     ./repo init -u ssh://git@github.com/RetronixTechInc/android-manifests.git -b ${BRAN} -m ${MANIFEST}
     ./repo sync
