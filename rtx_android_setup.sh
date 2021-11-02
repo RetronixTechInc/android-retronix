@@ -50,6 +50,7 @@ fi
 #~ # Copy all the proprietary packages to the android build folder
 cp -rf "$REL_PACKAGE_DIR/build/repo" "$android_builddir/"
 cp -rf "$REL_PACKAGE_DIR/build.sh" "$android_builddir/"
+cp -rf "$REL_PACKAGE_DIR/build/core/root.mk" "$android_builddir/Makefile"
 cp -rf "$REL_PACKAGE_DIR/art" "$android_builddir/"
 cp -rf "$REL_PACKAGE_DIR/bionic" "$android_builddir/"
 cp -rf "$REL_PACKAGE_DIR/bootable" "$android_builddir/"
