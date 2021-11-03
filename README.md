@@ -12,9 +12,11 @@ $: export PATH=${PATH}:~/bin<br>
 $git clone https://github.com/RetronixTechInc/android-retronix -b RTX_PICO_Android900<p>
 
 Run setup script to download Android open source and copy proprietary to source folders<br>
-Run from above the folder for setup script to work properly<br>
-$: source ./android-retronix/rtx_android_setup.sh<p>
-
+Run from above the folder for setup script to work properly<br><p>
+PCBA DDR is Nanya 1GB:<br>
+$: source ./android-retronix/rtx_android_setup.sh<br><p>
+PCBA DDR is Micro 2GB:<br>
+$: source ./android-retronix/rtx_android_setup_Micro2G.sh<p>
 <h2>Setup build environment:</h2>
 - Set up the environment for building. This only configures the current terminal.<p>
 $ source build/envsetup.sh
@@ -36,6 +38,8 @@ $: cd out/target/product/sabresd_6dq/<p>
 Switch dip to serial download mode.<br>
 If the Emmc is 4 GB, use sudo <br>
 $: sudo ./uuu_imx_android_flash.sh -f imx6q -c 4 -p sabresd -e<p>
+If the Emmc is 16 GB, use sudo <br>
+$: sudo ./uuu_imx_android_flash.sh -f imx6q -c 14 -p sabresd -e<p>
 
 <h2> Download all images to the SD card : </h2>
 The minimum size of the SD card is 4 GB.<br>
