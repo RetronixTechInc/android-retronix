@@ -26,7 +26,8 @@ if [ ! -d "$android_builddir" ]; then
     # Create android build dir if it does not exist.
     mkdir "$android_builddir"
     cd "$android_builddir"
-    repo init -u git@github.com:RetronixTechInc/android-manifests -b RTX_NXP_Android601 -m RTX_NXP_Android601.xml
+    cp -rf "$REL_PACKAGE_DIR/build/repo" "$android_builddir/"
+    repo init -u https://github.com/RetronixTechInc/android-manifests.git -b RTX_NXP_Android601 -m RTX_NXP_Android601.xml
       rc=$?
       if [ "$rc" != 0 ]; then
          echo "---------------------------------------------------"
@@ -48,7 +49,6 @@ if [ "$rc" != 0 ]; then
 fi
 
 #~ # Copy all the proprietary packages to the android build folder
-cp -rf "$REL_PACKAGE_DIR/build/repo" "$android_builddir/"
 cp -rf "$REL_PACKAGE_DIR/build.sh" "$android_builddir/"
 cp -rf "$REL_PACKAGE_DIR/build/core/root.mk" "$android_builddir/Makefile"
 cp -rf "$REL_PACKAGE_DIR/art" "$android_builddir/"
