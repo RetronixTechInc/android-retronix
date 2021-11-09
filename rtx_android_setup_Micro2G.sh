@@ -26,7 +26,7 @@ if [ ! -d "$android_builddir" ]; then
     # Create android build dir if it does not exist.
     mkdir "$android_builddir"
     cd "$android_builddir"
-    repo init -u git@github.com:RetronixTechInc/android-manifests -b RTX_PICO_Android900 -m RTX_PICO_Android900_Micro2G.xml
+    repo init -u https://github.com/RetronixTechInc/android-manifests.git -b RTX_PICO_Android900 -m RTX_PICO_Android900_Micro2G.xml
       rc=$?
       if [ "$rc" != 0 ]; then
          echo "---------------------------------------------------"
