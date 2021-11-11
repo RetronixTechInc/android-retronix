@@ -27,7 +27,7 @@ if [ ! -d "$android_builddir" ]; then
     mkdir "$android_builddir"
     cd "$android_builddir"
     cp -rf "$REL_PACKAGE_DIR/build/repo" "$android_builddir/"
-    repo init -u https://github.com/RetronixTechInc/android-manifests.git -b RTX_NXP_Android601 -m RTX_NXP_Android601.xml
+    ./repo init -u https://github.com/RetronixTechInc/android-manifests.git -b RTX_NXP_Android601 -m RTX_NXP_Android601.xml
       rc=$?
       if [ "$rc" != 0 ]; then
          echo "---------------------------------------------------"
@@ -39,7 +39,7 @@ else
     cd "$android_builddir"
 fi
 
-repo sync
+./repo sync
 rc=$?
 if [ "$rc" != 0 ]; then
  echo "---------------------------------------------------"
