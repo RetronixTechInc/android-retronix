@@ -484,7 +484,8 @@ PRODUCT_PACKAGES += \
 	Receive_Tools 	\
 	efm32fn		\
 	Factory_Tools \
-	rtw_fwloader
+	rtw_fwloader \
+	8812ae.ko
 	
 	
 	
