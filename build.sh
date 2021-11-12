@@ -48,7 +48,7 @@ case "$TARGET_BOARD" in
 		DEFAULT_RTXVER="R0051.00"
 		;;
 	"pitx")
-		DEFAULT_RTXVER="R0101.00"
+		DEFAULT_RTXVER="R0101.01"
 		;;
 
 	*) 

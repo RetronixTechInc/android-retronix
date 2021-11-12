@@ -3,7 +3,6 @@
  * Copyright (c) 2002-2014, Jouni Malinen <j@w1.fi>
  * Copyright (c) 2007, Johannes Berg <johannes@sipsolutions.net>
  * Copyright (c) 2009-2010, Atheros Communications
- * Copyright (C) 2015 Freescale Semiconductor, Inc.
  *
  * This software may be distributed under the terms of the BSD license.
  * See README for more details.
@@ -395,13 +394,6 @@ static void mlme_event_disconnect(struct wpa_driver_nl80211_data *drv,
 			wpa_printf(MSG_DEBUG, "nl80211: Ignore disconnect "
 				   "event triggered during reassociation");
 			return;
-#ifdef BROADCOM_WIFI_VENDOR
-		} else if ((WLAN_REASON_DEAUTH_LEAVING == nla_get_u16(reason)) &&
-                !(drv->associated)) {
-            wpa_printf(MSG_WARNING, "nl80211: Ignore disconnect "
-                            "supplicant has already updated its state machine");
-            return;
-#endif
 		}
 		wpa_printf(MSG_WARNING, "nl80211: Was expecting local "
 			   "disconnect but got another disconnect "

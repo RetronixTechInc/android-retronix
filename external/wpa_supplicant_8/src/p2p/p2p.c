@@ -96,9 +96,15 @@ static void p2p_expire_peers(struct p2p_data *p2p)
 		}
 
 #ifdef REALTEK_WIFI_VENDOR
-               if (dev->req_config_methods != 0)
-                       continue;
-#endif
+		if (dev->req_config_methods != 0) {
+			/*
+			 * The peer is doing P2P-PROV-DISC
+			 * So do not expire the peer entry.
+			 */
+			continue;
+		}
+#endif /* REALTEK_WIFI_VENDOR */
+
 		p2p_dbg(p2p, "Expiring old peer entry " MACSTR,
 			MAC2STR(dev->info.p2p_device_addr));
 		dl_list_del(&dev->list);

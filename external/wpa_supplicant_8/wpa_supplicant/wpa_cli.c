@@ -21,9 +21,9 @@
 #include "utils/list.h"
 #include "common/version.h"
 #include "common/ieee802_11_defs.h"
-#ifdef ANDROID
+#if defined(ANDROID) && !defined(PURE_LINUX)
 #include <cutils/properties.h>
-#endif /* ANDROID */
+#endif /* ANDROID && !PURE_LINUX */
 
 
 static const char *const wpa_cli_version =
@@ -4170,14 +4170,14 @@ static char * wpa_cli_get_default_ifname(void)
 	struct dirent *dent;
 	DIR *dir = opendir(ctrl_iface_dir);
 	if (!dir) {
-#ifdef ANDROID
+#if defined(ANDROID) && !defined(PURE_LINUX)
 		char ifprop[PROPERTY_VALUE_MAX];
 		if (property_get("wifi.interface", ifprop, NULL) != 0) {
 			ifname = os_strdup(ifprop);
 			printf("Using interface '%s'\n", ifname);
 			return ifname;
 		}
-#endif /* ANDROID */
+#endif /* ANDROID && !PURE_LINUX */
 		return NULL;
 	}
 	while ((dent = readdir(dir))) {

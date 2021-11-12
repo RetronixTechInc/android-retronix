@@ -18,6 +18,17 @@ export BINDIR ?= /usr/local/bin/
 
 -include .config
 
+ifeq ($(BOARD_WIFI_VENDOR), realtek)
+CFLAGS += -I$(abspath ./)
+CFLAGS += -I$(abspath ../src/drivers)
+CFLAGS += -I$(abspath ../wpa_supplicant)
+PURE_LINUX = y
+CFLAGS += -DPURE_LINUX
+CFLAGS += -DREALTEK_WIFI_VENDOR
+CFLAGS += -DANDROID
+CFLAGS += -DANDROID_P2P
+endif
+
 ifdef CONFIG_TESTING_OPTIONS
 CFLAGS += -DCONFIG_TESTING_OPTIONS
 CONFIG_WPS_TESTING=y

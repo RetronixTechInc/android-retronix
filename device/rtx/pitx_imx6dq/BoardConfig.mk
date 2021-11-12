@@ -166,33 +166,26 @@ PRODUCT_MODEL := A6-MX6DQ
 
 TARGET_RELEASETOOLS_EXTENSIONS := device/rtx/pitx_imx6dq
 
-# UNITE is a virtual device.
-BOARD_WLAN_DEVICE            := UNITE
-WPA_SUPPLICANT_VERSION       := VER_0_8_UNITE
+# for intel realtek
+BOARD_WLAN_DEVICE            := realtek
+WPA_SUPPLICANT_VERSION       := VER_0_8_X
 
 BOARD_WPA_SUPPLICANT_DRIVER  := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_rtl
+
 BOARD_HOSTAPD_DRIVER         := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB    := lib_driver_cmd_rtl
 
-BOARD_HOSTAPD_PRIVATE_LIB_BCM               := lib_driver_cmd_bcmdhd
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB_BCM        := lib_driver_cmd_bcmdhd
+WIFI_DRIVER_MODULE_NAME      := "8812ae"
+WIFI_DRIVER_MODULE_PATH      := "/system/lib/modules/8812ae.ko"
+WIFI_DRIVER_MODULE_ARG 		 := "ifname=wlan0 if2name=p2p0"
 
-BOARD_SUPPORT_BCM_WIFI  := true
-#for intel vendor
-ifeq ($(BOARD_WLAN_VENDOR),INTEL)
-BOARD_HOSTAPD_PRIVATE_LIB                := private_lib_driver_cmd
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB         := private_lib_driver_cmd
-WPA_SUPPLICANT_VERSION                   := VER_0_8_X
-HOSTAPD_VERSION                          := VER_0_8_X
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB         := private_lib_driver_cmd_intel
-WIFI_DRIVER_MODULE_PATH                  := "/system/lib/modules/iwlagn.ko"
-WIFI_DRIVER_MODULE_NAME                  := "iwlagn"
-WIFI_DRIVER_MODULE_PATH                  ?= auto
-endif
+WIFI_FIRMWARE_LOADER 		 := "rtw_fwloader"
+WIFI_DRIVER_FW_PATH_STA 	 := "STA"
+WIFI_DRIVER_FW_PATH_AP 		 := "AP"
+WIFI_DRIVER_FW_PATH_P2P 	 := "P2P"
+WIFI_DRIVER_FW_PATH_PARAM 	 := "/dev/null"
 
-WIFI_DRIVER_FW_PATH_STA        := "/system/etc/firmware/bcm/fw_bcmdhd.bin"
-WIFI_DRIVER_FW_PATH_P2P        := "/system/etc/firmware/bcm/fw_bcmdhd.bin"
-WIFI_DRIVER_FW_PATH_AP         := "/system/etc/firmware/bcm/fw_bcmdhd_apsta.bin"
-WIFI_DRIVER_FW_PATH_PARAM      := "/sys/module/bcmdhd/parameters/firmware_path"
 
 BOARD_MODEM_VENDOR := AMAZON
 

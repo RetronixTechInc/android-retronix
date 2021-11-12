@@ -535,6 +535,11 @@ static int wiphy_info_handler(struct nl_msg *msg, void *arg)
 	if (tb[NL80211_ATTR_DEVICE_AP_SME])
 		info->device_ap_sme = 1;
 
+#ifdef REALTEK_WIFI_VENDOR
+	/* force AP SME as true, compatible with kernel below v3.3.0 */
+	info->device_ap_sme = 1;
+#endif /* REALTEK_WIFI_VENDOR */
+
 	wiphy_info_feature_flags(info, tb[NL80211_ATTR_FEATURE_FLAGS]);
 	wiphy_info_ext_feature_flags(info, tb[NL80211_ATTR_EXT_FEATURES]);
 	wiphy_info_probe_resp_offload(capa,
@@ -878,6 +883,11 @@ int wpa_driver_nl80211_capa(struct wpa_driver_nl80211_data *drv)
 	 * to have everything we need to not need monitor interfaces.
 	 */
 	drv->use_monitor = !info.poll_command_supported || !info.data_tx_status;
+
+#ifdef REALTEK_WIFI_VENDOR
+	/* driver only support monitor-less mode */
+	drv->use_monitor = 0;
+#endif /* REALTEK_WIFI_VENDOR */
 
 	if (drv->device_ap_sme && drv->use_monitor) {
 		/*

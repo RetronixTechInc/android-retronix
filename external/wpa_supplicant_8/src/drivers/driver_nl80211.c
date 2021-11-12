@@ -82,12 +82,12 @@ static void nl80211_handle_destroy(struct nl_handle *handle)
 #endif /* CONFIG_LIBNL20 */
 
 
-#ifdef ANDROID
+#if defined(ANDROID) && !defined(PURE_LINUX)
 /* system/core/libnl_2 does not include nl_socket_set_nonblocking() */
 #undef nl_socket_set_nonblocking
 #define nl_socket_set_nonblocking(h) android_nl_socket_set_nonblocking(h)
 
-#endif /* ANDROID */
+#endif /* ANDROID && !PURE_LINUX */
 
 
 static struct nl_handle * nl_create_handle(struct nl_cb *cb, const char *dbg)

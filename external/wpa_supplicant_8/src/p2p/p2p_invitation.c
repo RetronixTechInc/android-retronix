@@ -212,11 +212,21 @@ void p2p_process_invitation_req(struct p2p_data *p2p, const u8 *sa,
 			goto fail;
 		}
 	}
+
 #ifdef REALTEK_WIFI_VENDOR
-      else {
-               p2p_add_dev_info(p2p, sa, dev, &msg);
-       }
-#endif
+	else if (!dev->listen_freq && !dev->oper_freq) {
+		/*
+		 * This may happen if the peer entry was added based on PD
+		 * Request and no Probe Request/Response frame has been received
+		 * from this peer (or that information has timed out).
+		 */
+		p2p_dbg(p2p, "Update peer " MACSTR
+			" based on GO Invitation Req since listen/oper freq not known",
+			MAC2STR(dev->info.p2p_device_addr));
+		p2p_add_dev_info(p2p, sa, dev, &msg);
+	}
+#endif /* REALTEK_WIFI_VENDOR */
+
 	if (!msg.group_id || !msg.channel_list) {
 		p2p_dbg(p2p, "Mandatory attribute missing in Invitation Request from "
 			MACSTR, MAC2STR(sa));

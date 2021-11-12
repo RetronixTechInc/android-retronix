@@ -6773,6 +6773,7 @@ static void wpa_supplicant_ctrl_iface_flush(struct wpa_supplicant *wpa_s)
 	}
 
 	eloop_cancel_timeout(wpas_network_reenabled, wpa_s, NULL);
+	wpa_s->wnmsleep_used = 0;
 }
 
 
@@ -6782,14 +6783,6 @@ static int wpas_ctrl_radio_work_show(struct wpa_supplicant *wpa_s,
 	struct wpa_radio_work *work;
 	char *pos, *end;
 	struct os_reltime now, diff;
-	char *reply;
-	const int reply_size = 4096;
-	int ctrl_rsp = 0;
-	int reply_len;
-#ifdef REALTEK_WIFI_VENDOR
-    if(os_strncmp(buf, "PING", 4) != 0)
-        wpa_printf(MSG_INFO, "[CTRL_IFACE]%s: %s", wpa_s->ifname, buf);
-#endif
 
 	pos = buf;
 	end = buf + buflen;
@@ -7998,6 +7991,11 @@ char * wpa_supplicant_ctrl_iface_process(struct wpa_supplicant *wpa_s,
 	const int reply_size = 4096;
 	int reply_len;
 
+#ifdef REALTEK_WIFI_VENDOR
+	if(os_strncmp(buf, "PING", 4) != 0)
+		wpa_printf(MSG_INFO, "[CTRL_IFACE] %s: '%s'", wpa_s->ifname, buf);
+#endif /* REALTEK_WIFI_VENDOR */
+
 	if (os_strncmp(buf, WPA_CTRL_RSP, os_strlen(WPA_CTRL_RSP)) == 0 ||
 	    os_strncmp(buf, "SET_NETWORK ", 12) == 0) {
 		if (wpa_debug_show_keys)
@@ -8583,8 +8581,6 @@ char * wpa_supplicant_ctrl_iface_process(struct wpa_supplicant *wpa_s,
 #endif /* CONFIG_AUTOSCAN */
 #ifdef ANDROID
 	} else if (os_strncmp(buf, "DRIVER ", 7) == 0) {
-        if (os_strncasecmp(buf + 7, "P2P_DISABLE", 11) == 0)
-            wpas_p2p_stop_find(wpa_s);
 		reply_len = wpa_supplicant_driver_cmd(wpa_s, buf + 7, reply,
 						      reply_size);
 #endif /* ANDROID */
@@ -9159,9 +9155,13 @@ char * wpa_supplicant_global_ctrl_iface_process(struct wpa_global *global,
 		return reply;
 
 #ifdef REALTEK_WIFI_VENDOR
-       if(os_strncmp(buf, "PING", 4) != 0)
-               wpa_printf(MSG_INFO, "[CTRL_IFACE_G]%s", buf);
-#endif
+	{
+		int level = MSG_INFO;
+		if (os_strcmp(buf, "PING") == 0)
+			level = MSG_EXCESSIVE;
+		wpa_printf(level, "[CTRL_IFACE_G] '%s'", buf);
+	}
+#endif /* REALTEK_WIFI_VENDOR */
 
 	if (os_strcmp(buf, "PING") == 0)
 		level = MSG_EXCESSIVE;

@@ -25,10 +25,16 @@ endif
 ifdef CONFIG_DRIVER_NL80211
 DRV_CFLAGS += -DCONFIG_DRIVER_NL80211
 DRV_OBJS += ../src/drivers/driver_nl80211.o
+ifdef PURE_LINUX
+DRV_OBJS += ../src/drivers/driver_nl80211_android.o
+endif
 DRV_OBJS += ../src/drivers/driver_nl80211_capa.o
 DRV_OBJS += ../src/drivers/driver_nl80211_event.o
 DRV_OBJS += ../src/drivers/driver_nl80211_monitor.o
 DRV_OBJS += ../src/drivers/driver_nl80211_scan.o
+ifdef PURE_LINUX
+DRV_OBJS += ../src/drivers/wpa_supplicant_8_lib/driver_cmd_nl80211.o
+endif
 DRV_OBJS += ../src/utils/radiotap.o
 NEED_SME=y
 NEED_AP_MLME=y
@@ -113,6 +119,9 @@ endif
 
 ifdef CONFIG_DRIVER_WEXT
 DRV_WPA_CFLAGS += -DCONFIG_DRIVER_WEXT
+ifdef PURE_LINUX
+DRV_OBJS += ../src/drivers/wpa_supplicant_8_lib/driver_cmd_wext.o
+endif
 CONFIG_WIRELESS_EXTENSION=y
 NEED_NETLINK=y
 NEED_LINUX_IOCTL=y

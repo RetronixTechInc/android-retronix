@@ -483,4 +483,8 @@ PRODUCT_PACKAGES += \
 	RTX_Tools 	\
 	Receive_Tools 	\
 	efm32fn		\
-	Factory_Tools
+	Factory_Tools \
+	rtw_fwloader
+	
+	
+	

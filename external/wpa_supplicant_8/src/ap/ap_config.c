@@ -1,7 +1,6 @@
 /*
  * hostapd / Configuration helper functions
  * Copyright (c) 2003-2014, Jouni Malinen <j@w1.fi>
- * Copyright (C) 2015 Freescale Semiconductor, Inc.
  *
  * This software may be distributed under the terms of the BSD license.
  * See README for more details.
@@ -921,10 +920,6 @@ void hostapd_set_security_params(struct hostapd_bss_config *bss,
 
 	if ((bss->wpa & 2) && bss->rsn_pairwise == 0)
 		bss->rsn_pairwise = bss->wpa_pairwise;
-#ifndef REALTEK_WIFI_VENDOR
-    else if (bss->wpa == 2)
-        bss->wpa_pairwise = bss->rsn_pairwise;
-#endif
 	bss->wpa_group = wpa_select_ap_group_cipher(bss->wpa, bss->wpa_pairwise,
 						    bss->rsn_pairwise);
 

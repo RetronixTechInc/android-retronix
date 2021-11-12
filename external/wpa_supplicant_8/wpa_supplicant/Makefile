@@ -17,6 +17,18 @@ CFLAGS += -I$(abspath ../src/utils)
 
 -include .config
 
+ifeq ($(BOARD_WIFI_VENDOR), realtek)
+-include ./android_config_realtek.inc
+
+CFLAGS += -I$(abspath ./)
+CFLAGS += -I$(abspath ../src/drivers)
+PURE_LINUX = y
+CFLAGS += -DPURE_LINUX
+CFLAGS += -DREALTEK_WIFI_VENDOR
+CFLAGS += -DANDROID
+CFLAGS += -DANDROID_P2P
+endif
+
 ifdef CONFIG_TESTING_OPTIONS
 CFLAGS += -DCONFIG_TESTING_OPTIONS
 CONFIG_WPS_TESTING=y
@@ -30,12 +42,14 @@ BINALL += wpa_passphrase
 endif
 
 ALL = $(BINALL)
+ifneq ($(BOARD_WIFI_VENDOR), realtek)
 ALL += systemd/wpa_supplicant.service
 ALL += systemd/wpa_supplicant@.service
 ALL += systemd/wpa_supplicant-nl80211@.service
 ALL += systemd/wpa_supplicant-wired@.service
 ALL += dbus/fi.epitest.hostap.WPASupplicant.service
 ALL += dbus/fi.w1.wpa_supplicant1.service
+endif
 ifdef CONFIG_BUILD_WPA_CLIENT_SO
 ALL += libwpa_client.so
 endif

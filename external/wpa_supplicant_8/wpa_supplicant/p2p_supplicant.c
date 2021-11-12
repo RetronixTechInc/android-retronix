@@ -2,7 +2,6 @@
  * wpa_supplicant - P2P
  * Copyright (c) 2009-2010, Atheros Communications
  * Copyright (c) 2010-2014, Jouni Malinen <j@w1.fi>
- * Copyright (C) 2015 Freescale Semiconductor, Inc.
  *
  * This software may be distributed under the terms of the BSD license.
  * See README for more details.
@@ -997,10 +996,7 @@ static int wpas_p2p_persistent_group(struct wpa_supplicant *wpa_s,
 		wpa_hexdump(MSG_DEBUG, "P2P: Beacon IEs",
 			    ((u8 *) bss + 1) + bss->ie_len,
 			    bss->beacon_ie_len);
-
-		wpa_printf(MSG_INFO, "Aries IOT patch : forcing be persistent and bssid " MACSTR " as go_dev_addr!! \n\n", MAC2STR(bssid));
-		memcpy(go_dev_addr, bssid, ETH_ALEN);
-		return 1;
+		return 0;
 	}
 
 	group_capab = p2p_get_group_capab(p2p);
@@ -2797,15 +2793,6 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
 		wpa_printf(MSG_DEBUG, "P2P: Invitation from peer " MACSTR
 			   " was accepted; op_freq=%d MHz, SSID=%s",
 			   MAC2STR(sa), op_freq, wpa_ssid_txt(ssid, ssid_len));
-#ifdef REALTEK_WIFI_VENDOR
-            // clear previous wpa_s->go_params because it is out of data.
-             if (wpa_s->go_params) {
-                        wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
-                            os_free(wpa_s->go_params);
-                          wpa_s->go_params = NULL;
-          }
-
-#endif
 		if (s) {
 			int go = s->mode == WPAS_MODE_P2P_GO;
 			wpas_p2p_group_add_persistent(
@@ -5526,7 +5513,7 @@ int wpas_p2p_group_add_persistent(struct wpa_supplicant *wpa_s,
 				  int connection_timeout)
 {
 	struct p2p_go_neg_results params;
-	int go = 0, freq = 2;
+	int go = 0, freq;
 
 	if (ssid->disabled != 2 || ssid->ssid == NULL)
 		return -1;
@@ -5590,12 +5577,8 @@ int wpas_p2p_group_add_persistent(struct wpa_supplicant *wpa_s,
 				freq = 0;
 		}
 
-
-	if (ssid->mode == WPAS_MODE_INFRA) {
-        os_sleep(0, 500000);
 		return wpas_start_p2p_client(wpa_s, ssid, addr_allocated, freq);
-    }
-	if (ssid->mode != WPAS_MODE_P2P_GO)
+	} else {
 		return -1;
 	}
 
@@ -6290,25 +6273,7 @@ void wpas_p2p_completed(struct wpa_supplicant *wpa_s)
 		os_memcpy(go_dev_addr, ssid->bssid, ETH_ALEN);
 	persistent = wpas_p2p_persistent_group(wpa_s, go_dev_addr, ssid->ssid,
 					       ssid->ssid_len);
-    /*
-     * Sometimes it cannot get persident go_dev_addr when p2p completed
-     * but the full-zero go_dev_addr will be dangerous.
-     * So we can try the bssid in wpa_s.
-     */
-    int go_addr_valid = 0;
-    int cc = 0;
-    for (cc = 0; cc < ETH_ALEN; cc++) {
-        if (go_dev_addr[cc] != 0) {
-            go_addr_valid = 1;
-            break;
-        }
-    }
-    if (!go_addr_valid) {
-        wpa_msg_global(wpa_s->parent, MSG_ERROR, "persistent group addr not valid, will try bssid:" MACSTR,
-                         MAC2STR(wpa_s->bssid));
-        os_memcpy(go_dev_addr, wpa_s->bssid, ETH_ALEN);
-    }
-    os_memcpy(wpa_s->go_dev_addr, go_dev_addr, ETH_ALEN);
+	os_memcpy(wpa_s->go_dev_addr, go_dev_addr, ETH_ALEN);
 
 	if (wpa_s->global->p2p_group_formation == wpa_s)
 		wpa_s->global->p2p_group_formation = NULL;
@@ -6445,24 +6410,18 @@ static void wpas_p2p_set_group_idle_timeout(struct wpa_supplicant *wpa_s)
 		return;
 	}
 
-
-	timeout = P2P_MAX_CLIENT_IDLE;
-
-	if (wpa_s->current_ssid->mode == WPAS_MODE_INFRA)
-	{
-		if (wpa_s->show_group_started) {
-
-			wpa_printf(MSG_INFO, "P2P: set P2P group idle timeout to 20s "
+	if (wpa_s->show_group_started) {
+		/*
+		 * Use the normal group formation timeout between the end of
+		 * the provisioning phase and completion of 4-way handshake to
+		 * avoid terminating this process too early due to group idle
+		 * timeout.
+		 */
+		wpa_printf(MSG_DEBUG, "P2P: Do not use P2P group idle timeout "
 			   "while waiting for initial 4-way handshake to "
 			   "complete");
-			timeout = P2P_MAX_CLIENT_IDLE;
-		}
-		else
-		{
-			timeout = 0;
-		}
+		return;
 	}
-
 
 	wpa_printf(MSG_DEBUG, "P2P: Set P2P group idle timeout to %u seconds",
 		   timeout);
@@ -7589,8 +7548,7 @@ static struct wpabuf * wpas_p2p_nfc_handover(int ndef, struct wpabuf *wsc,
 static int wpas_p2p_cli_freq(struct wpa_supplicant *wpa_s,
 			     struct wpa_ssid **ssid, u8 *go_dev_addr)
 {
-	struct wpa_supplicant *iface = NULL;
-
+	struct wpa_supplicant *iface;
 
 	if (go_dev_addr)
 		os_memset(go_dev_addr, 0, ETH_ALEN);

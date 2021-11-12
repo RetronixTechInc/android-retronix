@@ -2537,11 +2537,7 @@ static void wpa_supplicant_enable_one_network(struct wpa_supplicant *wpa_s,
 	 * Try to reassociate since there is no current configuration and a new
 	 * network was made available.
 	 */
-#ifdef REALTEK_WIFI_VENDOR
-	if (!wpa_s->current_ssid)
-#else
-    if (!wpa_s->current_ssid && !wpa_s->disconnected)
-#endif
+	if (!wpa_s->current_ssid && !wpa_s->disconnected)
 		wpa_s->reassociate = 1;
 }
 
@@ -2561,11 +2557,8 @@ void wpa_supplicant_enable_network(struct wpa_supplicant *wpa_s,
 			wpa_supplicant_enable_one_network(wpa_s, ssid);
 	} else
 		wpa_supplicant_enable_one_network(wpa_s, ssid);
-#ifdef REALTEK_WIFI_VENDOR
-	if (wpa_s->reassociate) {
-#else
-    if (wpa_s->reassociate && !wpa_s->disconnected) {
-#endif
+
+	if (wpa_s->reassociate && !wpa_s->disconnected) {
 		if (wpa_s->sched_scanning) {
 			wpa_printf(MSG_DEBUG, "Stop ongoing sched_scan to add "
 				   "new network to scan filters");
@@ -3299,14 +3292,14 @@ int wpa_supplicant_driver_init(struct wpa_supplicant *wpa_s)
 			wpa_supplicant_set_state(wpa_s, WPA_DISCONNECTED);
 			interface_count = 0;
 		}
-#ifndef ANDROID
+#if !defined(ANDROID) || defined(PURE_LINUX)
 		if (!wpa_s->p2p_mgmt &&
 		    wpa_supplicant_delayed_sched_scan(wpa_s,
 						      interface_count % 3,
 						      100000))
 			wpa_supplicant_req_scan(wpa_s, interface_count % 3,
 						100000);
-#endif /* ANDROID */
+#endif /* !ANDROID || PURE_LINUX */
 		interface_count++;
 	} else
 		wpa_supplicant_set_state(wpa_s, WPA_INACTIVE);
@@ -4798,7 +4791,7 @@ void wpa_supplicant_deinit(struct wpa_global *global)
 	os_free(global->params.ctrl_interface_group);
 	os_free(global->params.override_driver);
 	os_free(global->params.override_ctrl_interface);
-	os_free(global->params.conf_p2p_dev);
+	os_free((void *)global->params.conf_p2p_dev);
 
 	os_free(global->p2p_disallow_freq.range);
 	os_free(global->p2p_go_avoid_freq.range);

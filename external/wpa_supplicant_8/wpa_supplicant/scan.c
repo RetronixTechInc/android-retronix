@@ -1656,11 +1656,17 @@ static int wpa_scan_result_compar(const void *a, const void *b)
 	int wpa_a, wpa_b;
 	int snr_a, snr_b, snr_a_full, snr_b_full;
 
+#ifdef REALTEK_WIFI_VENDOR
+	/* WPA2 support preferred */
+	wpa_a = wpa_scan_get_ie(wa, WLAN_EID_RSN) != NULL;
+	wpa_b = wpa_scan_get_ie(wb, WLAN_EID_RSN) != NULL;
+#else
 	/* WPA/WPA2 support preferred */
 	wpa_a = wpa_scan_get_vendor_ie(wa, WPA_IE_VENDOR_TYPE) != NULL ||
 		wpa_scan_get_ie(wa, WLAN_EID_RSN) != NULL;
 	wpa_b = wpa_scan_get_vendor_ie(wb, WPA_IE_VENDOR_TYPE) != NULL ||
 		wpa_scan_get_ie(wb, WLAN_EID_RSN) != NULL;
+#endif /* REALTEK_WIFI_VENDOR */
 
 	if (wpa_b && !wpa_a)
 		return 1;

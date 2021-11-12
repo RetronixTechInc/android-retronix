@@ -19,12 +19,12 @@
 #include <netdb.h>
 #endif /* CONFIG_CTRL_IFACE_UDP_REMOTE */
 
-#ifdef ANDROID
+#if defined(ANDROID) && !defined(PURE_LINUX)
 #include <dirent.h>
 #include <sys/stat.h>
 #include <cutils/sockets.h>
 #include "private/android_filesystem_config.h"
-#endif /* ANDROID */
+#endif /* ANDROID && !PURE_LINUX */
 
 #ifdef CONFIG_CTRL_IFACE_UDP_IPV6
 #include <net/if.h>
@@ -135,7 +135,7 @@ try_again:
 		return NULL;
 	}
 
-#ifdef ANDROID
+#if defined(ANDROID) && !defined(PURE_LINUX)
 	chmod(ctrl->local.sun_path, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 	chown(ctrl->local.sun_path, AID_SYSTEM, AID_WIFI);
 
@@ -172,7 +172,7 @@ try_again:
 		}
 		return ctrl;
 	}
-#endif /* ANDROID */
+#endif /* ANDROID && !PURE_LINUX */
 
 	ctrl->dest.sun_family = AF_UNIX;
 	if (os_strncmp(ctrl_path, "@abstract:", 10) == 0) {
@@ -224,7 +224,7 @@ void wpa_ctrl_close(struct wpa_ctrl *ctrl)
 }
 
 
-#ifdef ANDROID
+#if defined(ANDROID) && !defined(PURE_LINUX)
 /**
  * wpa_ctrl_cleanup() - Delete any local UNIX domain socket files that
  * may be left over from clients that were previously connected to
@@ -259,7 +259,7 @@ void wpa_ctrl_cleanup(void)
 	}
 	closedir(dir);
 }
-#endif /* ANDROID */
+#endif /* ANDROID && !PURE_LINUX */
 
 #else /* CONFIG_CTRL_IFACE_UNIX */
 

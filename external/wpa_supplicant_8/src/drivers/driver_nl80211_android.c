@@ -57,7 +57,7 @@ static int android_priv_cmd(struct i802_bss *bss, const char *cmd)
 	priv_cmd.buf = buf;
 	priv_cmd.used_len = sizeof(buf);
 	priv_cmd.total_len = sizeof(buf);
-	ifr.ifr_data = &priv_cmd;
+	ifr.ifr_data = (void *)&priv_cmd;
 
 	ret = ioctl(drv->global->ioctl_sock, SIOCDEVPRIVATE + 1, &ifr);
 	if (ret < 0) {
@@ -127,7 +127,7 @@ int android_pno_start(struct i802_bss *bss,
 	priv_cmd.buf = buf;
 	priv_cmd.used_len = bp;
 	priv_cmd.total_len = bp;
-	ifr.ifr_data = &priv_cmd;
+	ifr.ifr_data = (void *)&priv_cmd;
 
 	ret = ioctl(drv->global->ioctl_sock, SIOCDEVPRIVATE + 1, &ifr);
 
